@@ -35,13 +35,25 @@ function tone(freq: number, start: number, dur: number, type: OscillatorType = "
   o.stop(t0 + dur + 0.02);
 }
 
+/** Rung nhẹ trên điện thoại (nếu thiết bị hỗ trợ). */
+function buzz(pattern: number | number[]) {
+  if (!enabled || typeof navigator === "undefined" || !("vibrate" in navigator)) return;
+  try {
+    navigator.vibrate(pattern);
+  } catch {
+    /* một số trình duyệt chặn rung */
+  }
+}
+
 export const sfx = {
   correct() {
+    buzz(18);
     if (!enabled) return;
     tone(660, 0, 0.12, "triangle", 0.14);
     tone(990, 0.1, 0.22, "triangle", 0.14);
   },
   wrong() {
+    buzz([45, 60, 45]);
     if (!enabled) return;
     // tiếng còi "bíp bíp"
     tone(330, 0, 0.16, "square", 0.06);
@@ -55,6 +67,7 @@ export const sfx = {
     tone(110, 0.05, 0.8, "square", 0.02, 220);
   },
   click() {
+    buzz(8);
     if (!enabled) return;
     tone(880, 0, 0.05, "sine", 0.05);
   },

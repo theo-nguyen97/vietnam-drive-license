@@ -1,6 +1,6 @@
 export function Footer() {
   return (
-    <footer className="mt-16 border-t border-white/5">
+    <footer className="mt-16 border-t border-white/5 pb-[calc(4.5rem+env(safe-area-inset-bottom))] md:pb-0">
       <div className="lane-divider opacity-30" />
       <div className="mx-auto max-w-6xl px-4 py-8 text-sm text-white/50">
         <p>

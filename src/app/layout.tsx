@@ -23,10 +23,14 @@ export const metadata: Metadata = {
   },
   description:
     "Ôn tập và thi thử lý thuyết giấy phép lái xe Việt Nam (A1, A, B1, B, C1, C, D1, D2, D, BE, C1E, CE, D1E, D2E, DE) với sa hình động, giải thích chi tiết và lưu tiến độ học.",
+  appleWebApp: { capable: true, title: "Lái Lụa", statusBarStyle: "black-translucent" },
 };
 
 export const viewport: Viewport = {
   themeColor: "#0b0d12",
+  viewportFit: "cover",
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

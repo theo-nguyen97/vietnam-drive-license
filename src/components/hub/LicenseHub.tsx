@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { motion } from "motion/react";
-import { Trophy, Shuffle, AlertTriangle, RotateCcw, Bookmark, ListOrdered, ChevronRight, Dices, CalendarCheck, Gauge as GaugeIcon, Target } from "lucide-react";
+import { Trophy, AlertTriangle, RotateCcw, Bookmark, ListOrdered, ChevronRight, Dices, CalendarCheck, Gauge as GaugeIcon, Target, Stethoscope } from "lucide-react";
 import { setCount } from "@/lib/exam";
 import { dailySet, dueQuestions } from "@/lib/sets";
+import { analyze } from "@/lib/topics";
 import clsx from "clsx";
 import type { LicenseId } from "@/lib/types";
 import { getLicense } from "@/data/licenses";
@@ -30,6 +31,7 @@ export function LicenseHub({ license }: { license: LicenseId }) {
   const dueCount = hydrated ? dueQuestions(pool, stats).length : 0;
   const dailyCount = hydrated ? dailySet(pool, stats).length : 0;
   const arcadeBest = useProgress((s) => s.arcadeBest[license] ?? 0);
+  const topWeak = hydrated ? analyze(license, stats).find((r) => r.status === "danger" || r.status === "warn") : undefined;
   const current = chapters.findIndex((c) => {
     const ch = p.chapters[c.id];
     return !ch || ch.mastered / ch.total < 0.8;
@@ -64,7 +66,7 @@ export function LicenseHub({ license }: { license: LicenseId }) {
               </Pill>
             </div>
           </div>
-          <div className="flex justify-center">
+          <div className="mx-auto w-40 sm:w-auto">
             <Gauge value={p.pct} color={lic.color} label="Mức sẵn sàng" />
           </div>
           <div className="hidden w-44 md:block">
@@ -80,38 +82,46 @@ export function LicenseHub({ license }: { license: LicenseId }) {
       </section>
 
       {/* Hành động nhanh */}
-      <section className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <section className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
         <Link
           href={`${base}/bo-de`}
-          className="group relative flex items-center gap-4 overflow-hidden rounded-3xl bg-[linear-gradient(180deg,#ffe57a_0%,#ffd23f_45%,#f5b700_100%)] p-5 text-slate-950 shadow-[inset_0_1px_0_rgba(255,255,255,.7),0_6px_0_#a87800,0_18px_40px_-10px_rgba(255,200,40,.5)] transition duration-150 hover:-translate-y-0.5 active:translate-y-1.5 active:shadow-[0_1px_0_#a87800] sm:col-span-2"
+          className="group relative flex items-center gap-4 overflow-hidden rounded-3xl bg-[linear-gradient(180deg,#ffe57a_0%,#ffd23f_45%,#f5b700_100%)] p-5 text-slate-950 shadow-[inset_0_1px_0_rgba(255,255,255,.7),0_6px_0_#a87800,0_18px_40px_-10px_rgba(255,200,40,.5)] transition duration-150 hover:-translate-y-0.5 active:translate-y-1.5 active:shadow-[0_1px_0_#a87800] col-span-2"
         >
           <div className="hazard-stripes absolute inset-y-0 right-0 w-10 opacity-50" />
           <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-slate-950/90 text-lane">
             <Trophy className="h-7 w-7" />
           </span>
           <div>
-            <div className="font-display text-2xl leading-tight">BỘ ĐỀ 2026 · {setCount(license)} ĐỀ</div>
-            <div className="text-sm font-semibold opacity-80">
-              {lic.exam.total} câu · {lic.exam.minutes} phút · đạt {lic.exam.pass} · theo Thông tư 12/2025/TT-BCA
+            <div className="font-display text-xl leading-tight sm:text-2xl">BỘ ĐỀ 2026 · {setCount(license)} ĐỀ</div>
+            <div className="text-xs font-semibold opacity-80 sm:text-sm">
+              {lic.exam.total} câu · {lic.exam.minutes} phút · đạt {lic.exam.pass}
+              <span className="hidden sm:inline"> · theo Thông tư 12/2025/TT-BCA</span>
             </div>
           </div>
-          <ChevronRight className="ml-auto mr-8 h-6 w-6 transition group-hover:translate-x-1" />
+          <ChevronRight className="ml-auto mr-6 h-6 w-6 shrink-0 transition group-hover:translate-x-1 sm:mr-8" />
         </Link>
         <Link
           href={`${base}/on-tap/hom-nay`}
-          className="group relative flex items-center gap-4 overflow-hidden rounded-3xl bg-[linear-gradient(180deg,#34d399_0%,#10b981_50%,#059669_100%)] p-5 text-white shadow-[inset_0_1px_0_rgba(255,255,255,.45),0_6px_0_#065f46,0_18px_40px_-12px_rgba(16,185,129,.55)] transition duration-150 hover:-translate-y-0.5 active:translate-y-1.5 active:shadow-[0_1px_0_#065f46] sm:col-span-2"
+          className="group relative flex items-center gap-4 overflow-hidden rounded-3xl bg-[linear-gradient(180deg,#34d399_0%,#10b981_50%,#059669_100%)] p-5 text-white shadow-[inset_0_1px_0_rgba(255,255,255,.45),0_6px_0_#065f46,0_18px_40px_-12px_rgba(16,185,129,.55)] transition duration-150 hover:-translate-y-0.5 active:translate-y-1.5 active:shadow-[0_1px_0_#065f46] col-span-2"
         >
           <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-slate-950/85 text-emerald-300">
             <CalendarCheck className="h-7 w-7" />
           </span>
           <div>
-            <div className="font-display text-2xl leading-tight">ÔN TẬP HÔM NAY</div>
+            <div className="font-display text-xl leading-tight sm:text-2xl">ÔN TẬP HÔM NAY</div>
             <div className="text-sm font-semibold text-white/90">
               {hydrated ? `${Math.min(dueCount, dailyCount)} câu đến hạn ôn · ${Math.max(0, dailyCount - dueCount)} câu mới` : "Lặp lại ngắt quãng — nhớ lâu hơn"}
             </div>
           </div>
           <ChevronRight className="ml-auto h-6 w-6 transition group-hover:translate-x-1" />
         </Link>
+        <QuickSet
+          href={`${base}/diem-yeu`}
+          icon={<Stethoscope className="h-5 w-5" />}
+          title="Luyện điểm yếu"
+          desc={topWeak ? `Lỗi ${topWeak.topic.code}: ${topWeak.topic.name}` : "Chẩn đoán lỗi hay mắc"}
+          tone="text-cyan-300 bg-cyan-500/10 ring-cyan-400/25"
+        />
         <QuickSet
           href={`${base}/thu-thach`}
           icon={<GaugeIcon className="h-5 w-5" />}
@@ -121,7 +131,6 @@ export function LicenseHub({ license }: { license: LicenseId }) {
         />
         <QuickSet href={`${base}/thi-thu`} icon={<Dices className="h-5 w-5" />} title="Thi thử ngẫu nhiên" desc="Đề trộn mới mỗi lần" tone="text-lane bg-lane/10 ring-lane/25" />
         <QuickSet href={`${base}/on-tap/diem-liet`} icon={<AlertTriangle className="h-5 w-5" />} title="Câu điểm liệt" desc={`${p.critical} câu — sai là trượt`} tone="text-red-300 bg-red-500/10 ring-red-400/25" />
-        <QuickSet href={`${base}/on-tap/ngau-nhien`} icon={<Shuffle className="h-5 w-5" />} title="Chạy ngẫu nhiên" desc="20 câu bất kỳ" tone="text-sky-300 bg-sky-500/10 ring-sky-400/25" />
         <QuickSet href={`${base}/on-tap/cau-sai`} icon={<RotateCcw className="h-5 w-5" />} title="Câu hay sai" desc={hydrated ? `${p.wrong} câu cần ôn lại` : "Ôn lại câu sai"} tone="text-orange-300 bg-orange-500/10 ring-orange-400/25" />
         <QuickSet href={`${base}/on-tap/da-luu`} icon={<Bookmark className="h-5 w-5" />} title="Câu đã lưu" desc={`${saved} câu`} tone="text-violet-300 bg-violet-500/10 ring-violet-400/25" />
         <QuickSet href={`${base}/on-tap/tat-ca`} icon={<ListOrdered className="h-5 w-5" />} title="Toàn bộ câu hỏi" desc={`${p.total} câu theo thứ tự`} tone="text-emerald-300 bg-emerald-500/10 ring-emerald-400/25" />
@@ -164,12 +173,12 @@ export function LicenseHub({ license }: { license: LicenseId }) {
                   >
                     {c.id}
                     {hydrated && i === current && (
-                      <span className="absolute -top-7 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-lane px-1.5 py-0.5 text-[10px] font-extrabold text-slate-900">BẠN ĐANG Ở ĐÂY</span>
+                      <span className="absolute -top-7 left-0 whitespace-nowrap rounded-md bg-lane md:left-1/2 md:-translate-x-1/2 px-1.5 py-0.5 text-[10px] font-extrabold text-slate-900">BẠN ĐANG Ở ĐÂY</span>
                     )}
                   </div>
                   <Link
                     href={`${base}/on-tap/chuong-${c.id}`}
-                    className="group flex-1 rounded-2xl bg-asphalt-850 p-4 ring-1 ring-white/10 transition hover:bg-asphalt-800 hover:ring-lane/40"
+                    className="group min-w-0 flex-1 rounded-2xl bg-asphalt-850 p-4 ring-1 ring-white/10 transition hover:bg-asphalt-800 hover:ring-lane/40"
                   >
                     <div className={clsx("flex items-center gap-2", !right && "md:flex-row-reverse")}>
                       <span className="text-2xl">{c.icon}</span>
@@ -220,14 +229,14 @@ function QuickSet({ href, icon, title, desc, tone }: { href: string; icon: React
   return (
     <Link
       href={href}
-      className="group flex items-center gap-3 rounded-3xl bg-[linear-gradient(180deg,#222834,#1a1f29)] p-4 ring-1 ring-inset ring-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,.07),0_5px_0_#0b0d12] transition duration-150 hover:-translate-y-0.5 hover:ring-white/20 active:translate-y-1 active:shadow-none"
+      className="group flex min-w-0 flex-col items-start gap-2 rounded-3xl bg-[linear-gradient(180deg,#222834,#1a1f29)] p-3.5 ring-1 ring-inset ring-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,.07),0_5px_0_#0b0d12] transition duration-150 hover:-translate-y-0.5 hover:ring-white/20 active:translate-y-1 active:shadow-none sm:flex-row sm:items-center sm:gap-3 sm:p-4"
     >
-      <span className={clsx("flex h-11 w-11 items-center justify-center rounded-2xl ring-1", tone)}>{icon}</span>
+      <span className={clsx("flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl ring-1 sm:h-11 sm:w-11", tone)}>{icon}</span>
       <div className="min-w-0">
-        <div className="font-bold text-white">{title}</div>
-        <div className="truncate text-xs text-white/50">{desc}</div>
+        <div className="text-sm font-bold leading-tight text-white sm:text-base">{title}</div>
+        <div className="mt-0.5 line-clamp-2 text-[11px] leading-snug text-white/50 sm:truncate sm:text-xs">{desc}</div>
       </div>
-      <ChevronRight className="ml-auto h-5 w-5 text-white/30 transition group-hover:translate-x-0.5 group-hover:text-white/70" />
+      <ChevronRight className="ml-auto hidden h-5 w-5 shrink-0 text-white/30 transition group-hover:translate-x-0.5 group-hover:text-white/70 sm:block" />
     </Link>
   );
 }

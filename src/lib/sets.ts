@@ -4,6 +4,7 @@ import { CHAPTERS } from "@/data/chapters";
 import { getLicense } from "@/data/licenses";
 import type { QStat } from "@/store/progress";
 import { shuffle } from "./random";
+import { getTopic, topicSet, topicsFor, weaknessSet } from "./topics";
 
 export const STATIC_SETS = ["hom-nay", "tat-ca", "diem-liet", "cau-sai", "ngau-nhien", "da-luu"] as const;
 
@@ -11,10 +12,20 @@ export const DAILY_SIZE = 20;
 
 export function setKeysFor(license: LicenseId): string[] {
   const group = getLicense(license)!.group;
-  return [...STATIC_SETS, ...CHAPTERS.filter((c) => c.groups.includes(group)).map((c) => `chuong-${c.id}`)];
+  return [
+    ...STATIC_SETS,
+    "diem-yeu",
+    ...CHAPTERS.filter((c) => c.groups.includes(group)).map((c) => `chuong-${c.id}`),
+    ...topicsFor(license).map((t) => `chu-de-${t.id}`),
+  ];
 }
 
 export function setMeta(key: string): { title: string; desc: string; icon: string } {
+  if (key.startsWith("chu-de-")) {
+    const t = getTopic(key.slice(7));
+    if (t) return { title: t.name, desc: t.hint, icon: t.icon };
+  }
+  if (key === "diem-yeu") return { title: "Luyện điểm yếu", desc: "Câu hỏi từ các chủ đề bạn hay sai nhất", icon: "🩺" };
   if (key.startsWith("chuong-")) {
     const ch = CHAPTERS.find((c) => c.id === Number(key.slice(7)));
     if (ch) return { title: ch.short, desc: ch.name, icon: ch.icon };
@@ -47,6 +58,8 @@ export function buildSet(
     const ch = Number(key.slice(7)) as ChapterId;
     return all.filter((q) => q.chapter === ch);
   }
+  if (key.startsWith("chu-de-")) return topicSet(license, key.slice(7), stats);
+  if (key === "diem-yeu") return weaknessSet(license, stats);
   switch (key) {
     case "hom-nay":
       return dailySet(all, stats);

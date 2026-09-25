@@ -23,6 +23,11 @@ mở và xe chạy tiếp, trả lời sai thì bị "thổi còi" kèm giải t
 - **Thử thách 12 điểm** — chế độ sinh tồn theo luật trừ điểm GPLX: mỗi câu 20 giây, sai/hết giờ trừ 2 điểm (câu điểm liệt trừ 6),
   5 câu đúng liên tiếp phục hồi 1 điểm, hết 12 điểm là "tước bằng"; lưu kỷ lục theo hạng.
 - **Săn biển báo** — mini game 60 giây nhận diện biển báo, combo, cuối lượt liệt kê biển nhận nhầm để ôn.
+- **Luyện theo lỗi hay mắc** — "chẩn đoán tay lái": chia câu hỏi thành 21 chủ đề nhỏ (vượt xe, dừng đỗ, tốc độ, biển cấm,
+  sa hình vòng xuyến…), tính mức rủi ro từng chủ đề từ lịch sử trả lời, báo "mã lỗi" và ra bài luyện đúng chỗ yếu
+  (`/hang/[id]/diem-yeu`, bài tổng hợp `on-tap/diem-yeu`, từng chủ đề `on-tap/chu-de-*`).
+- **Giao diện điện thoại kiểu ứng dụng** — thanh tab dưới đáy, bảng danh sách câu kéo từ dưới lên, vuốt ngang để chuyển câu,
+  tự cuộn tới lời giải thích, rung khi trả lời, hỗ trợ tai thỏ (safe-area) và cài lên màn hình chính (web app manifest).
 - **Đọc câu hỏi** bằng giọng tiếng Việt của trình duyệt (Web Speech API).
 - **Bằng lái ảo** — thẻ tổng hợp thành tích (tên, cấp bậc, hạng đã đạt thi thử), tải về ảnh PNG để chia sẻ.
 - **Lưu tiến độ** (localStorage): thống kê từng câu, lịch sử thi, XP & cấp bậc, chuỗi ngày học, câu đã lưu; xuất/nhập tệp JSON.

@@ -3,7 +3,9 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { ArrowLeft, ArrowRight, ChevronLeft, Clock, KeyRound, Send, ListChecks, RotateCcw } from "lucide-react";
+import { ArrowLeft, ArrowRight, ChevronLeft, Clock, KeyRound, Send, ListChecks, RotateCcw, Grid3x3 } from "lucide-react";
+import { BottomSheet } from "@/components/ui/BottomSheet";
+import { useSwipe } from "@/lib/useSwipe";
 import clsx from "clsx";
 import type { LicenseId, Question } from "@/lib/types";
 import { getLicense } from "@/data/licenses";
@@ -34,6 +36,15 @@ export function ExamRunner({ license, setNo }: { license: LicenseId; setNo?: num
   const [confirm, setConfirm] = useState(false);
   const [filter, setFilter] = useState<"all" | "wrong" | "critical">("all");
   const submitted = useRef(false);
+  const [sheet, setSheet] = useState(false);
+  const swipe = useSwipe(
+    () => {
+      if (stage === "running" || stage === "review") window.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight" }));
+    },
+    () => {
+      if (stage === "running" || stage === "review") window.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowLeft" }));
+    },
+  );
 
   const record = useProgress((s) => s.record);
   const addExam = useProgress((s) => s.addExam);
@@ -304,59 +315,7 @@ export function ExamRunner({ license, setNo }: { license: LicenseId; setNo?: num
   const ss = Math.floor((remain % 60000) / 1000);
   const low = remain < 60_000;
 
-  return (
-    <div className="flex flex-1 flex-col">
-      <div className="sticky top-0 z-30 border-b border-white/5 bg-asphalt-950/85 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center gap-3 px-3 py-2 sm:px-4">
-          <button
-            type="button"
-            onClick={() => (review ? setStage("result") : setConfirm(true))}
-            className={iconButtonClass()}
-            aria-label="Quay lại"
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </button>
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-2 text-sm">
-              <span className="rounded-md px-1.5 py-0.5 font-display text-xs text-slate-900" style={{ background: lic.color }}>
-                {lic.id}
-              </span>
-              <span className="truncate font-semibold text-white">{review ? "Xem lại bài thi" : setNo ? `Đề số ${setNo}` : "Đang thi thử"}</span>
-            </div>
-            <div className="text-xs text-white/50">
-              Đã trả lời <span className="font-hud font-bold text-white">{answeredCount}</span>/{questions.length}
-            </div>
-          </div>
-          {!review && (
-            <div
-              className={clsx(
-                "flex items-center gap-1.5 rounded-xl px-3 py-1.5 font-hud text-lg font-bold ring-1",
-                low ? "animate-pulse bg-red-500/20 text-red-300 ring-red-400/40" : "bg-black/40 text-green-300 ring-white/10",
-              )}
-              aria-label="Thời gian còn lại"
-            >
-              <Clock className="h-4 w-4" />
-              {String(mm).padStart(2, "0")}:{String(ss).padStart(2, "0")}
-            </div>
-          )}
-          <SoundToggle />
-          {!review && (
-            <Button size="sm" onClick={() => setConfirm(true)} className="hidden sm:inline-flex" icon={<Send className="h-4 w-4" />}>
-              Nộp bài
-            </Button>
-          )}
-        </div>
-      </div>
-
-      <div className="mx-auto grid w-full max-w-6xl flex-1 gap-5 px-3 py-4 sm:px-4 lg:grid-cols-[1.25fr_1fr] lg:py-6">
-        <div className="flex flex-col gap-4 lg:sticky lg:top-24 lg:self-start">
-          <SceneStage
-            q={q}
-            number={idx + 1}
-            vehicle={lic.vehicle}
-            outcome={review ? (answers[q.id] === q.answer ? "correct" : "wrong") : null}
-            mode={review ? "review" : "exam"}
-          />
+  const gridPanel = (mobile: boolean) => (
           <div className="rounded-2xl bg-asphalt-850 p-3 ring-1 ring-white/10">
             {review && (
               <div className="mb-3 flex gap-1.5">
@@ -387,9 +346,90 @@ export function ExamRunner({ license, setNo }: { license: LicenseId; setNo?: num
               current={idx}
               answers={answers}
               reveal={review}
-              onJump={(i) => setIdx(i)}
+              onJump={(i) => {
+                setIdx(i);
+                if (mobile) setSheet(false);
+              }}
             />
           </div>
+  );
+
+  const goPrev = () => {
+    if (review) {
+      const pos = reviewList.indexOf(idx);
+      if (pos > 0) setIdx(reviewList[pos - 1]);
+    } else setIdx(Math.max(0, idx - 1));
+  };
+  const goNext = () => {
+    if (review) {
+      const pos = reviewList.indexOf(idx);
+      if (pos >= 0 && pos < reviewList.length - 1) setIdx(reviewList[pos + 1]);
+      else if (pos < 0 && reviewList.length) setIdx(reviewList[0]);
+    } else if (idx < questions.length - 1) setIdx(idx + 1);
+  };
+
+  return (
+    <div className="flex flex-1 flex-col">
+      <div className="sticky top-0 z-30 border-b border-white/5 bg-asphalt-950/85 backdrop-blur">
+        <div className="mx-auto flex max-w-6xl items-center gap-3 px-3 py-2 sm:px-4">
+          <button
+            type="button"
+            onClick={() => (review ? setStage("result") : setConfirm(true))}
+            className={iconButtonClass()}
+            aria-label="Quay lại"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2 text-sm">
+              <span className="rounded-md px-1.5 py-0.5 font-display text-xs text-slate-900" style={{ background: lic.color }}>
+                {lic.id}
+              </span>
+              <span className="truncate font-semibold text-white">{review ? "Xem lại bài thi" : setNo ? `Đề số ${setNo}` : "Đang thi thử"}</span>
+            </div>
+            <div className="text-xs text-white/50">
+              <span className="hidden min-[400px]:inline">Đã trả lời </span>
+              <span className="font-hud font-bold text-white">{answeredCount}</span>/{questions.length}
+            </div>
+          </div>
+          {!review && (
+            <div
+              className={clsx(
+                "flex items-center gap-1.5 rounded-xl px-3 py-1.5 font-hud text-lg font-bold ring-1",
+                low ? "animate-pulse bg-red-500/20 text-red-300 ring-red-400/40" : "bg-black/40 text-green-300 ring-white/10",
+              )}
+              aria-label="Thời gian còn lại"
+            >
+              <Clock className="h-4 w-4" />
+              {String(mm).padStart(2, "0")}:{String(ss).padStart(2, "0")}
+            </div>
+          )}
+          <span className="hidden sm:block">
+            <SoundToggle />
+          </span>
+          <button type="button" onClick={() => setSheet(true)} className={clsx(iconButtonClass(), "lg:hidden")} aria-label="Danh sách câu hỏi">
+            <Grid3x3 className="h-4 w-4" />
+          </button>
+          {!review && (
+            <span className="hidden sm:block">
+              <Button size="sm" onClick={() => setConfirm(true)} icon={<Send className="h-4 w-4" />}>
+                Nộp bài
+              </Button>
+            </span>
+          )}
+        </div>
+      </div>
+
+      <div {...swipe} className="mx-auto grid w-full max-w-6xl flex-1 gap-4 px-3 py-3 sm:gap-5 sm:px-4 sm:py-4 lg:grid-cols-[1.25fr_1fr] lg:py-6">
+        <div className="flex flex-col gap-4 lg:sticky lg:top-24 lg:self-start">
+          <SceneStage
+            q={q}
+            number={idx + 1}
+            vehicle={lic.vehicle}
+            outcome={review ? (answers[q.id] === q.answer ? "correct" : "wrong") : null}
+            mode={review ? "review" : "exam"}
+          />
+          <div className="hidden lg:block">{gridPanel(false)}</div>
         </div>
         <div className="flex flex-col gap-4 pb-24 lg:pb-0">
           <QuestionView
@@ -410,16 +450,11 @@ export function ExamRunner({ license, setNo }: { license: LicenseId; setNo?: num
         </div>
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-white/5 bg-asphalt-950/90 backdrop-blur lg:static lg:border-0 lg:bg-transparent">
+      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-white/5 bg-asphalt-950/90 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:static lg:border-0 lg:bg-transparent lg:pb-0">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-3 py-3 sm:px-4 lg:justify-end lg:pb-8">
           <Button
             variant="secondary"
-            onClick={() => {
-              if (review) {
-                const pos = reviewList.indexOf(idx);
-                if (pos > 0) setIdx(reviewList[pos - 1]);
-              } else setIdx(Math.max(0, idx - 1));
-            }}
+            onClick={goPrev}
             icon={<ArrowLeft className="h-4 w-4" />}
           >
             Trước
@@ -430,14 +465,7 @@ export function ExamRunner({ license, setNo }: { license: LicenseId; setNo?: num
             </Button>
           )}
           <Button
-            onClick={() => {
-              if (review) {
-                const pos = reviewList.indexOf(idx);
-                if (pos >= 0 && pos < reviewList.length - 1) setIdx(reviewList[pos + 1]);
-                else if (pos < 0 && reviewList.length) setIdx(reviewList[0]);
-              } else if (idx < questions.length - 1) setIdx(idx + 1);
-              else setConfirm(true);
-            }}
+            onClick={() => (!review && idx === questions.length - 1 ? setConfirm(true) : goNext())}
             className="flex-1 sm:flex-none"
             iconRight={<ArrowRight className="h-4 w-4" />}
           >
@@ -445,6 +473,10 @@ export function ExamRunner({ license, setNo }: { license: LicenseId; setNo?: num
           </Button>
         </div>
       </div>
+
+      <BottomSheet open={sheet} onClose={() => setSheet(false)} title={`Danh sách câu · đã trả lời ${answeredCount}/${questions.length}`}>
+        {gridPanel(true)}
+      </BottomSheet>
 
       <AnimatePresence>
         {confirm && (

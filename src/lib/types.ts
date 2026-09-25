@@ -97,6 +97,8 @@ export interface Question {
   scene?: Scene;
   /** Mẹo ghi nhớ. */
   tip?: string;
+  /** Chủ đề nhỏ (ghi đè cách phân loại tự động trong lib/topics). */
+  topic?: string;
 }
 
 export interface ExamConfig {

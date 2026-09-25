@@ -9,11 +9,14 @@ import type { LicenseId, Question } from "@/lib/types";
 import { getLicense } from "@/data/licenses";
 import { useHydrated, useProgress } from "@/store/progress";
 import { buildSet, setMeta } from "@/lib/sets";
+import { getTopic, topicOf } from "@/lib/topics";
 import { sfx } from "@/lib/sound";
 import { SceneStage, type Outcome } from "./SceneStage";
 import { QuestionView } from "./QuestionView";
 import { QuestionGrid } from "./QuestionGrid";
 import { SoundToggle } from "@/components/ui/SoundToggle";
+import { BottomSheet } from "@/components/ui/BottomSheet";
+import { useSwipe } from "@/lib/useSwipe";
 import { Button, ButtonLink, iconButtonClass } from "@/components/ui/Button";
 
 export function PracticeRunner({ license, set }: { license: LicenseId; set: string }) {
@@ -55,6 +58,7 @@ function PracticeSession({ license, set, onRestart }: { license: LicenseId; set:
   const [gains, setGains] = useState<Record<number, number>>({});
   const [combo, setCombo] = useState(0);
   const [showGrid, setShowGrid] = useState(false);
+  const [sheet, setSheet] = useState(false);
   const [done, setDone] = useState(false);
 
   useEffect(() => {
@@ -74,6 +78,9 @@ function PracticeSession({ license, set, onRestart }: { license: LicenseId; set:
       if (!q || answers[q.id] !== undefined || i >= q.options.length) return;
       const ok = i === q.answer;
       setAnswers((a) => ({ ...a, [q.id]: i }));
+      if (window.innerWidth < 1024) {
+        setTimeout(() => document.getElementById("giai-thich")?.scrollIntoView({ behavior: "smooth", block: "nearest" }), 250);
+      }
       record(q.id, ok);
       if (ok) {
         const nextCombo = combo + 1;
@@ -110,6 +117,8 @@ function PracticeSession({ license, set, onRestart }: { license: LicenseId; set:
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [choose, next, prev, answered, done]);
+
+  const swipe = useSwipe(() => (answered ? next() : setIdx((i) => Math.min(questions.length - 1, i + 1))), prev);
 
   const backHref = `/hang/${license.toLowerCase()}`;
 
@@ -165,6 +174,40 @@ function PracticeSession({ license, set, onRestart }: { license: LicenseId; set:
             </div>
           </div>
         </motion.div>
+        {wrong.length > 0 && (
+          <div className="mt-4 rounded-3xl bg-asphalt-850 p-5 ring-1 ring-white/10">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h2 className="font-bold text-white">🩺 Chủ đề bạn vừa mắc lỗi</h2>
+              <Link href={`${backHref}/diem-yeu`} className="text-sm font-semibold text-cyan-300 hover:underline">
+                Xem chẩn đoán đầy đủ →
+              </Link>
+            </div>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {Object.entries(
+                wrong.reduce<Record<string, number>>((m, q) => {
+                  const t = topicOf(q);
+                  m[t] = (m[t] ?? 0) + 1;
+                  return m;
+                }, {}),
+              )
+                .sort((a, b) => b[1] - a[1])
+                .map(([id, n]) => {
+                  const t = getTopic(id)!;
+                  return (
+                    <Link
+                      key={id}
+                      href={`${backHref}/on-tap/chu-de-${id}`}
+                      className="flex items-center gap-2 rounded-xl bg-red-500/10 px-3 py-2 text-sm text-white ring-1 ring-red-400/30 transition hover:bg-red-500/20"
+                    >
+                      <span>{t.icon}</span>
+                      <span className="font-semibold">{t.name}</span>
+                      <span className="rounded-md bg-red-500/30 px-1.5 font-hud text-xs">{n}</span>
+                    </Link>
+                  );
+                })}
+            </div>
+          </div>
+        )}
         <div className="mt-4 text-center">
           <Link href={backHref} className="text-sm text-white/60 underline-offset-4 hover:underline">
             ← Về bản đồ hạng {lic.id}
@@ -207,10 +250,12 @@ function PracticeSession({ license, set, onRestart }: { license: LicenseId; set:
             )}
           </AnimatePresence>
           <div className="hidden rounded-xl bg-lane/15 px-2.5 py-1.5 font-hud text-sm font-bold text-lane ring-1 ring-lane/30 sm:block">+{sessionXp} XP</div>
-          <SoundToggle />
+          <span className="hidden sm:block">
+            <SoundToggle />
+          </span>
           <button
             type="button"
-            onClick={() => setShowGrid((v) => !v)}
+            onClick={() => (window.innerWidth < 1024 ? setSheet(true) : setShowGrid((v) => !v))}
             className={iconButtonClass(showGrid)}
             aria-label="Danh sách câu hỏi"
           >
@@ -237,10 +282,24 @@ function PracticeSession({ license, set, onRestart }: { license: LicenseId; set:
         </AnimatePresence>
       </div>
 
-      <div className="mx-auto grid w-full max-w-6xl flex-1 gap-5 px-3 py-4 sm:px-4 lg:grid-cols-[1.25fr_1fr] lg:py-6">
+      <BottomSheet open={sheet} onClose={() => setSheet(false)} title={`Danh sách câu · ${answeredCount}/${questions.length} đã làm`}>
+        <QuestionGrid
+          questions={questions}
+          current={idx}
+          answers={answers}
+          reveal
+          onJump={(i) => {
+            setIdx(i);
+            setSheet(false);
+          }}
+        />
+      </BottomSheet>
+
+      <div {...swipe} className="mx-auto grid w-full max-w-6xl flex-1 gap-4 px-3 py-3 sm:gap-5 sm:px-4 sm:py-4 lg:grid-cols-[1.25fr_1fr] lg:py-6">
         <div className="lg:sticky lg:top-24 lg:self-start">
           <SceneStage q={q} number={idx + 1} vehicle={lic.vehicle} outcome={outcome} mode="practice" xpGain={gains[q.id]} />
           <p className="mt-2 hidden text-center text-xs text-white/40 lg:block">Phím tắt: 1–4 chọn đáp án · Enter sang câu tiếp · ← câu trước</p>
+          <p className="mt-1.5 text-center text-[11px] text-white/35 lg:hidden">Vuốt ngang để chuyển câu</p>
         </div>
         <div className="flex flex-col gap-4 pb-24 lg:pb-0">
           <QuestionView
@@ -257,7 +316,7 @@ function PracticeSession({ license, set, onRestart }: { license: LicenseId; set:
       </div>
 
       {/* Thanh điều hướng */}
-      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-white/5 bg-asphalt-950/90 backdrop-blur lg:static lg:border-0 lg:bg-transparent">
+      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-white/5 bg-asphalt-950/90 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:static lg:border-0 lg:bg-transparent lg:pb-0">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-3 py-3 sm:px-4 lg:justify-end lg:pb-8">
           <Button variant="secondary" onClick={prev} disabled={idx === 0} icon={<ArrowLeft className="h-4 w-4" />}>
             Trước

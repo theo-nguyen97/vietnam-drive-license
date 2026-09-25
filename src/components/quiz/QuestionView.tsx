@@ -73,7 +73,7 @@ export function QuestionView({
         </div>
       )}
 
-      <h2 className="text-lg font-semibold leading-snug text-white sm:text-xl">{q.text}</h2>
+      <h2 className="text-[17px] font-semibold leading-snug text-white sm:text-xl">{q.text}</h2>
 
       <ol className="flex flex-col gap-2.5">
         {q.options.map((opt, i) => {
@@ -121,10 +121,11 @@ export function QuestionView({
 
       {reveal && showExplanation && (
         <motion.div
+          id="giai-thich"
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           className={clsx(
-            "rounded-2xl p-4 ring-1",
+            "scroll-mb-28 rounded-2xl p-4 ring-1",
             selected === undefined ? "bg-white/5 ring-white/10" : correct ? "bg-green-500/10 ring-green-500/30" : "bg-red-500/10 ring-red-500/30",
           )}
         >
