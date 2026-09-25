@@ -48,6 +48,13 @@ mở và xe chạy tiếp, trả lời sai thì bị "thổi còi" kèm giải t
 - **Lưu tiến độ** (localStorage): thống kê từng câu, lịch sử thi, XP & cấp bậc, chuỗi ngày học, câu đã lưu; xuất/nhập tệp JSON.
 - **Thư viện biển báo** vẽ bằng SVG, có tìm kiếm không dấu.
 
+## 📱 Ứng dụng Android
+
+Thư mục [`mobile/`](mobile/README.md) là bản **native Android (Kotlin + Jetpack Compose)** dùng chung ngân hàng câu hỏi,
+bộ đề (trùng khớp từng câu, có unit test đối chiếu) và định dạng tiến độ với bản web. Có sa hình hoạt hình vẽ bằng
+Compose Canvas, thi thử đếm ngược, ôn tập ngắt quãng, dự đoán khả năng đậu, xuất/nhập tiến độ qua lại với web.
+APK được build tự động bởi workflow `android.yml` (artifact mỗi lần push, GitHub Release khi đẩy tag `app-v*`).
+
 ## Cấu trúc đề thi (Thông tư 12/2025/TT-BCA)
 
 | Hạng | Bộ câu hỏi | Số câu | Thời gian | Đạt | Quy định chung | Điểm liệt | Văn hoá | Kỹ thuật | Cấu tạo | Báo hiệu | Sa hình |
