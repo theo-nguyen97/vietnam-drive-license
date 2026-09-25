@@ -7,7 +7,7 @@ import { ArrowLeft, ArrowRight, ChevronLeft, Grid3x3, Flame, Trophy, RotateCcw }
 import clsx from "clsx";
 import type { LicenseId, Question } from "@/lib/types";
 import { getLicense } from "@/data/licenses";
-import { useHydrated, useProgress } from "@/store/progress";
+import { useExamVersion, useHydrated, useProgress } from "@/store/progress";
 import { buildSet, setMeta } from "@/lib/sets";
 import { getTopic, topicOf } from "@/lib/topics";
 import { sfx } from "@/lib/sound";
@@ -53,6 +53,7 @@ function PracticeSession({ license, set, onRestart }: { license: LicenseId; set:
   const bookmarks = useProgress((s) => s.bookmarks);
   const toggleBookmark = useProgress((s) => s.toggleBookmark);
   const setLastLicense = useProgress((s) => s.setLastLicense);
+  const setsLabel = `Bộ đề ${useExamVersion() === "tt108" ? "2027" : "2026"}`;
 
   const [idx, setIdx] = useState(0);
   const [answers, setAnswers] = useState<Record<number, number>>({});
@@ -132,7 +133,7 @@ function PracticeSession({ license, set, onRestart }: { license: LicenseId; set:
         </h1>
         <p className="text-white/60">
           {set === "hom-nay"
-            ? "Bạn đã học hết các câu và chưa có câu nào đến hạn ôn lại. Quay lại vào ngày mai, hoặc thử Bộ đề 2026 nhé."
+            ? `Bạn đã học hết các câu và chưa có câu nào đến hạn ôn lại. Quay lại vào ngày mai, hoặc thử ${setsLabel} nhé.`
             : set === "cau-sai"
               ? "Bạn chưa có câu nào trả lời sai ở lần gần nhất. Hãy ôn thêm các chương hoặc thi thử."
               : "Bấm biểu tượng dấu trang trên câu hỏi để lưu lại những câu cần ôn."}
@@ -170,7 +171,7 @@ function PracticeSession({ license, set, onRestart }: { license: LicenseId; set:
                 Chạy lại chặng này
               </Button>
               <ButtonLink href={`${backHref}/bo-de`} icon={<Trophy className="h-4 w-4" />}>
-                Bộ đề 2026
+                {setsLabel}
               </ButtonLink>
             </div>
           </div>

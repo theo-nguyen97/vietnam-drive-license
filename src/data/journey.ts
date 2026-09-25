@@ -62,7 +62,7 @@ export const STEPS: Record<JourneyGroup, JourneyStep[]> = {
       items: [
         "Hiện hành: hạng B 30 câu / 20 phút, đạt 27; có 01 câu điểm liệt.",
         "Từ 01/3/2027: hạng B 50 câu / 33 phút, đạt 45 (Thông tư 108/2026/TT-BCA).",
-        "Bài thi mô phỏng 120 tình huống đã bỏ từ 01/7/2026.",
+        "Bài thi mô phỏng trên máy tính (bộ 120 tình huống, mỗi lần thi 10 tình huống) đã bỏ từ 01/7/2026.",
       ],
       link: { href: "/hang/b/bo-de/", label: "Làm bộ đề" },
       isNew: "Đổi từ 01/3/2027",
@@ -84,14 +84,14 @@ export const STEPS: Record<JourneyGroup, JourneyStep[]> = {
     {
       key: "car-nhan-bang", title: "Nhận giấy phép lái xe", icon: "🎉",
       desc: "Nhận bằng điện tử và bản cứng.",
-      items: ["Giấy phép lái xe điện tử được tích hợp trên VNeID (rất nhanh sau khi cấp).", "Thời hạn cấp bản cứng rút xuống khoảng 3,5 ngày làm việc (từ 01/7/2026).", "Mỗi giấy phép có 12 điểm — lái xe an toàn để giữ điểm!"],
+      items: ["Giấy phép lái xe điện tử được tích hợp trên VNeID (rất nhanh sau khi cấp).", "Thời hạn cấp bản cứng dự kiến rút xuống khoảng 3,5 ngày làm việc (từ 01/7/2026).", "Mỗi giấy phép có 12 điểm — lái xe an toàn để giữ điểm!"],
     },
   ],
   moto: [
     {
       key: "moto-dieu-kien", title: "Kiểm tra điều kiện", icon: "🪪",
       desc: "Đủ 18 tuổi đối với hạng A1, A, B1.",
-      items: ["Người đủ 16 tuổi được lái xe gắn máy (≤ 50 cm³ hoặc ≤ 4 kW) — không cần bằng.", "Người đã có bằng ô tô còn hạn được miễn thi lý thuyết khi thi A1, A."],
+      items: ["Người đủ 16 tuổi được lái xe gắn máy (≤ 50 cm³ hoặc ≤ 4 kW) — không cần bằng.", "Người đã có giấy phép lái xe ô tô còn hiệu lực thường được miễn phần thi lý thuyết khi sát hạch A1, A — hỏi lại trung tâm sát hạch để chắc chắn."],
     },
     {
       key: "moto-ho-so", title: "Chuẩn bị hồ sơ & đăng ký", icon: "📝",
@@ -101,7 +101,7 @@ export const STEPS: Record<JourneyGroup, JourneyStep[]> = {
     {
       key: "moto-ly-thuyet", title: "Học & thi lý thuyết", icon: "🧠",
       desc: "Không đạt lý thuyết thì không được thi thực hành (từ 01/7/2026).",
-      items: ["Hiện hành: 25 câu / 19 phút, A1 đạt 21, A đạt 23; có 01 câu điểm liệt.", "Từ 01/3/2027: 40 câu / 27 phút, đạt 36 câu."],
+      items: ["Hiện hành: 25 câu / 19 phút, A1 đạt 21, A đạt 23; có 01 câu điểm liệt.", "Từ 01/3/2027: A1, A 40 câu / 27 phút, đạt 36; B1 dự kiến 50 câu / 33 phút, đạt 45."],
       link: { href: "/hang/a1/bo-de/", label: "Làm bộ đề A1" },
       isNew: "Đổi từ 01/3/2027",
     },
@@ -135,7 +135,7 @@ export const COURSE: Record<JourneyGroup, CourseExercise[]> = {
     {
       id: "di-bo", no: 2, title: "Dừng xe nhường đường cho người đi bộ", diagram: "di-bo",
       goal: "Dừng xe sao cho đầu xe cách vạch dừng không quá 500 mm, không đè vạch.",
-      tips: ["Giảm tốc từ xa, căn điểm dừng theo mốc trên nắp capo/gương.", "Dừng hẳn rồi mới đi tiếp."],
+      tips: ["Giảm tốc từ xa, căn điểm dừng theo mốc trên nắp ca-pô/gương.", "Dừng hẳn rồi mới đi tiếp."],
       faults: [{ text: "Không dừng xe ở vạch dừng", pts: "−5" }, { text: "Dừng cách vạch quá 500 mm", pts: "−5" }, { text: "Dừng đè lên vạch dừng", pts: "−5" }],
     },
     {

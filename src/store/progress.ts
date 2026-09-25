@@ -175,16 +175,9 @@ export const useProgress = create<ProgressState>()(
       importData: (json) => {
         try {
           const data = JSON.parse(json);
-          const st = data?.state ?? data;
-          if (typeof st !== "object" || !st.stats) return false;
-          set({
-            stats: st.stats ?? {},
-            exams: st.exams ?? [],
-            xp: Number(st.xp) || 0,
-            streak: st.streak ?? { days: 0, last: "" },
-            bestCombo: Number(st.bestCombo) || 0,
-            bookmarks: st.bookmarks ?? [],
-          });
+          const parsed = sanitizeImport(data?.state ?? data);
+          if (!parsed) return false;
+          set(parsed);
           return true;
         } catch {
           return false;
@@ -195,6 +188,8 @@ export const useProgress = create<ProgressState>()(
       name: "lai-lua-progress",
       version: 1,
       storage: createJSONStorage(() => localStorage),
+      // Giữ dữ liệu cũ khi nâng version (mặc định zustand sẽ bỏ toàn bộ state nếu thiếu migrate).
+      migrate: (persisted) => ({ ...initial, ...(persisted as Partial<ProgressState>) }),
       partialize: (s) => ({
         stats: s.stats,
         exams: s.exams,
@@ -217,6 +212,48 @@ export const useProgress = create<ProgressState>()(
   ),
 );
 
+const num = (v: unknown, d = 0) => (Number.isFinite(Number(v)) ? Number(v) : d);
+const isObj = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null && !Array.isArray(v);
+
+/** Kiểm tra & làm sạch dữ liệu nhập từ tệp JSON — dữ liệu sai kiểu sẽ làm app lỗi ở mọi trang. */
+function sanitizeImport(st: unknown): Pick<ProgressState, "stats" | "exams" | "xp" | "streak" | "bestCombo" | "bookmarks"> | null {
+  if (!isObj(st) || !isObj(st.stats)) return null;
+  const stats: Record<number, QStat> = {};
+  for (const [k, v] of Object.entries(st.stats)) {
+    const id = Number(k);
+    if (!Number.isInteger(id) || !isObj(v)) continue;
+    const c = num(v.c);
+    const w = num(v.w);
+    const box = Math.min(REVIEW_INTERVALS.length - 1, Math.max(0, Math.floor(num(v.box))));
+    stats[id] = { c, w, last: num(v.last) ? 1 : 0, t: num(v.t), box, due: v.due === undefined ? undefined : num(v.due) };
+  }
+  const exams: ExamRecord[] = (Array.isArray(st.exams) ? st.exams : [])
+    .filter((e): e is Record<string, unknown> => isObj(e) && typeof e.license === "string")
+    .slice(0, 50)
+    .map((e) => ({
+      id: String(e.id ?? `${e.license}-${num(e.at)}`),
+      license: e.license as LicenseId,
+      setNo: e.setNo === undefined ? undefined : num(e.setNo),
+      version: e.version === "tt108" ? "tt108" : e.version === "tt12" ? "tt12" : undefined,
+      at: num(e.at),
+      correct: num(e.correct),
+      total: num(e.total),
+      passed: !!e.passed,
+      criticalFail: !!e.criticalFail,
+      duration: num(e.duration),
+      wrongIds: Array.isArray(e.wrongIds) ? e.wrongIds.map(Number).filter(Number.isInteger) : [],
+    }));
+  const streak = isObj(st.streak) ? { days: Math.max(0, num(st.streak.days)), last: typeof st.streak.last === "string" ? st.streak.last : "" } : { days: 0, last: "" };
+  return {
+    stats,
+    exams,
+    xp: Math.max(0, num(st.xp)),
+    streak,
+    bestCombo: Math.max(0, num(st.bestCombo)),
+    bookmarks: Array.isArray(st.bookmarks) ? [...new Set(st.bookmarks.map(Number).filter(Number.isInteger))] : [],
+  };
+}
+
 const noop = () => () => {};
 
 /** true sau khi đã chạy ở client (tránh lệch dữ liệu khi hydrate). */
@@ -237,11 +274,12 @@ export function defaultExamVersion(now = new Date()): ExamVersion {
   return now >= TT108_DATE ? "tt108" : "tt12";
 }
 
-/** Cấu trúc đề đang dùng (người dùng chọn hoặc tự động). */
+/** Cấu trúc đề đang dùng (người dùng chọn hoặc tự động theo ngày — dùng useNow để server/client khớp khi hydrate). */
 export function useExamVersion(): ExamVersion {
   const hydrated = useHydrated();
   const v = useProgress((s) => s.examVersion);
-  return (hydrated && v) || defaultExamVersion();
+  const now = useNow();
+  return (hydrated && v) || defaultExamVersion(new Date(now));
 }
 
 let nowMinute = 0;

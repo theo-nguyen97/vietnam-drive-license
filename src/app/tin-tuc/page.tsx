@@ -1,11 +1,16 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/site";
 import { ExternalLink } from "lucide-react";
 import { SiteHeader } from "@/components/ui/SiteHeader";
 import { Footer } from "@/components/ui/Footer";
 import { NewsList } from "@/components/news/NewsList";
 import { OFFICIAL_LINKS } from "@/data/news";
 
-export const metadata: Metadata = { title: "Tin tức luật giao thông" };
+export const metadata: Metadata = pageMeta({
+  title: "Tin tức luật giao thông & đề thi bằng lái",
+  description: "Tóm tắt những thay đổi về đề thi lý thuyết 2027, luật trật tự an toàn giao thông, mức phạt, trừ điểm GPLX, nồng độ cồn, tốc độ — viết ngắn gọn cho người đang học lái.",
+  path: "/tin-tuc/",
+});
 
 export default function NewsPage() {
   return (

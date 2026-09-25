@@ -17,7 +17,7 @@ export function SignLibrary() {
 
   return (
     <div>
-      <div className="sticky top-[6.5rem] z-20 -mx-4 mb-6 flex flex-col gap-3 bg-asphalt-950/85 px-4 py-3 backdrop-blur md:top-14 sm:flex-row sm:items-center">
+      <div className="sticky top-[calc(3.5rem+env(safe-area-inset-top))] z-20 -mx-4 mb-6 flex flex-col gap-3 bg-asphalt-950/85 px-4 py-3 backdrop-blur sm:flex-row sm:items-center">
         <label className="flex flex-1 items-center gap-2 rounded-xl bg-white/5 px-3 ring-1 ring-white/10 focus-within:ring-lane/60">
           <Search className="h-4 w-4 text-white/40" />
           <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Tìm biển: “cấm đỗ”, “P.102”, “trẻ em”…" className="w-full bg-transparent py-2.5 text-sm text-white outline-none placeholder:text-white/30" />

@@ -63,7 +63,7 @@ export const SIGNS: SignInfo[] = [
   { code: "I.407a", name: "Đường một chiều", group: "chi-dan", meaning: "Chỉ dẫn những đoạn đường chạy một chiều; chỉ cho phép các loại xe đi vào theo chiều mũi tên." },
   { code: "I.408", name: "Nơi đỗ xe", group: "chi-dan", meaning: "Chỉ dẫn những nơi được phép đỗ xe, những bãi đỗ xe." },
   { code: "I.409", name: "Chỗ quay xe", group: "chi-dan", meaning: "Chỉ dẫn vị trí được phép quay đầu xe." },
-  { code: "I.423", name: "Đường người đi bộ sang ngang", group: "chi-dan", meaning: "Chỉ dẫn vị trí dành cho người đi bộ sang ngang đường." },
+  { code: "I.423", name: "Vị trí người đi bộ sang ngang", group: "chi-dan", meaning: "Chỉ dẫn vị trí dành cho người đi bộ sang ngang đường." },
   { code: "I.434a", name: "Bến xe buýt", group: "chi-dan", meaning: "Chỉ dẫn vị trí điểm dừng xe buýt." },
 ];
 

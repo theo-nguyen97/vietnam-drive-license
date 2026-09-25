@@ -8,7 +8,7 @@ import { ArrowLeft, ArrowRight, Check, ChevronDown } from "lucide-react";
 import clsx from "clsx";
 import type { LicenseId } from "@/lib/types";
 import { LICENSES, getLicense } from "@/data/licenses";
-import { useProgress } from "@/store/progress";
+import { useHydrated, useProgress } from "@/store/progress";
 import { VehicleIcon } from "@/components/ui/VehicleIcon";
 import { Logo } from "@/components/ui/Logo";
 import { Button } from "@/components/ui/Button";
@@ -23,6 +23,13 @@ type Timing = "before" | "after" | "unknown";
 
 /** Màn chào: hỏi hạng bằng và thời điểm dự thi — chỉ 2 bước. */
 export function Onboarding({ mode = "welcome" }: { mode?: "welcome" | "change" }) {
+  // Chờ nạp tiến độ từ localStorage: nếu không, lựa chọn hiện tại (hạng, thời điểm thi) sẽ không được điền sẵn ở chế độ "đổi hạng".
+  const hydrated = useHydrated();
+  if (!hydrated) return <div className="mx-auto w-full max-w-xl flex-1 px-4 pt-6 sm:pt-12" aria-busy><div className="h-80 animate-pulse rounded-3xl bg-white/5" /></div>;
+  return <OnboardingForm mode={mode} />;
+}
+
+function OnboardingForm({ mode }: { mode: "welcome" | "change" }) {
   const router = useRouter();
   const current = useProgress((s) => s.lastLicense);
   const currentTiming = useProgress((s) => s.examTiming);
@@ -61,7 +68,7 @@ export function Onboarding({ mode = "welcome" }: { mode?: "welcome" | "change" }
             </h1>
             <p className="mt-2 text-center text-white/60">Chọn một hạng — bạn có thể đổi lại bất cứ lúc nào.</p>
 
-            <div className="mt-6 flex flex-col gap-3">
+            <div className="mt-6 flex flex-col gap-3" role="radiogroup" aria-label="Hạng bằng">
               {MAIN.map((m) => {
                 const l = getLicense(m.id)!;
                 const active = license === m.id;
@@ -69,6 +76,8 @@ export function Onboarding({ mode = "welcome" }: { mode?: "welcome" | "change" }
                   <button
                     key={m.id}
                     type="button"
+                    role="radio"
+                    aria-checked={active}
                     onClick={() => setLicense(m.id)}
                     className={clsx(
                       "flex items-center gap-4 rounded-3xl p-3 pr-5 text-left ring-2 transition",
@@ -106,6 +115,8 @@ export function Onboarding({ mode = "welcome" }: { mode?: "welcome" | "change" }
                     <button
                       key={l.id}
                       type="button"
+                      role="radio"
+                      aria-checked={license === l.id}
                       onClick={() => setLicense(l.id)}
                       className={clsx(
                         "rounded-2xl p-3 text-left ring-2 transition",
@@ -128,7 +139,7 @@ export function Onboarding({ mode = "welcome" }: { mode?: "welcome" | "change" }
           <motion.section key="s2" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}>
             <h1 className="text-center font-display text-3xl text-white sm:text-4xl">Khi nào bạn thi?</h1>
             <p className="mt-2 text-center text-white/60">Từ 01/3/2027 đề lý thuyết có cấu trúc mới — mình sẽ chọn đúng loại đề cho bạn.</p>
-            <div className="mt-6 flex flex-col gap-3">
+            <div className="mt-6 flex flex-col gap-3" role="radiogroup" aria-label="Thời điểm thi">
               {(
                 [
                   ["before", "Trước 01/3/2027", lic ? `Đề hiện hành: ${lic.exam.total} câu, đúng ${lic.exam.pass} là đạt` : ""],
@@ -139,6 +150,8 @@ export function Onboarding({ mode = "welcome" }: { mode?: "welcome" | "change" }
                 <button
                   key={v}
                   type="button"
+                  role="radio"
+                  aria-checked={timing === v}
                   onClick={() => setTiming(v)}
                   className={clsx(
                     "flex items-center gap-4 rounded-3xl p-4 text-left ring-2 transition",

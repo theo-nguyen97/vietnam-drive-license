@@ -43,8 +43,13 @@ export async function downloadForOffline(license: LicenseId, onProgress: (p: num
         const html = await res.clone().text();
         await pages.put(u, res);
         for (const m of html.matchAll(/(?:src|href)="([^"]*\/_next\/static\/[^"]+)"/g)) assets.add(m[1]);
-        const txt = await fetch(`${u}index.txt`).catch(() => null);
-        if (txt?.ok) await pages.put(`${u}index.txt`, txt);
+        // Dữ liệu điều hướng phía client (RSC): index.txt + các tệp __next.*.txt cùng thư mục.
+        const rsc = new Set([`${u}index.txt`]);
+        for (const m of html.matchAll(/"([^"]*__next\.[^"]*\.txt)"/g)) rsc.add(m[1].startsWith("/") ? m[1] : `${u}${m[1]}`);
+        for (const r of rsc) {
+          const txt = await fetch(r).catch(() => null);
+          if (txt?.ok) await pages.put(r, txt);
+        }
       }
     } catch {
       /* bỏ qua trang lỗi */

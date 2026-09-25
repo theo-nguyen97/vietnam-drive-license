@@ -68,7 +68,7 @@ export function WeaknessReport({ license }: { license: LicenseId }) {
           <Stethoscope className="mx-auto h-10 w-10 text-cyan-300" />
           <h2 className="mt-3 text-xl font-bold text-white">Chưa đủ dữ liệu để chẩn đoán</h2>
           <p className="mx-auto mt-1 max-w-md text-white/60">
-            Hãy làm một đề trong Bộ đề 2026 hoặc ôn khoảng 20 câu — máy quét sẽ chỉ ra chủ đề bạn cần luyện thêm.
+            Hãy làm một đề thi thử hoặc ôn khoảng 20 câu — máy quét sẽ chỉ ra chủ đề bạn cần luyện thêm.
           </p>
           <div className="mt-5 flex flex-wrap justify-center gap-3">
             <ButtonLink href={`${base}/bo-de`} icon={<Trophy className="h-4 w-4" />}>

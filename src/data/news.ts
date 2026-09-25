@@ -66,6 +66,10 @@ export const NEWS: NewsItem[] = [
         type: "tip",
         text: "Nếu bạn thi trước 01/3/2027, cứ luyện đề hiện hành. Nếu thi sau mốc này, hãy chuyển sang đề 2027 để quen áp lực 40 – 90 câu.",
       },
+      {
+        type: "p",
+        text: "Lưu ý: số câu, thời gian và điểm đạt ở trên tổng hợp từ Thông tư 108/2026/TT-BCA; tỉ lệ câu theo từng nhóm và số liệu các hạng BE, D1E, D2E, DE là dự kiến — hãy đối chiếu văn bản chính thức và thông báo của trung tâm sát hạch trước ngày thi.",
+      },
     ],
     sources: ["Thông tư 108/2026/TT-BCA", "Thông tư 12/2025/TT-BCA"],
   },
@@ -76,7 +80,7 @@ export const NEWS: NewsItem[] = [
     date: "02/07/2026",
     emoji: "🖥️",
     summary:
-      "Từ 01/7/2026 học viên ô tô không còn thi 10 tình huống mô phỏng trên máy tính; phải đạt lý thuyết mới được vào thi sa hình và đường trường.",
+      "Từ 01/7/2026 học viên ô tô không còn thi mô phỏng trên máy tính (bộ 120 tình huống, mỗi lần thi 10 tình huống); phải đạt lý thuyết mới được vào thi sa hình và đường trường.",
     body: [
       { type: "p", text: "Bài thi mô phỏng tình huống giao thông (chấm theo thời điểm nhận biết nguy hiểm) từng khiến nhiều người trượt vì bấm sớm hoặc muộn. Từ 01/7/2026 phần thi này được bỏ." },
       { type: "h", text: "Quy trình mới" },
@@ -118,7 +122,7 @@ export const NEWS: NewsItem[] = [
           ["Vượt đèn đỏ (ô tô, xe máy)", "4 điểm"],
           ["Nồng độ cồn mức 1", "4 điểm"],
           ["Nồng độ cồn mức 2", "10 điểm"],
-          ["Đi ngược chiều", "4 điểm"],
+          ["Đi ngược chiều", "Ô tô 4 điểm · xe máy 2 điểm"],
         ],
       },
       { type: "tip", text: "Muốn trải nghiệm cảm giác “giữ điểm”? Chơi Thử thách 12 điểm trong mục Khám phá." },
@@ -132,7 +136,7 @@ export const NEWS: NewsItem[] = [
     date: "01/08/2026",
     emoji: "🍺",
     summary:
-      "Người lái xe không được có nồng độ cồn trong máu hoặc hơi thở. Ô tô vi phạm mức cao nhất bị phạt đến 40 triệu đồng và tước bằng đến 24 tháng.",
+      "Người lái xe không được có nồng độ cồn trong máu hoặc hơi thở. Ô tô vi phạm mức cao nhất bị phạt đến 40 triệu đồng và tước GPLX đến 24 tháng.",
     body: [
       { type: "p", text: "Luật Trật tự, an toàn giao thông đường bộ 2024 giữ nguyên quy định cấm điều khiển phương tiện khi trong máu hoặc hơi thở có nồng độ cồn." },
       {
@@ -237,7 +241,7 @@ export const NEWS: NewsItem[] = [
     date: "12/07/2026",
     emoji: "📱",
     summary:
-      "Sau khi đạt sát hạch, giấy phép lái xe điện tử được tích hợp trên VNeID; thời gian cấp bản cứng được rút ngắn còn khoảng 3,5 ngày làm việc.",
+      "Sau khi đạt sát hạch, giấy phép lái xe điện tử được tích hợp trên VNeID; thời gian cấp bản cứng dự kiến rút ngắn còn khoảng 3,5 ngày làm việc.",
     body: [
       { type: "p", text: "GPLX điện tử hiển thị trên ứng dụng VNeID có giá trị sử dụng như bản giấy khi xuất trình cho lực lượng chức năng." },
       {

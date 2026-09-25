@@ -22,17 +22,21 @@ export function OfflineDownload({ license }: { license: LicenseId }) {
   const hydrated = useHydrated();
   const [progress, setProgress] = useState<number | null>(null);
   const [savedAt, setSavedAt] = useState<number | null>(null);
+  const [error, setError] = useState<string | null>(null);
   if (!hydrated) return null;
   const supported = offlineSupported();
   const saved = savedAt ?? readSaved()[license];
 
   const run = async () => {
     setProgress(0);
+    setError(null);
     try {
       await downloadForOffline(license, setProgress);
       const all = { ...readSaved(), [license]: Date.now() };
       localStorage.setItem(KEY, JSON.stringify(all));
       setSavedAt(all[license]);
+    } catch {
+      setError("Không lưu được (trình duyệt chặn bộ nhớ đệm, ví dụ chế độ riêng tư). Hãy thử lại ở cửa sổ thường.");
     } finally {
       setProgress(null);
     }
@@ -52,6 +56,7 @@ export function OfflineDownload({ license }: { license: LicenseId }) {
               ? `Đã tải hạng ${license} lúc ${new Date(saved).toLocaleString("vi-VN")}. Mở web khi mất mạng vẫn học được.`
               : `Tải trọn bộ câu hỏi, bộ đề và các chế độ luyện của hạng ${license} (vài MB).`}
         </div>
+        {error && <div className="mt-1 text-sm text-red-300">{error}</div>}
         {progress !== null && (
           <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/10">
             <div className="h-full rounded-full bg-sky-400 transition-[width]" style={{ width: `${Math.round(progress * 100)}%` }} />

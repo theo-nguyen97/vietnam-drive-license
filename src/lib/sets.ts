@@ -83,7 +83,7 @@ export function dueQuestions(all: Question[], stats: Record<number, QStat>, now 
       const st = stats[q.id];
       return st && (st.due ?? st.t) <= now;
     })
-    .sort((a, b) => (stats[a.id].due ?? 0) - (stats[b.id].due ?? 0) || Number(!!b.critical) - Number(!!a.critical));
+    .sort((a, b) => Number(!!b.critical) - Number(!!a.critical) || (stats[a.id].due ?? 0) - (stats[b.id].due ?? 0));
 }
 
 /** Bài ôn hằng ngày: câu đến hạn trước, sau đó bổ sung câu chưa học (ưu tiên điểm liệt, trải đều các chương). */

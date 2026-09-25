@@ -53,7 +53,7 @@ const RULES_CH1: [RegExp, string][] = [
 ];
 
 /** Một số câu phân loại thủ công vì từ khoá dễ gây nhầm. */
-const OVERRIDES: Record<number, string> = { 40: "toc-do", 48: "gplx", 68: "nhuong-duong" };
+const OVERRIDES: Record<number, string> = { 40: "toc-do", 48: "gplx", 68: "nhuong-duong", 94: "khai-niem" };
 
 const CACHE = new Map<number, string>();
 

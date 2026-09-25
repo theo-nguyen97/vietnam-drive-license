@@ -112,10 +112,10 @@ export const EXTRA: Question[] = [
   },
   {
     id: 449, chapter: 5, signs: ["P.103a", "P.106a", "P.105"], only: "car",
-    text: "Biển nào cấm xe ô tô tải?",
+    text: "Biển nào chỉ cấm riêng xe ô tô tải (xe ô tô con vẫn được đi)?",
     options: ["Biển 1.", "Biển 2.", "Biển 3."],
     answer: 1,
-    explanation: "Biển 2 (P.106a) có hình xe tải. Lưu ý biển 1 (P.103a) và biển 3 (P.105) cấm mọi xe ô tô nên cũng cấm xe tải, nhưng biển chuyên cấm xe tải là biển 2.",
+    explanation: "Biển 2 (P.106a \"Cấm xe ô tô tải\") có hình xe tải, chỉ cấm ô tô tải. Biển 1 (P.103a) cấm mọi xe ô tô và biển 3 (P.105) cấm cả ô tô lẫn xe máy — xe con cũng không được đi.",
   },
   {
     id: 450, chapter: 5, signs: ["P.131a", "I.408", "P.130"],

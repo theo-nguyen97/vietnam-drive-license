@@ -1,4 +1,6 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+import { pageMeta } from "@/lib/site";
 import { ButtonLink } from "@/components/ui/Button";
 import { SiteHeader } from "@/components/ui/SiteHeader";
 import { Footer } from "@/components/ui/Footer";
@@ -8,7 +10,12 @@ import { LicenseGarage } from "@/components/home/LicenseGarage";
 import { QUESTIONS } from "@/data/questions";
 import { LICENSES } from "@/data/licenses";
 
-export const metadata = { title: "Giới thiệu" };
+export const metadata: Metadata = pageMeta({
+  title: "Giới thiệu",
+  description:
+    "Lái Lụa biến việc ôn thi lý thuyết bằng lái xe thành trò chơi: sa hình động, bộ đề 2026 & 2027 cho 15 hạng GPLX, ôn tập ngắt quãng, thử thách 12 điểm và săn biển báo.",
+  path: "/gioi-thieu/",
+});
 
 export default function Intro() {
   const junctions = QUESTIONS.filter((q) => q.scene?.kind === "junction").length;

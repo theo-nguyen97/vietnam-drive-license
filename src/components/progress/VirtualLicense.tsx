@@ -32,7 +32,8 @@ export function VirtualLicense() {
     if (!svg) return;
     setBusy(true);
     try {
-      const xml = new XMLSerializer().serializeToString(svg);
+      // Firefox không vẽ SVG thiếu width/height vào canvas → thêm kích thước nội tại.
+      const xml = new XMLSerializer().serializeToString(svg).replace("<svg ", `<svg width="${W}" height="${H}" `);
       const url = URL.createObjectURL(new Blob([xml], { type: "image/svg+xml;charset=utf-8" }));
       const img = new Image();
       await new Promise<void>((res, rej) => {
@@ -51,6 +52,8 @@ export function VirtualLicense() {
       a.href = canvas.toDataURL("image/png");
       a.download = "bang-lai-ao-lai-lua.png";
       a.click();
+    } catch {
+      window.alert("Không tạo được ảnh trên trình duyệt này. Bạn có thể chụp màn hình thẻ bằng lái để chia sẻ.");
     } finally {
       setBusy(false);
     }

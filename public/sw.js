@@ -1,10 +1,12 @@
 /* Service worker của Lái Lụa — cho phép học khi không có mạng.
  * - Tài nguyên tĩnh (/_next/static, icon, font): cache-first (tên file có hash).
  * - Trang HTML: network-first, mất mạng thì dùng bản đã lưu.
- * - Dữ liệu điều hướng (.txt RSC): stale-while-revalidate.
+ * - Dữ liệu điều hướng (.txt RSC), ảnh không có hash: stale-while-revalidate.
+ * Tên cache gắn với mã bản build (?v= khi đăng ký) — bản build mới sẽ xoá cache của bản cũ.
  */
-const STATIC = "ll-static-v1";
-const PAGES = "ll-pages-v1";
+const VERSION = new URL(self.location.href).searchParams.get("v") || "v1";
+const STATIC = `ll-static-${VERSION}`;
+const PAGES = `ll-pages-${VERSION}`;
 // Hỗ trợ triển khai dưới thư mục con (GitHub Pages): BASE = "/" hoặc "/<repo>/".
 const BASE = new URL(self.registration.scope).pathname;
 const CORE = [BASE, BASE + "manifest.webmanifest", BASE + "icons/icon-192.png"];
@@ -22,8 +24,13 @@ self.addEventListener("activate", (e) => {
   );
 });
 
-function isStatic(url) {
-  return url.pathname.startsWith(BASE + "_next/static/") || url.pathname.startsWith(BASE + "icons/") || /\.(woff2?|png|svg|ico)$/.test(url.pathname);
+/** Tệp có hash trong tên — không bao giờ đổi nội dung. */
+function isImmutable(url) {
+  return url.pathname.startsWith(BASE + "_next/static/");
+}
+
+function put(cacheName, key, res) {
+  return caches.open(cacheName).then((c) => c.put(key, res));
 }
 
 self.addEventListener("fetch", (e) => {
@@ -32,13 +39,13 @@ self.addEventListener("fetch", (e) => {
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
 
-  if (isStatic(url)) {
+  if (isImmutable(url)) {
     e.respondWith(
       caches.match(req).then(
         (hit) =>
           hit ||
           fetch(req).then((res) => {
-            if (res.ok) caches.open(STATIC).then((c) => c.put(req, res.clone()));
+            if (res.ok) e.waitUntil(put(STATIC, req, res.clone()));
             return res;
           }),
       ),
@@ -50,7 +57,7 @@ self.addEventListener("fetch", (e) => {
     e.respondWith(
       fetch(req)
         .then((res) => {
-          if (res.ok) caches.open(PAGES).then((c) => c.put(url.pathname, res.clone()));
+          if (res.ok) e.waitUntil(put(PAGES, url.pathname, res.clone()));
           return res;
         })
         .catch(async () => (await caches.match(url.pathname)) || (await caches.match(url.pathname + "/")) || (await caches.match(BASE)) || Response.error()),
@@ -58,15 +65,16 @@ self.addEventListener("fetch", (e) => {
     return;
   }
 
-  // Dữ liệu điều hướng phía client (RSC .txt) và các tệp khác.
+  // Dữ liệu điều hướng phía client (RSC .txt), icon, ảnh, manifest: dùng bản đã lưu và cập nhật ngầm.
   e.respondWith(
     caches.match(req, { ignoreSearch: true }).then((hit) => {
       const net = fetch(req)
         .then((res) => {
-          if (res.ok) caches.open(PAGES).then((c) => c.put(url.pathname, res.clone()));
+          if (res.ok) e.waitUntil(put(PAGES, url.pathname, res.clone()));
           return res;
         })
         .catch(() => hit || Response.error());
+      if (hit) e.waitUntil(net.catch(() => {}));
       return hit || net;
     }),
   );

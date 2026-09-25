@@ -36,7 +36,8 @@ export function QuestionGrid({
               reveal && answered && !ok && "bg-red-500/85 text-white",
               reveal && !answered && "bg-white/10 text-white/50",
             )}
-            aria-label={`Câu ${i + 1}`}
+            aria-label={`Câu ${i + 1}${answered ? (reveal ? (ok ? " — đúng" : " — sai") : " — đã trả lời") : ""}`}
+            aria-current={i === current ? "true" : undefined}
           >
             {i + 1}
             {q.critical && <span className="absolute right-0.5 top-0.5 h-1.5 w-1.5 rounded-full bg-red-400" />}

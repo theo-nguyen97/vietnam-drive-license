@@ -151,13 +151,13 @@ export function ArcadeRunner({ license }: { license: LicenseId }) {
   useEffect(() => {
     if (phase !== "play") return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.metaKey || e.ctrlKey || e.altKey) return;
-      if (!answered && e.key >= "1" && e.key <= "9") answer(Number(e.key) - 1);
+      if (e.metaKey || e.ctrlKey || e.altKey || e.defaultPrevented) return;
+      if (!answered && q && e.key >= "1" && e.key <= String(q.options.length)) answer(Number(e.key) - 1);
       else if (answered && (e.key === "Enter" || e.key === "ArrowRight")) next();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [phase, answered, answer, next]);
+  }, [phase, answered, answer, next, q]);
 
   const base = `/hang/${license.toLowerCase()}`;
   if (!hydrated) return null;

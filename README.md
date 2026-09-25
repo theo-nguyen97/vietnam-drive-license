@@ -29,7 +29,7 @@ mở và xe chạy tiếp, trả lời sai thì bị "thổi còi" kèm giải t
 - **Thử thách 12 điểm** — chế độ sinh tồn theo luật trừ điểm GPLX: mỗi câu 20 giây, sai/hết giờ trừ 2 điểm (câu điểm liệt trừ 6),
   5 câu đúng liên tiếp phục hồi 1 điểm, hết 12 điểm là "tước bằng"; lưu kỷ lục theo hạng.
 - **Săn biển báo** — mini game 60 giây nhận diện biển báo, combo, cuối lượt liệt kê biển nhận nhầm để ôn.
-- **Luyện theo lỗi hay mắc** — "chẩn đoán tay lái": chia câu hỏi thành 21 chủ đề nhỏ (vượt xe, dừng đỗ, tốc độ, biển cấm,
+- **Luyện theo lỗi hay mắc** — "chẩn đoán tay lái": chia câu hỏi thành 23 chủ đề nhỏ (vượt xe, dừng đỗ, tốc độ, biển cấm,
   sa hình vòng xuyến…), tính mức rủi ro từng chủ đề từ lịch sử trả lời, báo "mã lỗi" và ra bài luyện đúng chỗ yếu
   (`/hang/[id]/diem-yeu`, bài tổng hợp `on-tap/diem-yeu`, từng chủ đề `on-tap/chu-de-*`).
 - **Giao diện điện thoại kiểu ứng dụng** — thanh tab dưới đáy, bảng danh sách câu kéo từ dưới lên, vuốt ngang để chuyển câu,
@@ -53,7 +53,7 @@ mở và xe chạy tiếp, trả lời sai thì bị "thổi còi" kèm giải t
 | Hạng | Bộ câu hỏi | Số câu | Thời gian | Đạt | Quy định chung | Điểm liệt | Văn hoá | Kỹ thuật | Cấu tạo | Báo hiệu | Sa hình |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | A1 | 250 | 25 | 19' | 21 | 8 | 1 | 1 | 1 | – | 8 | 6 |
-| A, B1 | 250 / 300 | 25 | 19' | 23 | 8 | 1 | 1 | 1 | – | 8 | 6 |
+| A, B1 | 300 | 25 | 19' | 23 | 8 | 1 | 1 | 1 | – | 8 | 6 |
 | B | 600 | 30 | 20' | 27 | 8 | 1 | 1 | 1 | 1 | 9 | 9 |
 | C1 | 600 | 35 | 22' | 32 | 10 | 1 | 1 | 2 | 1 | 10 | 10 |
 | C | 600 | 40 | 24' | 36 | 10 | 1 | 1 | 2 | 1 | 14 | 11 |

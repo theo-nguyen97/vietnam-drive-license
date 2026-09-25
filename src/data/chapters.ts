@@ -11,7 +11,7 @@ export interface Chapter {
 /** Cấu trúc 6 chương của bộ câu hỏi sát hạch lý thuyết. */
 export const CHAPTERS: Chapter[] = [
   { id: 1, name: "Quy định chung và quy tắc giao thông đường bộ", short: "Quy tắc giao thông", icon: "⚖️", groups: ["moto", "car"] },
-  { id: 2, name: "Văn hóa giao thông, đạo đức người lái xe, PCCC và cứu hộ, cứu nạn", short: "Văn hóa & đạo đức", icon: "🤝", groups: ["moto", "car"] },
+  { id: 2, name: "Văn hoá giao thông, đạo đức người lái xe, PCCC và cứu hộ, cứu nạn", short: "Văn hoá & đạo đức", icon: "🤝", groups: ["moto", "car"] },
   { id: 3, name: "Kỹ thuật lái xe", short: "Kỹ thuật lái xe", icon: "🛞", groups: ["moto", "car"] },
   { id: 4, name: "Cấu tạo và sửa chữa", short: "Cấu tạo & sửa chữa", icon: "🔧", groups: ["car"] },
   { id: 5, name: "Báo hiệu đường bộ", short: "Biển báo hiệu", icon: "🚸", groups: ["moto", "car"] },

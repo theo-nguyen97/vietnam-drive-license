@@ -4,7 +4,7 @@ import { questionsFor } from "@/data/questions";
 import { hash, rng, shuffle } from "./random";
 
 /**
- * Cấu trúc đề sát hạch lý thuyết áp dụng năm 2026
+ * Cấu trúc đề sát hạch lý thuyết hiện hành
  * (Thông tư 12/2025/TT-BCA, bộ câu hỏi áp dụng từ 01/6/2025).
  * Mỗi đề có đúng 01 câu "tình huống mất an toàn giao thông nghiêm trọng" (điểm liệt),
  * tính riêng ngoài số câu của chương 1.
@@ -30,6 +30,7 @@ const PLAN_TT12: Record<number, Partial<Record<ChapterId, number>>> = {
  */
 const PLAN_TT108: Record<string, Partial<Record<ChapterId, number>>> = {
   "moto-40": { 1: 14, 2: 3, 3: 2, 5: 12, 6: 8 },
+  "moto-50": { 1: 17, 2: 3, 3: 3, 5: 14, 6: 12 },
   "car-50": { 1: 14, 2: 3, 3: 2, 4: 1, 5: 15, 6: 14 },
   "car-60": { 1: 17, 2: 3, 3: 3, 4: 2, 5: 17, 6: 17 },
   "car-70": { 1: 19, 2: 3, 3: 3, 4: 2, 5: 22, 6: 20 },
@@ -40,8 +41,33 @@ const PLAN_TT108: Record<string, Partial<Record<ChapterId, number>>> = {
 export function examPlan(license: LicenseId, version: ExamVersion = "tt12"): Partial<Record<ChapterId, number>> {
   const lic = getLicense(license)!;
   const total = examConfig(lic, version).total;
-  if (version === "tt108") return PLAN_TT108[`${lic.group}-${total}`] ?? PLAN_TT108["car-90"];
-  return PLAN_TT12[total] ?? PLAN_TT12[45];
+  const plan =
+    version === "tt108"
+      ? (PLAN_TT108[`${lic.group}-${total}`] ?? PLAN_TT108[lic.group === "moto" ? "moto-40" : "car-90"])
+      : (PLAN_TT12[total] ?? PLAN_TT12[45]);
+  return fitPlan(plan, total - 1, lic.group === "moto");
+}
+
+/**
+ * Co giãn phân bổ theo chương cho đúng số câu thường (tổng − 1 câu điểm liệt) khi
+ * không có bảng phân bổ khớp chính xác; xe máy không có chương "cấu tạo & sửa chữa".
+ */
+function fitPlan(plan: Partial<Record<ChapterId, number>>, target: number, moto: boolean) {
+  const entries = Object.entries(plan)
+    .map(([ch, n]) => [Number(ch) as ChapterId, n ?? 0] as const)
+    .filter(([ch, n]) => n > 0 && !(moto && ch === 4));
+  const sum = entries.reduce((a, [, n]) => a + n, 0);
+  if (sum === target) return Object.fromEntries(entries) as Partial<Record<ChapterId, number>>;
+  const scaled = entries.map(([ch, n]) => [ch, Math.max(1, Math.floor((n * target) / sum))] as [ChapterId, number]);
+  let diff = target - scaled.reduce((a, [, n]) => a + n, 0);
+  // Phần dư dồn cho các chương lớn (quy tắc, biển báo, sa hình) theo thứ tự.
+  for (let i = 0; diff !== 0 && i < scaled.length * 4; i++) {
+    const idx = [1, 5, 6, 2, 3, 4].map((c) => scaled.findIndex(([ch]) => ch === c)).filter((x) => x >= 0)[i % Math.min(3, scaled.length)];
+    if (idx === undefined) break;
+    scaled[idx][1] += Math.sign(diff);
+    diff -= Math.sign(diff);
+  }
+  return Object.fromEntries(scaled) as Partial<Record<ChapterId, number>>;
 }
 
 /** Thứ tự hiển thị trong đề: chương 1 → câu điểm liệt → các chương còn lại. */

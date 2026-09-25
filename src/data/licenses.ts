@@ -3,13 +3,13 @@ import type { License, LicenseId } from "@/lib/types";
 /**
  * Các hạng giấy phép lái xe theo Luật Trật tự, an toàn giao thông đường bộ 2024
  * (hiệu lực từ 01/01/2025). Số câu / thời gian / điểm đạt của đề lý thuyết theo
- * Thông tư 12/2025/TT-BCA (bộ câu hỏi áp dụng từ 01/6/2025): A1, A dùng bộ 250 câu,
- * B1 dùng bộ 300 câu, các hạng ô tô dùng bộ 600 câu.
+ * Thông tư 12/2025/TT-BCA (bộ câu hỏi áp dụng từ 01/6/2025): A1 dùng bộ 250 câu,
+ * A và B1 dùng bộ 300 câu, các hạng ô tô dùng bộ 600 câu.
  *
  * `exam2027`: cấu trúc mới theo Thông tư 108/2026/TT-BCA, áp dụng từ 01/3/2027
  * (A1, A: 40 câu/27 phút/đạt 36; B1, B: 50/33/45; C1: 60/40/54; C: 70/47/63;
  * D1, D2, D: 80/53/72; C1E, CE: 90/60/81). BE, D1E, D2E, DE chưa có số liệu công bố
- * rõ ràng nên tạm tính như CE — cần đối chiếu văn bản chính thức.
+ * rõ ràng nên tạm tính như CE; B1 xếp cùng B (50 câu) là dự kiến — cần đối chiếu văn bản chính thức.
  */
 export const LICENSES: License[] = [
   {
@@ -19,7 +19,7 @@ export const LICENSES: License[] = [
     exam: { total: 25, minutes: 19, pass: 21 }, exam2027: { total: 40, minutes: 27, pass: 36 }, minAge: 18, validity: "Không thời hạn", color: "#22c55e",
   },
   {
-    id: "A", bank: 250, name: "Hạng A", short: "Mô tô trên 125 cm³",
+    id: "A", bank: 300, name: "Hạng A", short: "Mô tô trên 125 cm³",
     desc: "Xe mô tô hai bánh có dung tích xi-lanh trên 125 cm³ hoặc công suất động cơ điện trên 11 kW và các loại xe của hạng A1.",
     group: "moto", family: "moto", vehicle: "bigbike",
     exam: { total: 25, minutes: 19, pass: 23 }, exam2027: { total: 40, minutes: 27, pass: 36 }, minAge: 18, validity: "Không thời hạn", color: "#10b981",

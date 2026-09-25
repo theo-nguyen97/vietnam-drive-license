@@ -12,10 +12,10 @@ export const CH1: Question[] = [
   },
   {
     id: 2, chapter: 1, critical: true,
-    text: "Người điều khiển phương tiện giao thông đường bộ mà trong cơ thể có chất ma túy có bị nghiêm cấm không?",
+    text: "Người điều khiển phương tiện giao thông đường bộ mà trong cơ thể có chất ma tuý có bị nghiêm cấm không?",
     options: ["Không bị nghiêm cấm.", "Bị nghiêm cấm.", "Chỉ bị cấm khi gây tai nạn giao thông."],
     answer: 1,
-    explanation: "Điều khiển phương tiện khi trong cơ thể có chất ma túy (hoặc chất kích thích khác mà luật cấm sử dụng) là hành vi bị nghiêm cấm tuyệt đối.",
+    explanation: "Điều khiển phương tiện khi trong cơ thể có chất ma tuý (hoặc chất kích thích khác mà luật cấm sử dụng) là hành vi bị nghiêm cấm tuyệt đối.",
   },
   {
     id: 3, chapter: 1, critical: true,
@@ -208,18 +208,18 @@ export const CH1: Question[] = [
       "Phía nào thuận tiện hơn.",
     ],
     answer: 1,
-    explanation: "Xe xin vượt phải vượt về bên trái. Chỉ được vượt bên phải khi xe phía trước đang rẽ trái (có tín hiệu rẽ trái), xe điện đang chạy giữa đường, hoặc xe chuyên dùng đang làm việc trên đường mà không thể vượt bên trái.",
+    explanation: "Xe xin vượt phải vượt về bên trái. Chỉ được vượt bên phải khi xe phía trước có tín hiệu rẽ trái hoặc đang rẽ trái, hoặc xe chuyên dùng đang làm việc trên đường mà không thể vượt bên trái.",
   },
   {
     id: 23, chapter: 1,
     text: "Những nơi nào dưới đây KHÔNG được vượt xe?",
     options: [
       "Trên đường thẳng, rộng, có tầm nhìn tốt và không có xe đi ngược chiều.",
-      "Trên cầu hẹp có một làn xe, đường cong tầm nhìn bị che khuất, đầu dốc, nơi đường giao nhau, nơi giao nhau với đường sắt.",
+      "Trên cầu hẹp có một làn xe, đường cong tầm nhìn bị che khuất, đỉnh dốc tầm nhìn bị hạn chế, nơi đường giao nhau, nơi giao nhau với đường sắt, phần đường dành cho người đi bộ qua đường.",
       "Trên đường cao tốc có nhiều làn xe cùng chiều.",
     ],
     answer: 1,
-    explanation: "Không được vượt xe tại cầu hẹp có một làn xe, đường cong tầm nhìn bị che khuất, đầu dốc và các vị trí có tầm nhìn hạn chế, nơi đường giao nhau, nơi giao nhau với đường sắt, khi điều kiện thời tiết hoặc đường không bảo đảm an toàn.",
+    explanation: "Không được vượt xe trên cầu hẹp có một làn xe, đường cong tầm nhìn bị che khuất, đường hai chiều tại đỉnh dốc tầm nhìn bị hạn chế, nơi đường giao nhau, nơi giao nhau với đường sắt, phần đường dành cho người đi bộ qua đường, khi xe ưu tiên đang phát tín hiệu, khi điều kiện thời tiết hoặc đường không bảo đảm an toàn.",
   },
   {
     id: 24, chapter: 1,
@@ -237,11 +237,11 @@ export const CH1: Question[] = [
     text: "Người lái xe KHÔNG được quay đầu xe ở những nơi nào?",
     options: [
       "Tại nơi đường giao nhau không có biển cấm quay đầu.",
-      "Trên phần đường dành cho người đi bộ qua đường, trên cầu, đầu cầu, gầm cầu vượt, ngầm, trong hầm, đường cao tốc, nơi giao nhau với đường sắt, đường hẹp, đường dốc, đường cong tầm nhìn bị che khuất.",
+      "Trên phần đường dành cho người đi bộ qua đường, trên cầu, đầu cầu, gầm cầu vượt, ngầm, trong hầm, đường cao tốc, đường một chiều, nơi giao nhau với đường sắt, đường hẹp, đường dốc, đường cong tầm nhìn bị che khuất.",
       "Tại nơi có biển chỉ dẫn \"Chỗ quay xe\".",
     ],
     answer: 1,
-    explanation: "Không được quay đầu xe ở phần đường dành cho người đi bộ qua đường, trên cầu, đầu cầu, gầm cầu vượt, ngầm, trong hầm, trên đường cao tốc, tại nơi giao nhau với đường sắt, đường hẹp, đường dốc, đoạn đường cong tầm nhìn bị che khuất và nơi có biển cấm quay đầu.",
+    explanation: "Không được quay đầu xe ở phần đường dành cho người đi bộ qua đường, trên cầu, đầu cầu, gầm cầu vượt, ngầm, trong hầm, trên đường cao tốc, tại nơi giao nhau với đường sắt, đường hẹp, đường dốc, đoạn đường cong tầm nhìn bị che khuất, trên đường một chiều (trừ khi có hiệu lệnh của người điều khiển giao thông hoặc biển báo tạm thời) và nơi có biển cấm quay đầu.",
   },
   {
     id: 26, chapter: 1,
@@ -252,7 +252,7 @@ export const CH1: Question[] = [
       "Chỉ cần quan sát qua gương chiếu hậu bên trái.",
     ],
     answer: 0,
-    explanation: "Khi lùi xe phải quan sát phía sau, có tín hiệu cần thiết và chỉ lùi khi thấy không nguy hiểm. Không được lùi xe ở khu vực cấm dừng, phần đường dành cho người đi bộ qua đường, nơi đường giao nhau, nơi giao nhau với đường sắt, nơi tầm nhìn bị che khuất, trong hầm, trên đường cao tốc.",
+    explanation: "Khi lùi xe phải quan sát phía sau, có tín hiệu cần thiết và chỉ lùi khi thấy không nguy hiểm. Không được lùi xe ở đường một chiều, khu vực cấm dừng, phần đường dành cho người đi bộ qua đường, nơi đường giao nhau, nơi giao nhau với đường sắt, nơi tầm nhìn bị che khuất, trong hầm, trên đường cao tốc.",
   },
   {
     id: 27, chapter: 1,

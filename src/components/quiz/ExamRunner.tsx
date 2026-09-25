@@ -44,14 +44,6 @@ export function ExamRunner({ license, setNo }: { license: LicenseId; setNo?: num
   const [filter, setFilter] = useState<"all" | "wrong" | "critical">("all");
   const submitted = useRef(false);
   const [sheet, setSheet] = useState(false);
-  const swipe = useSwipe(
-    () => {
-      if (stage === "running" || stage === "review") window.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight" }));
-    },
-    () => {
-      if (stage === "running" || stage === "review") window.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowLeft" }));
-    },
-  );
 
   const record = useProgress((s) => s.record);
   const addExam = useProgress((s) => s.addExam);
@@ -140,26 +132,11 @@ export function ExamRunner({ license, setNo }: { license: LicenseId; setNo?: num
     if (stage !== "running") return;
     const h = (e: BeforeUnloadEvent) => {
       e.preventDefault();
+      e.returnValue = "";
     };
     window.addEventListener("beforeunload", h);
     return () => window.removeEventListener("beforeunload", h);
   }, [stage]);
-
-  // Phím tắt
-  useEffect(() => {
-    if (stage !== "running" && stage !== "review") return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.metaKey || e.ctrlKey || e.altKey || confirm) return;
-      const q = questions[idx];
-      if (stage === "running" && q && e.key >= "1" && e.key <= String(q.options.length)) {
-        setAnswers((a) => ({ ...a, [q.id]: Number(e.key) - 1 }));
-        sfx.click();
-      } else if (e.key === "ArrowRight" || e.key === "Enter") setIdx((i) => Math.min(questions.length - 1, i + 1));
-      else if (e.key === "ArrowLeft") setIdx((i) => Math.max(0, i - 1));
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [stage, idx, questions, confirm]);
 
   const reviewList = useMemo(() => {
     if (!result) return questions.map((_, i) => i);
@@ -168,6 +145,64 @@ export function ExamRunner({ license, setNo }: { license: LicenseId; setNo?: num
       .filter(({ q }) => (filter === "wrong" ? answers[q.id] !== q.answer : filter === "critical" ? q.critical : true))
       .map(({ i }) => i);
   }, [questions, result, filter, answers]);
+
+  // Chuyển câu: ở chế độ xem lại chỉ đi trong danh sách đang lọc (câu sai / điểm liệt).
+  const isReview = stage === "review";
+  const goPrev = useCallback(() => {
+    if (isReview) {
+      const pos = reviewList.indexOf(idx);
+      if (pos > 0) setIdx(reviewList[pos - 1]);
+    } else setIdx(Math.max(0, idx - 1));
+  }, [isReview, reviewList, idx]);
+  const goNext = useCallback(() => {
+    if (isReview) {
+      const pos = reviewList.indexOf(idx);
+      if (pos >= 0 && pos < reviewList.length - 1) setIdx(reviewList[pos + 1]);
+      else if (pos < 0 && reviewList.length) setIdx(reviewList[0]);
+    } else if (idx < questions.length - 1) setIdx(idx + 1);
+  }, [isReview, reviewList, idx, questions.length]);
+
+  const swipe = useSwipe(
+    () => {
+      if (stage === "running" || stage === "review") goNext();
+    },
+    () => {
+      if (stage === "running" || stage === "review") goPrev();
+    },
+  );
+
+  // Phím tắt (bỏ qua khi tiêu điểm đang ở nút/ô nhập để không kích hoạt hai lần, và khi hộp thoại đang mở)
+  useEffect(() => {
+    if (stage !== "running" && stage !== "review") return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.metaKey || e.ctrlKey || e.altKey || e.defaultPrevented || confirm || sheet) return;
+      const t = e.target as HTMLElement | null;
+      if (t && (t.closest("button, a, input, textarea, select, [contenteditable]") || t.isContentEditable)) return;
+      const q = questions[idx];
+      if (stage === "running" && q && e.key >= "1" && e.key <= String(q.options.length)) {
+        setAnswers((a) => ({ ...a, [q.id]: Number(e.key) - 1 }));
+        sfx.click();
+      } else if (e.key === "ArrowRight" || e.key === "Enter") {
+        e.preventDefault();
+        goNext();
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        goPrev();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [stage, idx, questions, confirm, sheet, goNext, goPrev]);
+
+  // Esc đóng hộp thoại nộp bài
+  useEffect(() => {
+    if (!confirm) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setConfirm(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [confirm]);
 
   const backHref = `/hang/${license.toLowerCase()}`;
   const answeredCount = Object.keys(answers).length;
@@ -236,7 +271,14 @@ export function ExamRunner({ license, setNo }: { license: LicenseId; setNo?: num
         )}
         <AnimatePresence>
           {stage === "countdown" && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center bg-asphalt-950/90 backdrop-blur">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 flex items-center justify-center bg-asphalt-950/90 backdrop-blur"
+              role="status"
+              aria-live="polite"
+            >
               <div className="flex flex-col items-center gap-6">
                 <div className="flex flex-col gap-3 rounded-3xl bg-slate-900 p-4 ring-2 ring-white/10">
                   <Lamp on={count === 3 || count === 2} color="bg-red-500" glow="#ef4444" />
@@ -369,20 +411,6 @@ export function ExamRunner({ license, setNo }: { license: LicenseId; setNo?: num
           </div>
   );
 
-  const goPrev = () => {
-    if (review) {
-      const pos = reviewList.indexOf(idx);
-      if (pos > 0) setIdx(reviewList[pos - 1]);
-    } else setIdx(Math.max(0, idx - 1));
-  };
-  const goNext = () => {
-    if (review) {
-      const pos = reviewList.indexOf(idx);
-      if (pos >= 0 && pos < reviewList.length - 1) setIdx(reviewList[pos + 1]);
-      else if (pos < 0 && reviewList.length) setIdx(reviewList[0]);
-    } else if (idx < questions.length - 1) setIdx(idx + 1);
-  };
-
   return (
     <div className="flex flex-1 flex-col">
       <div className="sticky top-0 z-30 border-b border-white/5 bg-asphalt-950/85 backdrop-blur">
@@ -413,6 +441,7 @@ export function ExamRunner({ license, setNo }: { license: LicenseId; setNo?: num
                 "flex items-center gap-1.5 rounded-xl px-3 py-1.5 font-hud text-lg font-bold ring-1",
                 low ? "animate-pulse bg-red-500/20 text-red-300 ring-red-400/40" : "bg-black/40 text-green-300 ring-white/10",
               )}
+              role="timer"
               aria-label="Thời gian còn lại"
             >
               <Clock className="h-4 w-4" />
@@ -496,15 +525,29 @@ export function ExamRunner({ license, setNo }: { license: LicenseId; setNo?: num
 
       <AnimatePresence>
         {confirm && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 p-4 sm:items-center">
-            <motion.div initial={{ y: 40 }} animate={{ y: 0 }} className="w-full max-w-sm rounded-3xl bg-asphalt-800 p-6 ring-1 ring-white/10">
-              <h3 className="font-display text-xl text-white">Nộp bài?</h3>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 p-4 sm:items-center"
+            onClick={() => setConfirm(false)}
+          >
+            <motion.div
+              initial={{ y: 40 }}
+              animate={{ y: 0 }}
+              className="w-full max-w-sm rounded-3xl bg-asphalt-800 p-6 ring-1 ring-white/10"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="nop-bai-title"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h3 id="nop-bai-title" className="font-display text-xl text-white">Nộp bài?</h3>
               <p className="mt-2 text-sm text-white/70">
                 Bạn đã trả lời {answeredCount}/{questions.length} câu.
                 {answeredCount < questions.length && <b className="text-amber-300"> Còn {questions.length - answeredCount} câu chưa làm sẽ bị tính là sai.</b>}
               </p>
               <div className="mt-5 flex gap-3">
-                <Button variant="secondary" block onClick={() => setConfirm(false)}>
+                <Button variant="secondary" block onClick={() => setConfirm(false)} autoFocus>
                   Làm tiếp
                 </Button>
                 <Button block onClick={submit}>

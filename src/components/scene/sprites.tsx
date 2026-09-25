@@ -10,11 +10,11 @@ export const TOP_LABEL: Record<TopVehicleKind, string> = {
   car: "Xe con",
   truck: "Xe tải",
   bus: "Xe khách",
-  moto: "Mô tô",
+  moto: "Xe mô tô",
   bike: "Xe đạp",
-  ambulance: "Cứu thương",
-  fire: "Cứu hoả",
-  police: "Công an",
+  ambulance: "Xe cứu thương",
+  fire: "Xe cứu hoả",
+  police: "Xe công an",
 };
 
 export const TOP_LENGTH: Record<TopVehicleKind, number> = {

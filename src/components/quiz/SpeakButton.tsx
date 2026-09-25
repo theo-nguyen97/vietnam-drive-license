@@ -1,12 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { Volume2, Square } from "lucide-react";
 import clsx from "clsx";
 
 /** Đọc to nội dung bằng giọng tiếng Việt của trình duyệt (Web Speech API). */
 export function SpeakButton({ text }: { text: string }) {
   const [speaking, setSpeaking] = useState(false);
+  // Chỉ hiện nút khi trình duyệt hỗ trợ (server luôn trả false để không lệch khi hydrate).
+  const supported = useSyncExternalStore(
+    () => () => {},
+    () => "speechSynthesis" in window && typeof SpeechSynthesisUtterance !== "undefined",
+    () => false,
+  );
 
   useEffect(() => {
     return () => {
@@ -34,6 +40,7 @@ export function SpeakButton({ text }: { text: string }) {
     synth.speak(u);
   };
 
+  if (!supported) return null;
   return (
     <button
       type="button"

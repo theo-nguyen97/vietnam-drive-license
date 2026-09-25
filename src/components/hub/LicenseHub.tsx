@@ -123,7 +123,7 @@ export function LicenseHub({ license, home = false }: { license: LicenseId; home
 
       {/* Luyện tập */}
       <SectionTitle title="Luyện tập" />
-      <section className="grid grid-cols-2 gap-3 lg:grid-cols-5">
+      <section className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
         <QuickSet
           href={`${base}/diem-yeu`}
           icon={<Stethoscope className="h-5 w-5" />}
@@ -134,7 +134,14 @@ export function LicenseHub({ license, home = false }: { license: LicenseId; home
         <QuickSet href={`${base}/on-tap/diem-liet`} icon={<AlertTriangle className="h-5 w-5" />} title="Câu điểm liệt" desc={`${p.critical} câu — sai là trượt`} tone="text-red-300 bg-red-500/10 ring-red-400/25" />
         <QuickSet href={`${base}/on-tap/cau-sai`} icon={<RotateCcw className="h-5 w-5" />} title="Câu hay sai" desc={hydrated ? `${p.wrong} câu cần ôn lại` : "Ôn lại câu sai"} tone="text-orange-300 bg-orange-500/10 ring-orange-400/25" />
         <QuickSet href={`${base}/on-tap/da-luu`} icon={<Bookmark className="h-5 w-5" />} title="Câu đã lưu" desc={`${saved} câu`} tone="text-violet-300 bg-violet-500/10 ring-violet-400/25" />
-        <QuickSet href={`${base}/on-tap/tat-ca`} icon={<ListOrdered className="h-5 w-5" />} title="Toàn bộ câu hỏi" desc={`${p.total} câu theo thứ tự`} tone="text-emerald-300 bg-emerald-500/10 ring-emerald-400/25" />
+        <QuickSet
+          href={`${base}/on-tap/tat-ca`}
+          icon={<ListOrdered className="h-5 w-5" />}
+          title="Toàn bộ câu hỏi"
+          desc={`${p.total} câu theo thứ tự`}
+          tone="text-emerald-300 bg-emerald-500/10 ring-emerald-400/25"
+          className="col-span-2 sm:col-span-1"
+        />
       </section>
 
       {/* Bản đồ hành trình */}
@@ -257,11 +264,11 @@ function SectionTitle({ title, href }: { title: string; href?: string }) {
   );
 }
 
-function QuickSet({ href, icon, title, desc, tone }: { href: string; icon: React.ReactNode; title: string; desc: string; tone: string }) {
+function QuickSet({ href, icon, title, desc, tone, className }: { href: string; icon: React.ReactNode; title: string; desc: string; tone: string; className?: string }) {
   return (
     <Link
       href={href}
-      className="group flex min-w-0 flex-col items-start gap-2 rounded-3xl bg-[linear-gradient(180deg,#222834,#1a1f29)] p-3.5 ring-1 ring-inset ring-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,.07),0_5px_0_#0b0d12] transition duration-150 hover:-translate-y-0.5 hover:ring-white/20 active:translate-y-1 active:shadow-none sm:flex-row sm:items-center sm:gap-3 sm:p-4"
+      className={clsx(className, "group flex min-w-0 flex-col items-start gap-2 rounded-3xl bg-[linear-gradient(180deg,#222834,#1a1f29)] p-3.5 ring-1 ring-inset ring-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,.07),0_5px_0_#0b0d12] transition duration-150 hover:-translate-y-0.5 hover:ring-white/20 active:translate-y-1 active:shadow-none sm:flex-row sm:items-center sm:gap-3 sm:p-4")}
     >
       <span className={clsx("flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl ring-1 sm:h-11 sm:w-11", tone)}>{icon}</span>
       <div className="min-w-0">

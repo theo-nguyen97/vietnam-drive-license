@@ -6,8 +6,15 @@ import { SiteHeader } from "@/components/ui/SiteHeader";
 import { Footer } from "@/components/ui/Footer";
 import { Exam2027Panel } from "@/components/news/Exam2027Panel";
 import { NEWS, SORTED_NEWS, getNews, type NewsBlock } from "@/data/news";
+import { SITE_NAME, absoluteUrl, pageMeta } from "@/lib/site";
 
 export const dynamicParams = false;
+
+/** "dd/mm/yyyy" → "yyyy-mm-dd" cho Open Graph / dữ liệu có cấu trúc. */
+function isoDate(d: string) {
+  const [day, month, year] = d.split("/");
+  return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+}
 
 export function generateStaticParams() {
   return NEWS.map((n) => ({ slug: n.slug }));
@@ -15,16 +22,35 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps<"/tin-tuc/[slug]">): Promise<Metadata> {
   const n = getNews((await params).slug);
-  return n ? { title: n.title, description: n.summary } : {};
+  if (!n) return {};
+  const path = `/tin-tuc/${n.slug}/`;
+  return {
+    ...pageMeta({ title: n.title, description: n.summary, path }),
+    openGraph: { type: "article", title: n.title, description: n.summary, url: path, modifiedTime: isoDate(n.date), section: n.category },
+  };
 }
 
 export default async function ArticlePage({ params }: PageProps<"/tin-tuc/[slug]">) {
   const n = getNews((await params).slug);
   if (!n) notFound();
   const more = SORTED_NEWS.filter((x) => x.slug !== n.slug).slice(0, 3);
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: n.title,
+    description: n.summary,
+    datePublished: isoDate(n.date),
+    dateModified: isoDate(n.date),
+    inLanguage: "vi",
+    articleSection: n.category,
+    mainEntityOfPage: absoluteUrl(`/tin-tuc/${n.slug}/`),
+    author: { "@type": "Organization", name: SITE_NAME, url: absoluteUrl("/") },
+    publisher: { "@type": "Organization", name: SITE_NAME, url: absoluteUrl("/") },
+  };
 
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <SiteHeader />
       <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8">
         <Link href="/tin-tuc" className="inline-flex items-center gap-1.5 text-sm font-semibold text-white/55 hover:text-white">

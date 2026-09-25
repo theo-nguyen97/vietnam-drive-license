@@ -49,8 +49,14 @@ export function SignHunt() {
   const [newBest, setNewBest] = useState(false);
   const lock = useRef(false);
   const scoreRef = useRef(0);
+  const nextCard = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => () => {
+    if (nextCard.current) clearTimeout(nextCard.current);
+  }, []);
 
   const start = () => {
+    if (nextCard.current) clearTimeout(nextCard.current);
     setCard(makeCard());
     setN(1);
     setScore(0);
@@ -98,8 +104,9 @@ export function SignHunt() {
         setEndAt((e) => e - 3000);
         sfx.wrong();
       }
-      setTimeout(
+      nextCard.current = setTimeout(
         () => {
+          nextCard.current = null;
           setCard((c) => makeCard(c?.sign));
           setN((x) => x + 1);
           setPicked(null);
@@ -137,7 +144,7 @@ export function SignHunt() {
 
   if (phase === "intro") {
     return (
-      <div className="mx-auto grid w-full max-w-5xl flex-1 items-center gap-8 px-4 py-10 md:grid-cols-2">
+      <div className="mx-auto grid w-full max-w-5xl flex-1 items-center gap-8 overflow-x-hidden px-4 py-10 md:grid-cols-2">
         <div>
           <p className="font-hud text-sm uppercase tracking-[0.2em] text-lane">Mini game</p>
           <h1 className="font-display text-4xl text-white sm:text-5xl">Săn biển báo</h1>
@@ -154,7 +161,7 @@ export function SignHunt() {
           </div>
           <p className="mt-4 text-sm text-white/45">Phím tắt: 1 – 4 để chọn đáp án.</p>
         </div>
-        <div className="relative flex h-72 items-center justify-center">
+        <div className="relative flex h-72 items-center justify-center overflow-hidden">
           {["P.102", "W.225", "R.303", "I.408", "P.127"].map((c, i) => (
             <motion.div
               key={c}

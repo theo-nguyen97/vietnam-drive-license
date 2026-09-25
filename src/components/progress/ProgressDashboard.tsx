@@ -53,7 +53,7 @@ export function ProgressDashboard() {
     a.href = URL.createObjectURL(blob);
     a.download = `lai-lua-tien-do-${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
-    URL.revokeObjectURL(a.href);
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
   };
 
   const importData = async (f: File) => {

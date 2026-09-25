@@ -64,7 +64,7 @@ export const CH1B: Question[] = [
     text: "Khi điều khiển xe đến gần đường giao với đường sắt không có rào chắn, không có đèn tín hiệu, người lái xe phải làm gì?",
     options: [
       "Tăng tốc để nhanh chóng vượt qua đường sắt.",
-      "Giảm tốc độ, dừng lại ở khoảng cách an toàn, quan sát cả hai phía; chỉ đi qua khi chắc chắn không có tàu đang tới.",
+      "Giảm tốc độ, quan sát cả hai phía; chỉ đi qua khi chắc chắn không có tàu; nếu thấy tàu đang tới phải dừng lại cách ray gần nhất tối thiểu 5 m.",
       "Bấm còi liên tục và đi qua.",
     ],
     answer: 1,
@@ -88,7 +88,7 @@ export const CH1B: Question[] = [
   },
   {
     id: 78, chapter: 1, critical: true, only: "moto",
-    text: "Người điều khiển xe mô tô hai bánh có được chở theo từ 03 người trở lên (kể cả người lái có 04 người trên xe) không?",
+    text: "Người điều khiển xe mô tô hai bánh có được chở theo từ 03 người trở lên (kể cả người lái là 04 người) không?",
     options: ["Được, nếu đều là trẻ em.", "Không được.", "Được, nếu đi quãng đường ngắn."],
     answer: 1,
     explanation: "Xe mô tô hai bánh chỉ được chở một người, một số trường hợp đặc biệt được chở tối đa hai người. Chở ba người trở lên rất dễ mất thăng bằng và gây tai nạn nghiêm trọng.",
@@ -237,14 +237,14 @@ export const CH1B: Question[] = [
   },
   {
     id: 94, chapter: 1, only: "car",
-    text: "Khi kéo xe ô tô bị hỏng bằng dây nối, khoảng cách giữa xe kéo và xe được kéo tối thiểu là bao nhiêu và phải bảo đảm điều gì?",
+    text: "Xe ô tô kéo xe ô tô khác bị hỏng phải bảo đảm những điều kiện gì?",
     options: [
-      "Không có quy định.",
-      "Khoảng cách không nhỏ hơn 3 m, không quá 5 m; phải có tín hiệu (cờ, đèn) ở giữa dây nối; xe được kéo phải có người điều khiển và hệ thống lái còn hiệu lực.",
-      "Khoảng cách tối thiểu 10 m.",
+      "Chỉ cần nối dây chắc chắn, xe được kéo không cần người điều khiển.",
+      "Xe được kéo phải có người điều khiển và hệ thống lái còn hiệu lực; nối chắc chắn, an toàn; nếu hệ thống hãm của xe được kéo không còn hiệu lực phải nối bằng thanh nối cứng; có biển báo hiệu phía trước xe kéo và phía sau xe được kéo.",
+      "Được kéo theo bất kỳ cách nào miễn là đi chậm dưới 30 km/h.",
     ],
     answer: 1,
-    explanation: "Kéo xe bằng dây nối: khoảng cách từ 3 m đến 5 m, có cờ/đèn báo hiệu ở giữa dây; xe được kéo phải có người lái và hệ thống lái còn hoạt động.",
+    explanation: "Luật TTATGT đường bộ 2024 (Điều 30): xe được kéo phải có người điều khiển và hệ thống lái còn hiệu lực; xe kéo và xe được kéo phải nối chắc chắn, an toàn; nếu hệ thống hãm của xe được kéo không còn hiệu lực thì phải nối bằng thanh nối cứng; phía trước xe kéo và phía sau xe được kéo phải có biển báo hiệu.",
   },
   {
     id: 95, chapter: 1,

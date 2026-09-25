@@ -1,11 +1,16 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/site";
 import { SiteHeader } from "@/components/ui/SiteHeader";
 import { Footer } from "@/components/ui/Footer";
 import { SignLibrary } from "@/components/signs/SignLibrary";
 import { ButtonLink } from "@/components/ui/Button";
 import { Target } from "lucide-react";
 
-export const metadata: Metadata = { title: "Thư viện biển báo" };
+export const metadata: Metadata = pageMeta({
+  title: "Thư viện biển báo giao thông",
+  description: "Tra cứu biển báo giao thông đường bộ theo QCVN 41: biển cấm, biển nguy hiểm, biển hiệu lệnh, biển chỉ dẫn, biển phụ và vạch kẻ đường — có hình vẽ và ý nghĩa ngắn gọn.",
+  path: "/bien-bao/",
+});
 
 export default function SignsPage() {
   return (

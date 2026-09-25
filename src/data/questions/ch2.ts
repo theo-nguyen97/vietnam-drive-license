@@ -88,7 +88,7 @@ export const CH2: Question[] = [
       "Không ảnh hưởng nếu đã quen đường.",
     ],
     answer: 1,
-    explanation: "Mệt mỏi, buồn ngủ làm giảm khả năng quan sát, phán đoán và phản xạ. Khi buồn ngủ, hãy dừng xe ở nơi an toàn để nghỉ ngơi. Người lái ô tô không được lái liên tục quá 4 giờ và không quá 10 giờ trong một ngày.",
+    explanation: "Mệt mỏi, buồn ngủ làm giảm khả năng quan sát, phán đoán và phản xạ. Khi buồn ngủ, hãy dừng xe ở nơi an toàn để nghỉ ngơi. Người lái xe ô tô kinh doanh vận tải không được lái liên tục quá 4 giờ, quá 10 giờ trong một ngày và quá 48 giờ trong một tuần.",
   },
   {
     id: 109, chapter: 2, only: "car",

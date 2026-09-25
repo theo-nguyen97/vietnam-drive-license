@@ -8,7 +8,8 @@ import { withBase } from "@/lib/basePath";
 export function ServiceWorkerRegister() {
   useEffect(() => {
     if (process.env.NODE_ENV !== "production" || !("serviceWorker" in navigator)) return;
-    navigator.serviceWorker.register(withBase("/sw.js"), { scope: withBase("/") }).catch(() => {});
+    // ?v= đổi theo bản build → trình duyệt tải lại sw.js, cache cũ được dọn ở bước activate.
+    navigator.serviceWorker.register(withBase(`/sw.js?v=${process.env.NEXT_PUBLIC_BUILD_ID ?? "dev"}`), { scope: withBase("/") }).catch(() => {});
   }, []);
   const online = useOnline();
   if (online) return null;
