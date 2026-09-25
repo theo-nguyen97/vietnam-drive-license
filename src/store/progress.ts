@@ -19,6 +19,8 @@ export interface QStat {
 export interface ExamRecord {
   id: string;
   license: LicenseId;
+  /** Số đề trong bộ đề (không có nếu là đề ngẫu nhiên). */
+  setNo?: number;
   at: number;
   correct: number;
   total: number;

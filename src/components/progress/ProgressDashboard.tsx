@@ -10,6 +10,7 @@ import { QUESTIONS } from "@/data/questions";
 import { activeStreak, useHydrated, useProgress } from "@/store/progress";
 import { licenseProgress } from "@/lib/stats";
 import { rankOf, RANKS } from "@/lib/rank";
+import { Button } from "@/components/ui/Button";
 
 export function ProgressDashboard() {
   const hydrated = useHydrated();
@@ -200,12 +201,12 @@ export function ProgressDashboard() {
         <h2 className="text-lg font-bold text-white">Sao lưu tiến độ</h2>
         <p className="mt-1 text-sm text-white/60">Tiến độ được lưu tự động trên trình duyệt này. Xuất tệp để chuyển sang máy khác.</p>
         <div className="mt-4 flex flex-wrap gap-3">
-          <button type="button" onClick={exportData} className="flex items-center gap-2 rounded-xl bg-white/10 px-4 py-2.5 text-sm font-bold text-white ring-1 ring-white/15 hover:bg-white/15">
-            <Download className="h-4 w-4" /> Xuất tệp
-          </button>
-          <button type="button" onClick={() => fileRef.current?.click()} className="flex items-center gap-2 rounded-xl bg-white/10 px-4 py-2.5 text-sm font-bold text-white ring-1 ring-white/15 hover:bg-white/15">
-            <Upload className="h-4 w-4" /> Nhập tệp
-          </button>
+          <Button variant="secondary" onClick={exportData} icon={<Download className="h-4 w-4" />}>
+            Xuất tệp
+          </Button>
+          <Button variant="secondary" onClick={() => fileRef.current?.click()} icon={<Upload className="h-4 w-4" />}>
+            Nhập tệp
+          </Button>
           <input
             ref={fileRef}
             type="file"
@@ -220,25 +221,25 @@ export function ProgressDashboard() {
           {confirmReset ? (
             <span className="flex items-center gap-2">
               <span className="text-sm text-red-300">Xoá toàn bộ tiến độ?</span>
-              <button
-                type="button"
+              <Button
+                variant="danger"
+                size="sm"
                 onClick={() => {
                   s.reset();
                   setConfirmReset(false);
                   setMsg("Đã xoá tiến độ.");
                 }}
-                className="rounded-xl bg-red-500 px-3 py-2 text-sm font-bold text-white"
               >
                 Xoá
-              </button>
-              <button type="button" onClick={() => setConfirmReset(false)} className="rounded-xl bg-white/10 px-3 py-2 text-sm font-bold text-white">
+              </Button>
+              <Button variant="secondary" size="sm" onClick={() => setConfirmReset(false)}>
                 Huỷ
-              </button>
+              </Button>
             </span>
           ) : (
-            <button type="button" onClick={() => setConfirmReset(true)} className="flex items-center gap-2 rounded-xl bg-red-500/10 px-4 py-2.5 text-sm font-bold text-red-300 ring-1 ring-red-400/30 hover:bg-red-500/20">
-              <Trash2 className="h-4 w-4" /> Xoá tiến độ
-            </button>
+            <Button variant="ghost" onClick={() => setConfirmReset(true)} className="text-red-300 hover:text-red-200" icon={<Trash2 className="h-4 w-4" />}>
+              Xoá tiến độ
+            </Button>
           )}
         </div>
         {msg && <p className="mt-3 text-sm text-lane">{msg}</p>}

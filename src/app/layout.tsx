@@ -1,23 +1,19 @@
 import type { Metadata, Viewport } from "next";
-import { Be_Vietnam_Pro, Bungee, Chakra_Petch } from "next/font/google";
+import { Exo_2, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
-const body = Be_Vietnam_Pro({
+const body = Plus_Jakarta_Sans({
   variable: "--font-body",
   subsets: ["latin", "vietnamese"],
   weight: ["400", "500", "600", "700", "800"],
 });
 
-const display = Bungee({
+/* Exo 2: dáng nghiêng, mạnh — hợp chất đua xe / game */
+const display = Exo_2({
   variable: "--font-disp",
   subsets: ["latin", "vietnamese"],
-  weight: "400",
-});
-
-const hud = Chakra_Petch({
-  variable: "--font-mono-hud",
-  subsets: ["latin", "vietnamese"],
-  weight: ["500", "700"],
+  weight: ["600", "700", "800", "900"],
+  style: ["normal", "italic"],
 });
 
 export const metadata: Metadata = {
@@ -35,7 +31,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="vi" className={`${body.variable} ${display.variable} ${hud.variable} h-full antialiased`}>
+    <html lang="vi" className={`${body.variable} ${display.variable} h-full antialiased`}>
       <body className="asphalt flex min-h-full flex-col">{children}</body>
     </html>
   );

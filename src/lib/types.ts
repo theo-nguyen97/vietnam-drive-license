@@ -107,6 +107,8 @@ export interface ExamConfig {
 
 export interface License {
   id: LicenseId;
+  /** Bộ câu hỏi dùng cho hạng (250 / 300 / 600 câu). */
+  bank: number;
   name: string;
   short: string;
   desc: string;

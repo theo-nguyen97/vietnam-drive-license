@@ -1,56 +1,111 @@
 import type { ChapterId, LicenseId, Question } from "@/lib/types";
 import { getLicense } from "@/data/licenses";
 import { questionsFor } from "@/data/questions";
-import { rng, shuffle } from "./random";
+import { hash, rng, shuffle } from "./random";
 
-/** Phân bổ số câu theo chương cho từng quy mô đề. */
-const PLAN: Record<number, Partial<Record<ChapterId, number>>> = {
-  25: { 1: 8, 2: 1, 3: 1, 5: 8, 6: 7 },
-  30: { 1: 9, 2: 1, 3: 2, 4: 1, 5: 9, 6: 8 },
-  35: { 1: 10, 2: 1, 3: 2, 4: 1, 5: 11, 6: 10 },
-  40: { 1: 11, 2: 2, 3: 2, 4: 2, 5: 12, 6: 11 },
-  45: { 1: 13, 2: 2, 3: 2, 4: 2, 5: 13, 6: 13 },
+/**
+ * Cấu trúc đề sát hạch lý thuyết áp dụng năm 2026
+ * (Thông tư 12/2025/TT-BCA, bộ câu hỏi áp dụng từ 01/6/2025).
+ * Mỗi đề có đúng 01 câu "tình huống mất an toàn giao thông nghiêm trọng" (điểm liệt),
+ * tính riêng ngoài số câu của chương 1.
+ *
+ * - A1, A, B1 (25 câu): 8 quy định chung · 1 điểm liệt · 1 văn hoá · 1 kỹ thuật · 8 báo hiệu · 6 sa hình
+ * - B  (30 câu): 8 · 1 · 1 · 1 kỹ thuật · 1 cấu tạo · 9 báo hiệu · 9 sa hình
+ * - C1 (35 câu): 10 · 1 · 1 · 2 · 1 · 10 · 10
+ * - C  (40 câu): 10 · 1 · 1 · 2 · 1 · 14 · 11
+ * - D1, D2, D, BE, C1E, CE, D1E, D2E, DE (45 câu): 10 · 1 · 1 · 2 · 1 · 16 · 14
+ */
+export const EXAM_PLAN: Record<number, Partial<Record<ChapterId, number>>> = {
+  25: { 1: 8, 2: 1, 3: 1, 5: 8, 6: 6 },
+  30: { 1: 8, 2: 1, 3: 1, 4: 1, 5: 9, 6: 9 },
+  35: { 1: 10, 2: 1, 3: 2, 4: 1, 5: 10, 6: 10 },
+  40: { 1: 10, 2: 1, 3: 2, 4: 1, 5: 14, 6: 11 },
+  45: { 1: 10, 2: 1, 3: 2, 4: 1, 5: 16, 6: 14 },
 };
 
-/** Tạo đề thi ngẫu nhiên: luôn có ít nhất 1 câu điểm liệt. */
-export function buildExam(license: LicenseId, seed: number): Question[] {
+/** Thứ tự hiển thị trong đề: chương 1 → câu điểm liệt → các chương còn lại. */
+function orderExam(qs: Question[]) {
+  const rank = (q: Question) => (q.critical ? 1.5 : q.chapter);
+  return qs.slice().sort((a, b) => rank(a) - rank(b) || a.id - b.id);
+}
+
+/** Lấy lần lượt từ một hàng đợi vòng tròn — giúp các đề phủ đều ngân hàng câu hỏi. */
+class Cycle<T extends { id: number }> {
+  private i = 0;
+  private items: T[];
+  constructor(items: T[]) {
+    this.items = items;
+  }
+  take(n: number, used: Set<number>): T[] {
+    const out: T[] = [];
+    if (!this.items.length) return out;
+    let guard = 0;
+    while (out.length < n && guard < this.items.length * 2) {
+      const it = this.items[this.i % this.items.length];
+      this.i++;
+      guard++;
+      if (!used.has(it.id)) {
+        out.push(it);
+        used.add(it.id);
+      }
+    }
+    return out;
+  }
+}
+
+function compose(license: LicenseId, pick: (ch: ChapterId | "critical", n: number, used: Set<number>) => Question[]) {
   const lic = getLicense(license)!;
   const total = lic.exam.total;
+  const plan = EXAM_PLAN[total] ?? EXAM_PLAN[45];
+  const used = new Set<number>();
+  const out: Question[] = [...pick("critical", 1, used)];
+  for (const [ch, n] of Object.entries(plan)) out.push(...pick(Number(ch) as ChapterId, n!, used));
+  // Bù (nếu một chương nào đó chưa đủ câu) bằng câu thường ở chương 1, 5, 6.
+  for (const ch of [1, 5, 6] as ChapterId[]) {
+    if (out.length >= total) break;
+    out.push(...pick(ch, total - out.length, used));
+  }
+  return orderExam(out.slice(0, total));
+}
+
+/** Tạo đề ngẫu nhiên (thi thử nhanh). */
+export function buildExam(license: LicenseId, seed: number): Question[] {
   const rand = rng(seed);
   const pool = questionsFor(license);
-  const plan = PLAN[total] ?? PLAN[45];
-  const picked = new Set<number>();
-  const out: Question[] = [];
+  return compose(license, (ch, n, used) => {
+    const src = ch === "critical" ? pool.filter((q) => q.critical) : pool.filter((q) => q.chapter === ch && !q.critical);
+    return shuffle(src, rand)
+      .filter((q) => !used.has(q.id))
+      .slice(0, n)
+      .map((q) => (used.add(q.id), q));
+  });
+}
 
-  const critical = shuffle(pool.filter((q) => q.critical), rand);
-  if (critical[0]) {
-    out.push(critical[0]);
-    picked.add(critical[0].id);
+/** Số đề trong bộ đề của mỗi hạng. */
+export function setCount(license: LicenseId) {
+  return getLicense(license)!.group === "moto" ? 10 : 20;
+}
+
+const SET_CACHE = new Map<LicenseId, Question[][]>();
+
+/**
+ * Bộ đề cố định của từng hạng (Đề số 1…N). Sinh tất định từ mã hạng nên mọi
+ * người dùng đều có cùng bộ đề; các câu được xoay vòng để phủ đều ngân hàng câu hỏi
+ * và mỗi đề có một câu điểm liệt khác nhau (khi đủ câu).
+ */
+export function examSets(license: LicenseId): Question[][] {
+  const cached = SET_CACHE.get(license);
+  if (cached) return cached;
+  const rand = rng(hash(license.split("").reduce((a, c) => a * 31 + c.charCodeAt(0), 7)));
+  const pool = questionsFor(license);
+  const cycles = new Map<ChapterId | "critical", Cycle<Question>>();
+  cycles.set("critical", new Cycle(shuffle(pool.filter((q) => q.critical), rand)));
+  for (const ch of [1, 2, 3, 4, 5, 6] as ChapterId[]) {
+    cycles.set(ch, new Cycle(shuffle(pool.filter((q) => q.chapter === ch && !q.critical), rand)));
   }
-
-  for (const [chStr, count] of Object.entries(plan)) {
-    const ch = Number(chStr) as ChapterId;
-    let need = count! - out.filter((q) => q.chapter === ch).length;
-    const candidates = shuffle(pool.filter((q) => q.chapter === ch && !q.critical && !picked.has(q.id)), rand);
-    for (const q of candidates) {
-      if (need <= 0) break;
-      out.push(q);
-      picked.add(q.id);
-      need--;
-    }
-  }
-
-  // Bù nếu ngân hàng chưa đủ câu ở chương nào đó.
-  if (out.length < total) {
-    const rest = shuffle(pool.filter((q) => !picked.has(q.id) && !q.critical), rand);
-    for (const q of rest) {
-      if (out.length >= total) break;
-      out.push(q);
-      picked.add(q.id);
-    }
-  }
-
-  return out.slice(0, total).sort((a, b) => a.chapter - b.chapter || a.id - b.id);
+  const sets = Array.from({ length: setCount(license) }, () => compose(license, (ch, n, used) => cycles.get(ch)!.take(n, used)));
+  SET_CACHE.set(license, sets);
+  return sets;
 }
 
 export interface ExamResult {

@@ -14,6 +14,7 @@ import { SceneStage, type Outcome } from "./SceneStage";
 import { QuestionView } from "./QuestionView";
 import { QuestionGrid } from "./QuestionGrid";
 import { SoundToggle } from "@/components/ui/SoundToggle";
+import { Button, ButtonLink, iconButtonClass } from "@/components/ui/Button";
 
 export function PracticeRunner({ license, set }: { license: LicenseId; set: string }) {
   const hydrated = useHydrated();
@@ -122,9 +123,7 @@ function PracticeSession({ license, set, onRestart }: { license: LicenseId; set:
             ? "Bạn chưa có câu nào trả lời sai ở lần gần nhất. Hãy ôn thêm các chương hoặc thi thử."
             : "Bấm biểu tượng dấu trang trên câu hỏi để lưu lại những câu cần ôn."}
         </p>
-        <Link href={backHref} className="rounded-xl bg-lane px-5 py-2.5 font-bold text-slate-900">
-          Về bản đồ hạng {lic.id}
-        </Link>
+        <ButtonLink href={backHref}>Về bản đồ hạng {lic.id}</ButtonLink>
       </div>
     );
   }
@@ -149,16 +148,16 @@ function PracticeSession({ license, set, onRestart }: { license: LicenseId; set:
             </div>
             <div className="mt-6 flex flex-wrap justify-center gap-3">
               {wrong.length > 0 && (
-                <Link href={`${backHref}/on-tap/cau-sai`} className="flex items-center gap-2 rounded-xl bg-red-500 px-4 py-2.5 font-bold text-white">
-                  <RotateCcw className="h-4 w-4" /> Ôn lại {wrong.length} câu sai
-                </Link>
+                <ButtonLink href={`${backHref}/on-tap/cau-sai`} variant="danger" icon={<RotateCcw className="h-4 w-4" />}>
+                  Ôn lại {wrong.length} câu sai
+                </ButtonLink>
               )}
-              <button type="button" onClick={onRestart} className="rounded-xl bg-white/10 px-4 py-2.5 font-bold text-white ring-1 ring-white/15">
+              <Button variant="secondary" onClick={onRestart}>
                 Chạy lại chặng này
-              </button>
-              <Link href={`${backHref}/thi-thu`} className="flex items-center gap-2 rounded-xl bg-lane px-4 py-2.5 font-bold text-slate-900">
-                <Trophy className="h-4 w-4" /> Thi thử
-              </Link>
+              </Button>
+              <ButtonLink href={`${backHref}/bo-de`} icon={<Trophy className="h-4 w-4" />}>
+                Bộ đề 2026
+              </ButtonLink>
             </div>
           </div>
         </motion.div>
@@ -176,7 +175,7 @@ function PracticeSession({ license, set, onRestart }: { license: LicenseId; set:
       {/* HUD */}
       <div className="sticky top-0 z-30 border-b border-white/5 bg-asphalt-950/85 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center gap-3 px-3 py-2 sm:px-4">
-          <Link href={backHref} className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/5 ring-1 ring-white/10 hover:bg-white/10" aria-label="Quay lại">
+          <Link href={backHref} className={iconButtonClass()} aria-label="Quay lại">
             <ChevronLeft className="h-5 w-5" />
           </Link>
           <div className="min-w-0 flex-1">
@@ -208,7 +207,7 @@ function PracticeSession({ license, set, onRestart }: { license: LicenseId; set:
           <button
             type="button"
             onClick={() => setShowGrid((v) => !v)}
-            className={clsx("flex h-9 w-9 items-center justify-center rounded-xl ring-1 ring-white/10 transition", showGrid ? "bg-lane text-slate-900" : "bg-white/5 hover:bg-white/10")}
+            className={iconButtonClass(showGrid)}
             aria-label="Danh sách câu hỏi"
           >
             <Grid3x3 className="h-4 w-4" />
@@ -256,25 +255,17 @@ function PracticeSession({ license, set, onRestart }: { license: LicenseId; set:
       {/* Thanh điều hướng */}
       <div className="fixed inset-x-0 bottom-0 z-30 border-t border-white/5 bg-asphalt-950/90 backdrop-blur lg:static lg:border-0 lg:bg-transparent">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-3 py-3 sm:px-4 lg:justify-end lg:pb-8">
-          <button
-            type="button"
-            onClick={prev}
-            disabled={idx === 0}
-            className="flex items-center gap-1.5 rounded-xl bg-white/5 px-4 py-3 text-sm font-semibold text-white ring-1 ring-white/10 transition hover:bg-white/10 disabled:opacity-40"
-          >
-            <ArrowLeft className="h-4 w-4" /> Trước
-          </button>
-          <button
-            type="button"
+          <Button variant="secondary" onClick={prev} disabled={idx === 0} icon={<ArrowLeft className="h-4 w-4" />}>
+            Trước
+          </Button>
+          <Button
+            variant={answered ? "primary" : "secondary"}
             onClick={answered ? next : () => setIdx((i) => Math.min(questions.length - 1, i + 1))}
-            className={clsx(
-              "flex flex-1 items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-extrabold transition sm:flex-none",
-              answered ? "bg-lane text-slate-900 shadow-[0_6px_24px_rgba(255,210,63,.35)] hover:brightness-110" : "bg-white/5 text-white/70 ring-1 ring-white/10 hover:bg-white/10",
-            )}
+            className="flex-1 sm:flex-none sm:min-w-44"
+            iconRight={<ArrowRight className="h-4 w-4" />}
           >
             {answered ? (idx === questions.length - 1 ? "Về đích 🏁" : "Tiếp tục") : "Bỏ qua"}
-            <ArrowRight className="h-4 w-4" />
-          </button>
+          </Button>
         </div>
       </div>
     </div>

@@ -14,10 +14,25 @@ mở và xe chạy tiếp, trả lời sai thì bị "thổi còi" kèm giải t
   mô phỏng chạy các xe **đúng thứ tự** kèm chú thích từng bước; xe vi phạm được đánh dấu.
 - **Cảnh lái 3D giả lập** cho câu hỏi thường: xe người chơi chạy tới trạm, biển báo dựng bên đường, đèn tín hiệu, CSGT, đường sắt có tàu
   chạy qua, trời mưa, sương mù, ban đêm, xe cứu thương trong gương chiếu hậu…
-- **Thi thử**: đề ngẫu nhiên đúng số câu / thời gian / điểm đạt của từng hạng, luôn có câu điểm liệt (sai là trượt), đếm ngược 3‑2‑1,
+- **Bộ đề 2026**: mỗi hạng có bộ đề cố định (10 đề cho A1, A, B1 · 20 đề cho các hạng ô tô), cấu trúc theo Thông tư 12/2025/TT-BCA
+  (bộ câu hỏi áp dụng từ 01/6/2025), lưu kết quả từng đề. Ngoài ra có **thi thử ngẫu nhiên** trộn đề mới mỗi lần.
+- **Thi**: đúng số câu / thời gian / điểm đạt, đúng 01 câu điểm liệt mỗi đề (sai là trượt), đếm ngược 3‑2‑1,
   tự nộp khi hết giờ, xem lại bài có lọc câu sai / điểm liệt.
 - **Lưu tiến độ** (localStorage): thống kê từng câu, lịch sử thi, XP & cấp bậc, chuỗi ngày học, câu đã lưu; xuất/nhập tệp JSON.
 - **Thư viện biển báo** vẽ bằng SVG, có tìm kiếm không dấu.
+
+## Cấu trúc đề thi (Thông tư 12/2025/TT-BCA)
+
+| Hạng | Bộ câu hỏi | Số câu | Thời gian | Đạt | Quy định chung | Điểm liệt | Văn hoá | Kỹ thuật | Cấu tạo | Báo hiệu | Sa hình |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| A1 | 250 | 25 | 19' | 21 | 8 | 1 | 1 | 1 | – | 8 | 6 |
+| A, B1 | 250 / 300 | 25 | 19' | 23 | 8 | 1 | 1 | 1 | – | 8 | 6 |
+| B | 600 | 30 | 20' | 27 | 8 | 1 | 1 | 1 | 1 | 9 | 9 |
+| C1 | 600 | 35 | 22' | 32 | 10 | 1 | 1 | 2 | 1 | 10 | 10 |
+| C | 600 | 40 | 24' | 36 | 10 | 1 | 1 | 2 | 1 | 14 | 11 |
+| D1, D2, D, BE, C1E, CE, D1E, D2E, DE | 600 | 45 | 26' | 41 | 10 | 1 | 1 | 2 | 1 | 16 | 14 |
+
+Bộ đề được sinh tất định trong `src/lib/exam.ts` (`examSets`): các câu được xoay vòng để phủ đều ngân hàng và mỗi đề có một câu điểm liệt khác nhau.
 
 ## Chạy dự án
 
@@ -90,6 +105,6 @@ Câu thường có thể chọn bối cảnh cho cảnh lái: `scene: { kind: "r
 
 ## Lưu ý về nội dung
 
-Ngân hàng câu hỏi hiện tại (~180 câu) được biên soạn theo Luật Trật tự, an toàn giao thông đường bộ 2024, các quy định về tốc độ,
+Ngân hàng câu hỏi hiện tại (235 câu, 26 câu điểm liệt, 31 sa hình động) được biên soạn theo Luật Trật tự, an toàn giao thông đường bộ 2024, các quy định về tốc độ,
 khoảng cách an toàn và QCVN 41 về báo hiệu đường bộ để phục vụ ôn luyện. Đây **không phải** bản sao bộ 600 câu sát hạch chính thức —
 hãy đối chiếu với bộ đề do cơ quan có thẩm quyền ban hành. Cấu trúc dữ liệu cho phép nhập bộ đề chính thức khi có nguồn.

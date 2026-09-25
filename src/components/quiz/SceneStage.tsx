@@ -8,6 +8,7 @@ import { DriveScene } from "@/components/scene/DriveScene";
 import { JunctionScene } from "@/components/scene/JunctionScene";
 import { getChapter } from "@/data/chapters";
 import { hash } from "@/lib/random";
+import { buttonClass } from "@/components/ui/Button";
 
 export type Outcome = null | "correct" | "wrong";
 
@@ -84,7 +85,7 @@ export function SceneStage({
         <button
           type="button"
           onClick={onReplay}
-          className="absolute bottom-2 right-2 flex items-center gap-1.5 rounded-xl bg-lane px-3 py-1.5 text-xs font-bold text-slate-900 shadow-lg transition hover:brightness-110 sm:bottom-3 sm:right-3 sm:text-sm"
+          className={buttonClass({ size: "sm", className: "absolute bottom-2.5 right-2.5 sm:bottom-3 sm:right-3" })}
         >
           {jPlaying ? <RotateCcw className="h-4 w-4" /> : <Play className="h-4 w-4" />}
           {jPlaying ? "Xem lại" : "Xem mô phỏng"}

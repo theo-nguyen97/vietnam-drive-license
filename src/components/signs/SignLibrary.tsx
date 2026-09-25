@@ -22,13 +22,16 @@ export function SignLibrary() {
           <Search className="h-4 w-4 text-white/40" />
           <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Tìm biển: “cấm đỗ”, “P.102”, “trẻ em”…" className="w-full bg-transparent py-2.5 text-sm text-white outline-none placeholder:text-white/30" />
         </label>
-        <div className="flex gap-1.5 overflow-x-auto thin-scroll">
+        <div className="flex gap-1 overflow-x-auto rounded-2xl bg-black/30 p-1 ring-1 ring-white/10 thin-scroll">
           {[{ id: "all" as const, name: "Tất cả" }, ...SIGN_GROUPS].map((g) => (
             <button
               key={g.id}
               type="button"
               onClick={() => setGroup(g.id)}
-              className={clsx("shrink-0 rounded-lg px-3 py-2 text-xs font-bold", group === g.id ? "bg-lane text-slate-900" : "bg-white/5 text-white/70 hover:bg-white/10")}
+              className={clsx(
+                "shrink-0 rounded-xl px-3.5 py-2 text-xs font-bold transition",
+                group === g.id ? "bg-[linear-gradient(180deg,#ffe57a,#f5b700)] text-slate-950 shadow-[inset_0_1px_0_rgba(255,255,255,.6),0_2px_0_#a87800]" : "text-white/70 hover:bg-white/10 hover:text-white",
+              )}
             >
               {g.name.replace("Biển báo ", "").replace("Biển ", "")}
             </button>

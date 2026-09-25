@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { motion } from "motion/react";
-import { Trophy, Shuffle, AlertTriangle, RotateCcw, Bookmark, ListOrdered, ChevronRight } from "lucide-react";
+import { Trophy, Shuffle, AlertTriangle, RotateCcw, Bookmark, ListOrdered, ChevronRight, Dices } from "lucide-react";
+import { setCount } from "@/lib/exam";
 import clsx from "clsx";
 import type { LicenseId } from "@/lib/types";
 import { getLicense } from "@/data/licenses";
@@ -49,6 +50,7 @@ export function LicenseHub({ license }: { license: LicenseId }) {
             <div className="mt-4 flex flex-wrap gap-2 text-xs font-semibold">
               <Pill>Tuổi tối thiểu: {lic.minAge}</Pill>
               <Pill>Thời hạn: {lic.validity}</Pill>
+              <Pill>Bộ {lic.bank} câu</Pill>
               <Pill>
                 Đề thi: {lic.exam.total} câu / {lic.exam.minutes} phút
               </Pill>
@@ -75,19 +77,22 @@ export function LicenseHub({ license }: { license: LicenseId }) {
       {/* Hành động nhanh */}
       <section className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <Link
-          href={`${base}/thi-thu`}
-          className="group relative flex items-center gap-4 overflow-hidden rounded-3xl bg-lane p-5 text-slate-900 shadow-[0_10px_40px_rgba(255,210,63,.25)] transition hover:brightness-110 sm:col-span-2"
+          href={`${base}/bo-de`}
+          className="group relative flex items-center gap-4 overflow-hidden rounded-3xl bg-[linear-gradient(180deg,#ffe57a_0%,#ffd23f_45%,#f5b700_100%)] p-5 text-slate-950 shadow-[inset_0_1px_0_rgba(255,255,255,.7),0_6px_0_#a87800,0_18px_40px_-10px_rgba(255,200,40,.5)] transition duration-150 hover:-translate-y-0.5 active:translate-y-1.5 active:shadow-[0_1px_0_#a87800] sm:col-span-2"
         >
-          <div className="hazard-stripes absolute inset-y-0 right-0 w-10 opacity-60" />
-          <Trophy className="h-10 w-10 shrink-0" />
+          <div className="hazard-stripes absolute inset-y-0 right-0 w-10 opacity-50" />
+          <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-slate-950/90 text-lane">
+            <Trophy className="h-7 w-7" />
+          </span>
           <div>
-            <div className="font-display text-2xl">THI THỬ</div>
+            <div className="font-display text-2xl leading-tight">BỘ ĐỀ 2026 · {setCount(license)} ĐỀ</div>
             <div className="text-sm font-semibold opacity-80">
-              Đề ngẫu nhiên {lic.exam.total} câu · {lic.exam.minutes} phút · có câu điểm liệt
+              {lic.exam.total} câu · {lic.exam.minutes} phút · đạt {lic.exam.pass} · theo Thông tư 12/2025/TT-BCA
             </div>
           </div>
           <ChevronRight className="ml-auto mr-8 h-6 w-6 transition group-hover:translate-x-1" />
         </Link>
+        <QuickSet href={`${base}/thi-thu`} icon={<Dices className="h-5 w-5" />} title="Thi thử ngẫu nhiên" desc="Đề trộn mới mỗi lần" tone="text-lane bg-lane/10 ring-lane/25" />
         <QuickSet href={`${base}/on-tap/diem-liet`} icon={<AlertTriangle className="h-5 w-5" />} title="Câu điểm liệt" desc={`${p.critical} câu — sai là trượt`} tone="text-red-300 bg-red-500/10 ring-red-400/25" />
         <QuickSet href={`${base}/on-tap/ngau-nhien`} icon={<Shuffle className="h-5 w-5" />} title="Chạy ngẫu nhiên" desc="20 câu bất kỳ" tone="text-sky-300 bg-sky-500/10 ring-sky-400/25" />
         <QuickSet href={`${base}/on-tap/cau-sai`} icon={<RotateCcw className="h-5 w-5" />} title="Câu hay sai" desc={hydrated ? `${p.wrong} câu cần ôn lại` : "Ôn lại câu sai"} tone="text-orange-300 bg-orange-500/10 ring-orange-400/25" />
@@ -159,8 +164,8 @@ export function LicenseHub({ license }: { license: LicenseId }) {
             })}
             <li className="relative flex items-center gap-4 md:justify-center">
               <div className="relative z-10 flex h-[52px] w-[52px] items-center justify-center rounded-full border-4 border-white bg-[conic-gradient(#111_0_25%,#fff_0_50%,#111_0_75%,#fff_0)] text-lg" />
-              <Link href={`${base}/thi-thu`} className="font-display text-lg text-lane hover:underline md:absolute md:left-1/2 md:ml-10">
-                ĐÍCH: THI THỬ →
+              <Link href={`${base}/bo-de`} className="font-display text-lg text-lane hover:underline md:absolute md:left-1/2 md:ml-10">
+                ĐÍCH: BỘ ĐỀ 2026 →
               </Link>
             </li>
           </ol>
@@ -185,7 +190,10 @@ function Metric({ k, v }: { k: string; v: string }) {
 
 function QuickSet({ href, icon, title, desc, tone }: { href: string; icon: React.ReactNode; title: string; desc: string; tone: string }) {
   return (
-    <Link href={href} className="group flex items-center gap-3 rounded-3xl bg-asphalt-850 p-4 ring-1 ring-white/10 transition hover:bg-asphalt-800">
+    <Link
+      href={href}
+      className="group flex items-center gap-3 rounded-3xl bg-[linear-gradient(180deg,#222834,#1a1f29)] p-4 ring-1 ring-inset ring-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,.07),0_5px_0_#0b0d12] transition duration-150 hover:-translate-y-0.5 hover:ring-white/20 active:translate-y-1 active:shadow-none"
+    >
       <span className={clsx("flex h-11 w-11 items-center justify-center rounded-2xl ring-1", tone)}>{icon}</span>
       <div className="min-w-0">
         <div className="font-bold text-white">{title}</div>

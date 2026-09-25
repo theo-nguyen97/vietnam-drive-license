@@ -3,7 +3,7 @@
 @theme inline {
   --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-disp), var(--font-body), sans-serif;
-  --font-hud: var(--font-mono-hud), ui-monospace, monospace;
+  --font-hud: var(--font-disp), ui-sans-serif, sans-serif;
   --color-asphalt-950: #0b0d12;
   --color-asphalt-900: #12151c;
   --color-asphalt-850: #171b24;
@@ -29,6 +29,7 @@ body {
 
 body {
   font-family: var(--font-sans);
+  font-feature-settings: "ss01", "cv11";
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -89,3 +90,16 @@ body {
 /* thanh cuộn */
 .thin-scroll::-webkit-scrollbar { height: 6px; width: 6px; }
 .thin-scroll::-webkit-scrollbar-thumb { background: #3a4252; border-radius: 99px; }
+
+/* Tiêu đề kiểu đường đua: Exo 2 nghiêng, rất đậm */
+.font-display {
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: -0.01em;
+}
+/* Số trên HUD: Exo 2 đậm, số đều nhau */
+.font-hud {
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+}

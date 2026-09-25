@@ -7,17 +7,18 @@ import { ArrowLeft, ArrowRight, ChevronLeft, Clock, KeyRound, Send, ListChecks, 
 import clsx from "clsx";
 import type { LicenseId, Question } from "@/lib/types";
 import { getLicense } from "@/data/licenses";
-import { buildExam, gradeExam, type ExamResult } from "@/lib/exam";
+import { buildExam, examSets, gradeExam, setCount as totalSets, type ExamResult } from "@/lib/exam";
 import { useHydrated, useProgress } from "@/store/progress";
 import { sfx } from "@/lib/sound";
 import { SceneStage } from "./SceneStage";
 import { QuestionView } from "./QuestionView";
 import { QuestionGrid } from "./QuestionGrid";
 import { SoundToggle } from "@/components/ui/SoundToggle";
+import { Button, ButtonLink, iconButtonClass } from "@/components/ui/Button";
 
 type Stage = "ready" | "countdown" | "running" | "result" | "review";
 
-export function ExamRunner({ license }: { license: LicenseId }) {
+export function ExamRunner({ license, setNo }: { license: LicenseId; setNo?: number }) {
   const lic = getLicense(license)!;
   const hydrated = useHydrated();
   const [stage, setStage] = useState<Stage>("ready");
@@ -43,7 +44,7 @@ export function ExamRunner({ license }: { license: LicenseId }) {
   const start = () => {
     const sd = Date.now() % 1_000_000_007;
     setSeed(sd);
-    setQuestions(buildExam(license, sd));
+    setQuestions(setNo ? examSets(license)[setNo - 1] : buildExam(license, sd));
     setAnswers({});
     setIdx(0);
     setResult(null);
@@ -84,8 +85,9 @@ export function ExamRunner({ license }: { license: LicenseId }) {
       if (answers[q.id] !== undefined) record(q.id, answers[q.id] === q.answer);
     }
     addExam({
-      id: `${license}-${seed}`,
+      id: `${license}-${setNo ?? "r"}-${seed}`,
       license,
+      setNo,
       at: Date.now(),
       correct: r.correct,
       total: r.total,
@@ -99,7 +101,7 @@ export function ExamRunner({ license }: { license: LicenseId }) {
     else sfx.lose();
     setConfirm(false);
     setStage("result");
-  }, [license, questions, answers, record, addExam, addXp, seed, startedAt]);
+  }, [license, setNo, questions, answers, record, addExam, addXp, seed, startedAt]);
 
   // Đồng hồ
   useEffect(() => {
@@ -154,11 +156,11 @@ export function ExamRunner({ license }: { license: LicenseId }) {
 
   /* ---------- Màn chuẩn bị ---------- */
   if (stage === "ready" || stage === "countdown") {
-    const history = exams.filter((e) => e.license === license).slice(0, 5);
+    const history = exams.filter((e) => e.license === license && (setNo ? e.setNo === setNo : true)).slice(0, 5);
     return (
       <div className="relative mx-auto w-full max-w-3xl flex-1 px-4 py-8">
-        <Link href={backHref} className="mb-4 inline-flex items-center gap-1 text-sm text-white/60 hover:text-white">
-          <ChevronLeft className="h-4 w-4" /> Hạng {lic.id}
+        <Link href={setNo ? `${backHref}/bo-de` : backHref} className="mb-4 inline-flex items-center gap-1 text-sm font-semibold text-white/60 hover:text-white">
+          <ChevronLeft className="h-4 w-4" /> {setNo ? `Bộ đề hạng ${lic.id}` : `Hạng ${lic.id}`}
         </Link>
         <div className="overflow-hidden rounded-3xl bg-asphalt-850 ring-1 ring-white/10">
           <div className="hazard-stripes h-3" />
@@ -168,8 +170,8 @@ export function ExamRunner({ license }: { license: LicenseId }) {
                 {lic.id}
               </span>
               <div>
-                <p className="text-sm font-semibold uppercase tracking-widest text-white/50">Sát hạch thử</p>
-                <h1 className="font-display text-2xl text-white sm:text-3xl">Đề thi hạng {lic.id}</h1>
+                <p className="text-sm font-semibold uppercase tracking-widest text-white/50">{setNo ? `Bộ đề 2026 · ${setNo}/${totalSets(license)}` : "Đề ngẫu nhiên"}</p>
+                <h1 className="font-display text-2xl text-white sm:text-3xl">{setNo ? `Đề số ${setNo} — hạng ${lic.id}` : `Thi thử hạng ${lic.id}`}</h1>
               </div>
             </div>
             <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -179,18 +181,13 @@ export function ExamRunner({ license }: { license: LicenseId }) {
               <Rule k="Điểm liệt" v="Sai = trượt" warn />
             </div>
             <ul className="mt-6 space-y-2 text-sm text-white/70">
-              <li>• Đề được trộn ngẫu nhiên từ các chương, luôn có ít nhất một câu điểm liệt.</li>
+              <li>• Cấu trúc đề theo Thông tư 12/2025/TT-BCA (bộ {lic.bank} câu): đủ các nhóm quy định chung, văn hoá, kỹ thuật, biển báo, sa hình và đúng 01 câu điểm liệt.</li>
               <li>• Có thể đổi đáp án và quay lại câu trước bất cứ lúc nào trước khi nộp bài.</li>
               <li>• Hết giờ hệ thống tự nộp bài. Kết quả và giải thích hiển thị sau khi nộp.</li>
             </ul>
-            <button
-              type="button"
-              onClick={start}
-              disabled={stage === "countdown"}
-              className="mt-8 flex w-full items-center justify-center gap-3 rounded-2xl bg-lane py-4 font-display text-xl text-slate-900 shadow-[0_10px_40px_rgba(255,210,63,.35)] transition hover:brightness-110 disabled:opacity-70"
-            >
-              <KeyRound className="h-6 w-6" /> NỔ MÁY — BẮT ĐẦU
-            </button>
+            <Button size="xl" block onClick={start} disabled={stage === "countdown"} className="mt-8" icon={<KeyRound className="h-6 w-6" />}>
+              NỔ MÁY — BẮT ĐẦU THI
+            </Button>
           </div>
         </div>
         {history.length > 0 && (
@@ -238,7 +235,9 @@ export function ExamRunner({ license }: { license: LicenseId }) {
       <div className="mx-auto w-full max-w-2xl flex-1 px-4 py-8">
         <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="relative overflow-hidden rounded-3xl bg-asphalt-850 p-6 text-center ring-1 ring-white/10 sm:p-8">
           {result.passed && <Confetti />}
-          <p className="text-sm font-semibold uppercase tracking-widest text-white/50">Kết quả sát hạch hạng {lic.id}</p>
+          <p className="text-sm font-semibold uppercase tracking-widest text-white/50">
+            Kết quả {setNo ? `đề số ${setNo}` : "thi thử"} · hạng {lic.id}
+          </p>
           <motion.div
             initial={{ scale: 2.4, rotate: -18, opacity: 0 }}
             animate={{ scale: 1, rotate: -8, opacity: 1 }}
@@ -262,23 +261,36 @@ export function ExamRunner({ license }: { license: LicenseId }) {
           )}
           <p className="mt-4 text-sm text-white/60">{result.passed ? "Tuyệt vời! Bạn đã sẵn sàng cho kỳ sát hạch thật. 🎉" : "Đừng nản! Xem lại các câu sai rồi thử một đề khác nhé."}</p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
-            <button
-              type="button"
+            <Button
+              variant="secondary"
               onClick={() => {
                 setFilter(result.wrongIds.length ? "wrong" : "all");
                 setIdx(result.wrongIds.length ? questions.findIndex((q) => result.wrongIds.includes(q.id)) : 0);
                 setStage("review");
               }}
-              className="flex items-center gap-2 rounded-xl bg-white/10 px-4 py-2.5 font-bold text-white ring-1 ring-white/15"
+              icon={<ListChecks className="h-4 w-4" />}
             >
-              <ListChecks className="h-4 w-4" /> Xem lại bài làm
-            </button>
-            <button type="button" onClick={start} className="flex items-center gap-2 rounded-xl bg-lane px-4 py-2.5 font-bold text-slate-900">
-              <RotateCcw className="h-4 w-4" /> Thi đề khác
-            </button>
+              Xem lại bài làm
+            </Button>
+            {setNo ? (
+              <>
+                <Button variant="outline" onClick={start} icon={<RotateCcw className="h-4 w-4" />}>
+                  Làm lại đề {setNo}
+                </Button>
+                {setNo < totalSets(license) && (
+                  <ButtonLink href={`${backHref}/bo-de/${setNo + 1}`} iconRight={<ArrowRight className="h-4 w-4" />}>
+                    Đề số {setNo + 1}
+                  </ButtonLink>
+                )}
+              </>
+            ) : (
+              <Button onClick={start} icon={<RotateCcw className="h-4 w-4" />}>
+                Thi đề khác
+              </Button>
+            )}
           </div>
-          <Link href={backHref} className="mt-4 inline-block text-sm text-white/60 hover:underline">
-            ← Về bản đồ hạng {lic.id}
+          <Link href={setNo ? `${backHref}/bo-de` : backHref} className="mt-5 inline-block text-sm font-semibold text-white/60 hover:text-white">
+            ← {setNo ? `Về bộ đề hạng ${lic.id}` : `Về bản đồ hạng ${lic.id}`}
           </Link>
         </motion.div>
       </div>
@@ -299,7 +311,7 @@ export function ExamRunner({ license }: { license: LicenseId }) {
           <button
             type="button"
             onClick={() => (review ? setStage("result") : setConfirm(true))}
-            className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/5 ring-1 ring-white/10 hover:bg-white/10"
+            className={iconButtonClass()}
             aria-label="Quay lại"
           >
             <ChevronLeft className="h-5 w-5" />
@@ -309,7 +321,7 @@ export function ExamRunner({ license }: { license: LicenseId }) {
               <span className="rounded-md px-1.5 py-0.5 font-display text-xs text-slate-900" style={{ background: lic.color }}>
                 {lic.id}
               </span>
-              <span className="truncate font-semibold text-white">{review ? "Xem lại bài thi" : "Đang thi thử"}</span>
+              <span className="truncate font-semibold text-white">{review ? "Xem lại bài thi" : setNo ? `Đề số ${setNo}` : "Đang thi thử"}</span>
             </div>
             <div className="text-xs text-white/50">
               Đã trả lời <span className="font-hud font-bold text-white">{answeredCount}</span>/{questions.length}
@@ -329,9 +341,9 @@ export function ExamRunner({ license }: { license: LicenseId }) {
           )}
           <SoundToggle />
           {!review && (
-            <button type="button" onClick={() => setConfirm(true)} className="hidden items-center gap-1.5 rounded-xl bg-lane px-3 py-2 text-sm font-extrabold text-slate-900 sm:flex">
-              <Send className="h-4 w-4" /> Nộp bài
-            </button>
+            <Button size="sm" onClick={() => setConfirm(true)} className="hidden sm:inline-flex" icon={<Send className="h-4 w-4" />}>
+              Nộp bài
+            </Button>
           )}
         </div>
       </div>
@@ -363,7 +375,7 @@ export function ExamRunner({ license }: { license: LicenseId }) {
                       const first = questions.findIndex((x) => (k === "wrong" ? answers[x.id] !== x.answer : k === "critical" ? x.critical : true));
                       if (first >= 0) setIdx(first);
                     }}
-                    className={clsx("rounded-lg px-3 py-1 text-xs font-bold", filter === k ? "bg-lane text-slate-900" : "bg-white/5 text-white/70")}
+                    className={clsx("rounded-lg px-3 py-1.5 text-xs font-bold transition", filter === k ? "bg-lane text-slate-900 shadow-[0_2px_0_#a87800]" : "bg-white/5 text-white/70 hover:bg-white/10")}
                   >
                     {label}
                   </button>
@@ -400,25 +412,24 @@ export function ExamRunner({ license }: { license: LicenseId }) {
 
       <div className="fixed inset-x-0 bottom-0 z-30 border-t border-white/5 bg-asphalt-950/90 backdrop-blur lg:static lg:border-0 lg:bg-transparent">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-3 py-3 sm:px-4 lg:justify-end lg:pb-8">
-          <button
-            type="button"
+          <Button
+            variant="secondary"
             onClick={() => {
               if (review) {
                 const pos = reviewList.indexOf(idx);
                 if (pos > 0) setIdx(reviewList[pos - 1]);
               } else setIdx(Math.max(0, idx - 1));
             }}
-            className="flex items-center gap-1.5 rounded-xl bg-white/5 px-4 py-3 text-sm font-semibold text-white ring-1 ring-white/10 hover:bg-white/10"
+            icon={<ArrowLeft className="h-4 w-4" />}
           >
-            <ArrowLeft className="h-4 w-4" /> Trước
-          </button>
+            Trước
+          </Button>
           {!review && (
-            <button type="button" onClick={() => setConfirm(true)} className="flex items-center gap-1.5 rounded-xl bg-white/5 px-4 py-3 text-sm font-bold text-lane ring-1 ring-lane/40 sm:hidden">
-              <Send className="h-4 w-4" /> Nộp
-            </button>
+            <Button variant="outline" onClick={() => setConfirm(true)} className="sm:hidden" icon={<Send className="h-4 w-4" />}>
+              Nộp
+            </Button>
           )}
-          <button
-            type="button"
+          <Button
             onClick={() => {
               if (review) {
                 const pos = reviewList.indexOf(idx);
@@ -427,10 +438,11 @@ export function ExamRunner({ license }: { license: LicenseId }) {
               } else if (idx < questions.length - 1) setIdx(idx + 1);
               else setConfirm(true);
             }}
-            className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-lane px-5 py-3 text-sm font-extrabold text-slate-900 hover:brightness-110 sm:flex-none"
+            className="flex-1 sm:flex-none"
+            iconRight={<ArrowRight className="h-4 w-4" />}
           >
-            {!review && idx === questions.length - 1 ? "Nộp bài" : "Câu tiếp"} <ArrowRight className="h-4 w-4" />
-          </button>
+            {!review && idx === questions.length - 1 ? "Nộp bài" : "Câu tiếp"}
+          </Button>
         </div>
       </div>
 
@@ -444,12 +456,12 @@ export function ExamRunner({ license }: { license: LicenseId }) {
                 {answeredCount < questions.length && <b className="text-amber-300"> Còn {questions.length - answeredCount} câu chưa làm sẽ bị tính là sai.</b>}
               </p>
               <div className="mt-5 flex gap-3">
-                <button type="button" onClick={() => setConfirm(false)} className="flex-1 rounded-xl bg-white/10 py-2.5 font-bold text-white">
+                <Button variant="secondary" block onClick={() => setConfirm(false)}>
                   Làm tiếp
-                </button>
-                <button type="button" onClick={submit} className="flex-1 rounded-xl bg-lane py-2.5 font-extrabold text-slate-900">
+                </Button>
+                <Button block onClick={submit}>
                   Nộp bài
-                </button>
+                </Button>
               </div>
             </motion.div>
           </motion.div>

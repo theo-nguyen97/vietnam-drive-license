@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { ButtonLink } from "@/components/ui/Button";
 
 export default function NotFound() {
   return (
@@ -9,9 +9,7 @@ export default function NotFound() {
       </svg>
       <h1 className="font-display text-3xl text-white">Đường cấm!</h1>
       <p className="text-white/60">Trang bạn tìm không tồn tại hoặc đã đổi hướng.</p>
-      <Link href="/" className="rounded-xl bg-lane px-5 py-2.5 font-bold text-slate-900">
-        Quay đầu về trang chủ
-      </Link>
+      <ButtonLink href="/">Quay đầu về trang chủ</ButtonLink>
     </main>
   );
 }

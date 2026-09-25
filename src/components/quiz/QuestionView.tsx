@@ -85,22 +85,23 @@ export function QuestionView({
                 animate={state === "wrong" ? { x: [0, -8, 8, -5, 5, 0] } : { x: 0 }}
                 transition={{ duration: 0.4 }}
                 className={clsx(
-                  "group flex w-full items-start gap-3 rounded-xl px-3.5 py-3 text-left text-[15px] leading-snug ring-1 transition sm:text-base",
-                  state === "idle" && "bg-asphalt-800 text-white/90 ring-white/10 hover:bg-asphalt-700 hover:ring-lane/50",
-                  state === "sel" && "bg-lane/15 text-white ring-2 ring-lane",
-                  state === "right" && "bg-green-500/15 text-white ring-2 ring-green-500",
-                  state === "wrong" && "bg-red-500/15 text-white ring-2 ring-red-500",
-                  state === "dim" && "bg-asphalt-850 text-white/45 ring-white/5",
+                  "group relative flex w-full items-center gap-3.5 rounded-2xl px-3.5 py-3 text-left text-[15px] font-medium leading-snug transition-[transform,box-shadow,background-color] duration-150 sm:text-base",
+                  state === "idle" &&
+                    "bg-[linear-gradient(180deg,#252b38,#1d222d)] text-white/90 ring-1 ring-inset ring-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,.07),0_4px_0_#0b0d12] hover:-translate-y-0.5 hover:ring-lane/50 hover:shadow-[inset_0_1px_0_rgba(255,255,255,.07),0_6px_0_#0b0d12] active:translate-y-1 active:shadow-none",
+                  state === "sel" && "translate-y-0.5 bg-lane/15 text-white ring-2 ring-inset ring-lane shadow-[0_2px_0_#a87800,0_0_24px_-6px_rgba(255,210,63,.6)]",
+                  state === "right" && "bg-green-500/15 text-white ring-2 ring-inset ring-green-500 shadow-[0_3px_0_#0f6b30,0_0_24px_-8px_rgba(34,197,94,.7)]",
+                  state === "wrong" && "bg-red-500/15 text-white ring-2 ring-inset ring-red-500 shadow-[0_3px_0_#8f1515,0_0_24px_-8px_rgba(239,68,68,.7)]",
+                  state === "dim" && "bg-asphalt-850 text-white/40 ring-1 ring-inset ring-white/5",
                   !onSelect && "cursor-default",
                 )}
               >
                 <span
                   className={clsx(
-                    "mt-px flex h-6 w-6 shrink-0 items-center justify-center rounded-md font-hud text-sm font-bold",
-                    state === "idle" && "bg-white/10 text-white/70 group-hover:bg-lane group-hover:text-slate-900",
-                    state === "sel" && "bg-lane text-slate-900",
-                    state === "right" && "bg-green-500 text-white",
-                    state === "wrong" && "bg-red-500 text-white",
+                    "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg font-hud text-base transition-colors",
+                    state === "idle" && "bg-[linear-gradient(180deg,#3a4254,#2c3341)] text-white/80 shadow-[inset_0_1px_0_rgba(255,255,255,.15),0_3px_0_#10131a] group-hover:bg-[linear-gradient(180deg,#ffe57a,#f5b700)] group-hover:text-slate-950 group-hover:shadow-[inset_0_1px_0_rgba(255,255,255,.6),0_3px_0_#a87800]",
+                    state === "sel" && "bg-[linear-gradient(180deg,#ffe57a,#f5b700)] text-slate-950 shadow-[inset_0_1px_0_rgba(255,255,255,.6),0_2px_0_#a87800]",
+                    state === "right" && "bg-green-500 text-white shadow-[0_2px_0_#0f6b30]",
+                    state === "wrong" && "bg-red-500 text-white shadow-[0_2px_0_#8f1515]",
                     state === "dim" && "bg-white/5 text-white/30",
                   )}
                 >

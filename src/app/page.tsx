@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { ButtonLink } from "@/components/ui/Button";
 import { SiteHeader } from "@/components/ui/SiteHeader";
 import { Footer } from "@/components/ui/Footer";
 import { HeroDemo } from "@/components/home/HeroDemo";
@@ -31,9 +31,9 @@ export default function Home() {
             </p>
             <div className="mt-7 flex flex-wrap items-center gap-3">
               <ContinueButton />
-              <Link href="/bien-bao" className="rounded-2xl bg-white/5 px-5 py-3.5 font-bold text-white ring-1 ring-white/15 transition hover:bg-white/10">
+              <ButtonLink href="/bien-bao" variant="secondary" size="lg">
                 Tra cứu biển báo
-              </Link>
+              </ButtonLink>
             </div>
             <dl className="mt-8 grid max-w-lg grid-cols-4 gap-3">
               {[

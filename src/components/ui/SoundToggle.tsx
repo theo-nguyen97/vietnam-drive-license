@@ -4,6 +4,7 @@ import { Volume2, VolumeX } from "lucide-react";
 import { useEffect } from "react";
 import { useHydrated, useProgress } from "@/store/progress";
 import { setSoundEnabled } from "@/lib/sound";
+import { iconButtonClass } from "./Button";
 
 export function SoundToggle() {
   const hydrated = useHydrated();
@@ -12,12 +13,12 @@ export function SoundToggle() {
   useEffect(() => {
     setSoundEnabled(sound);
   }, [sound]);
-  if (!hydrated) return <span className="h-9 w-9" />;
+  if (!hydrated) return <span className="h-10 w-10" />;
   return (
     <button
       type="button"
       onClick={() => setSound(!sound)}
-      className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/5 text-white/80 ring-1 ring-white/10 transition hover:bg-white/10"
+      className={iconButtonClass()}
       aria-label={sound ? "Tắt âm thanh" : "Bật âm thanh"}
       title={sound ? "Tắt âm thanh" : "Bật âm thanh"}
     >
