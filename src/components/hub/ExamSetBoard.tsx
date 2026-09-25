@@ -5,9 +5,10 @@ import { motion } from "motion/react";
 import { Shuffle, CheckCircle2, XCircle, CircleDashed } from "lucide-react";
 import clsx from "clsx";
 import type { LicenseId } from "@/lib/types";
-import { getLicense } from "@/data/licenses";
-import { EXAM_PLAN, examSets } from "@/lib/exam";
-import { useHydrated, useProgress } from "@/store/progress";
+import { examConfig, getLicense } from "@/data/licenses";
+import { examPlan, examSets } from "@/lib/exam";
+import { useExamVersion, useHydrated, useProgress } from "@/store/progress";
+import { ExamVersionSwitch } from "@/components/ui/ExamVersionSwitch";
 import { ButtonLink } from "@/components/ui/Button";
 
 const GROUPS: [string, string][] = [
@@ -24,12 +25,14 @@ export function ExamSetBoard({ license }: { license: LicenseId }) {
   const lic = getLicense(license)!;
   const hydrated = useHydrated();
   const exams = useProgress((s) => s.exams);
-  const sets = examSets(license);
-  const plan = EXAM_PLAN[lic.exam.total];
+  const version = useExamVersion();
+  const cfg = examConfig(lic, version);
+  const sets = examSets(license, version);
+  const plan = examPlan(license, version);
   const base = `/hang/${license.toLowerCase()}`;
 
   const status = sets.map((_, i) => {
-    const rec = hydrated ? exams.filter((e) => e.license === license && e.setNo === i + 1) : [];
+    const rec = hydrated ? exams.filter((e) => e.license === license && e.setNo === i + 1 && (e.version ?? "tt12") === version) : [];
     const best = rec.reduce((m, e) => Math.max(m, e.correct), -1);
     return { tries: rec.length, best, passed: rec.some((e) => e.passed) };
   });
@@ -42,13 +45,16 @@ export function ExamSetBoard({ license }: { license: LicenseId }) {
           <Link href={base} className="text-sm font-semibold text-white/55 hover:text-white">
             ← Hạng {lic.id}
           </Link>
-          <p className="mt-3 font-hud text-sm uppercase tracking-[0.2em] text-lane">Bộ đề 2026 · bộ {lic.bank} câu</p>
+          <p className="mt-3 font-hud text-sm uppercase tracking-[0.2em] text-lane">
+            {version === "tt108" ? "Bộ đề 2027 · Thông tư 108/2026" : `Bộ đề 2026 · bộ ${lic.bank} câu`}
+          </p>
           <h1 className="font-display text-3xl text-white sm:text-4xl">
             {sets.length} đề thi hạng {lic.id}
           </h1>
           <p className="mt-2 max-w-2xl text-white/65">
-            Mỗi đề {lic.exam.total} câu · {lic.exam.minutes} phút · đạt từ {lic.exam.pass}/{lic.exam.total} câu và không sai câu điểm liệt. Cấu trúc theo Thông tư
-            12/2025/TT-BCA.
+            Mỗi đề {cfg.total} câu · {cfg.minutes} phút · đạt từ {cfg.pass}/{cfg.total} câu và không sai câu điểm liệt. {version === "tt108"
+              ? "Cấu trúc mới áp dụng từ 01/3/2027 (tỉ lệ từng nhóm là dự kiến)."
+              : "Cấu trúc theo Thông tư 12/2025/TT-BCA."}
           </p>
         </div>
         <div className="flex items-center gap-4 rounded-2xl bg-asphalt-850 px-5 py-4 ring-1 ring-white/10">
@@ -65,8 +71,10 @@ export function ExamSetBoard({ license }: { license: LicenseId }) {
         </div>
       </div>
 
+      <ExamVersionSwitch license={license} className="mt-6 max-w-xl" />
+
       {/* Cấu trúc đề */}
-      <div className="mt-6 flex flex-wrap gap-2">
+      <div className="mt-4 flex flex-wrap gap-2">
         {GROUPS.filter(([k]) => k === "liet" || plan[Number(k) as 1]).map(([k, name]) => (
           <span
             key={k}
@@ -96,7 +104,7 @@ export function ExamSetBoard({ license }: { license: LicenseId }) {
               >
                 <span className="absolute inset-x-0 top-0 h-1" style={{ background: state === "pass" ? "#22c55e" : state === "fail" ? "#ef4444" : lic.color }} />
                 <div className="flex items-start justify-between">
-                  <span className="text-[11px] font-bold uppercase tracking-widest text-white/45">Đề số</span>
+                  <span className="text-[0.6875rem] font-bold uppercase tracking-widest text-white/45">Đề số</span>
                   {state === "pass" ? (
                     <CheckCircle2 className="h-5 w-5 text-green-400" />
                   ) : state === "fail" ? (
@@ -112,11 +120,11 @@ export function ExamSetBoard({ license }: { license: LicenseId }) {
                 <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/10">
                   <div
                     className={clsx("h-full rounded-full", state === "pass" ? "bg-green-500" : "bg-red-400")}
-                    style={{ width: st.best >= 0 ? `${(st.best / lic.exam.total) * 100}%` : 0 }}
+                    style={{ width: st.best >= 0 ? `${(st.best / cfg.total) * 100}%` : 0 }}
                   />
                 </div>
                 <div className="mt-1.5 font-hud text-xs text-white/60">
-                  {st.best >= 0 ? `Cao nhất ${st.best}/${lic.exam.total} · ${st.tries} lần` : "Chưa làm"}
+                  {st.best >= 0 ? `Cao nhất ${st.best}/${cfg.total} · ${st.tries} lần` : "Chưa làm"}
                 </div>
               </Link>
             </motion.div>

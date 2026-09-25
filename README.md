@@ -28,6 +28,15 @@ mở và xe chạy tiếp, trả lời sai thì bị "thổi còi" kèm giải t
   (`/hang/[id]/diem-yeu`, bài tổng hợp `on-tap/diem-yeu`, từng chủ đề `on-tap/chu-de-*`).
 - **Giao diện điện thoại kiểu ứng dụng** — thanh tab dưới đáy, bảng danh sách câu kéo từ dưới lên, vuốt ngang để chuyển câu,
   tự cuộn tới lời giải thích, rung khi trả lời, hỗ trợ tai thỏ (safe-area) và cài lên màn hình chính (web app manifest).
+- **Đề 2027 song song đề hiện hành** — chuyển giữa cấu trúc Thông tư 12/2025 và Thông tư 108/2026 (áp dụng từ 01/3/2027:
+  A1/A 40 câu – đạt 36, B1/B 50 – 45, C1 60 – 54, C 70 – 63, D1/D2/D 80 – 72, C1E/CE 90 – 81); bộ đề, thi thử, lịch sử tách theo
+  cấu trúc; băng rôn đếm ngược; thêm câu hỏi nội dung mới (xử phạt, trách nhiệm hình sự, phòng chống rượu bia).
+- **Dự đoán khả năng đậu** — mô phỏng 160 đề ngẫu nhiên từ lịch sử trả lời (xác suất đúng từng câu, câu điểm liệt), kết hợp kết quả thi
+  thử gần đây; hiển thị lý do và độ tin cậy.
+- **Học offline** — service worker (`public/sw.js`) lưu trang và tài nguyên; nút "Tải về" lưu trọn gói một hạng; nhãn báo khi mất mạng.
+- **Lộ trình lấy bằng** (`/lo-trinh`) — các bước từ đăng ký đến nhận bằng cho ô tô và xe máy, đánh dấu tiến độ, hướng dẫn 11 bài sa hình
+  ô tô + tình huống nguy hiểm và 4 phần thi xe máy với sơ đồ động, mẹo và lỗi trừ điểm.
+- **Chế độ chữ lớn** — nút "Aa" chuyển 3 cỡ chữ, áp dụng toàn trang ngay khi tải.
 - **Đọc câu hỏi** bằng giọng tiếng Việt của trình duyệt (Web Speech API).
 - **Bằng lái ảo** — thẻ tổng hợp thành tích (tên, cấp bậc, hạng đã đạt thi thử), tải về ảnh PNG để chia sẻ.
 - **Lưu tiến độ** (localStorage): thống kê từng câu, lịch sử thi, XP & cấp bậc, chuỗi ngày học, câu đã lưu; xuất/nhập tệp JSON.
@@ -45,6 +54,9 @@ mở và xe chạy tiếp, trả lời sai thì bị "thổi còi" kèm giải t
 | D1, D2, D, BE, C1E, CE, D1E, D2E, DE | 600 | 45 | 26' | 41 | 10 | 1 | 1 | 2 | 1 | 16 | 14 |
 
 Bộ đề được sinh tất định trong `src/lib/exam.ts` (`examSets`): các câu được xoay vòng để phủ đều ngân hàng và mỗi đề có một câu điểm liệt khác nhau.
+
+> Đề từ 01/3/2027: Thông tư 108/2026/TT-BCA chưa công bố tỉ lệ câu theo từng nhóm, nên phân bổ trong `src/lib/exam.ts`
+> (`PLAN_TT108`) là dự kiến; BE, D1E, D2E, DE tạm tính như CE — cần đối chiếu văn bản chính thức.
 
 ## Chạy dự án
 
@@ -117,6 +129,6 @@ Câu thường có thể chọn bối cảnh cho cảnh lái: `scene: { kind: "r
 
 ## Lưu ý về nội dung
 
-Ngân hàng câu hỏi hiện tại (235 câu, 26 câu điểm liệt, 31 sa hình động) được biên soạn theo Luật Trật tự, an toàn giao thông đường bộ 2024, các quy định về tốc độ,
+Ngân hàng câu hỏi hiện tại (247 câu, 26 câu điểm liệt, 31 sa hình động) được biên soạn theo Luật Trật tự, an toàn giao thông đường bộ 2024, các quy định về tốc độ,
 khoảng cách an toàn và QCVN 41 về báo hiệu đường bộ để phục vụ ôn luyện. Đây **không phải** bản sao bộ 600 câu sát hạch chính thức —
 hãy đối chiếu với bộ đề do cơ quan có thẩm quyền ban hành. Cấu trúc dữ liệu cho phép nhập bộ đề chính thức khi có nguồn.

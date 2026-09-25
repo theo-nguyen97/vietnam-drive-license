@@ -73,7 +73,7 @@ export function QuestionView({
         </div>
       )}
 
-      <h2 className="text-[17px] font-semibold leading-snug text-white sm:text-xl">{q.text}</h2>
+      <h2 className="text-[1.0625rem] font-semibold leading-snug text-white sm:text-xl">{q.text}</h2>
 
       <ol className="flex flex-col gap-2.5">
         {q.options.map((opt, i) => {
@@ -90,7 +90,7 @@ export function QuestionView({
                 animate={state === "wrong" ? { x: [0, -8, 8, -5, 5, 0] } : { x: 0 }}
                 transition={{ duration: 0.4 }}
                 className={clsx(
-                  "group relative flex w-full items-center gap-3.5 rounded-2xl px-3.5 py-3 text-left text-[15px] font-medium leading-snug transition-[transform,box-shadow,background-color] duration-150 sm:text-base",
+                  "group relative flex w-full items-center gap-3.5 rounded-2xl px-3.5 py-3 text-left text-[0.9375rem] font-medium leading-snug transition-[transform,box-shadow,background-color] duration-150 sm:text-base",
                   state === "idle" &&
                     "bg-[linear-gradient(180deg,#252b38,#1d222d)] text-white/90 ring-1 ring-inset ring-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,.07),0_4px_0_#0b0d12] hover:-translate-y-0.5 hover:ring-lane/50 hover:shadow-[inset_0_1px_0_rgba(255,255,255,.07),0_6px_0_#0b0d12] active:translate-y-1 active:shadow-none",
                   state === "sel" && "translate-y-0.5 bg-lane/15 text-white ring-2 ring-inset ring-lane shadow-[0_2px_0_#a87800,0_0_24px_-6px_rgba(255,210,63,.6)]",
@@ -142,7 +142,7 @@ export function QuestionView({
               </>
             )}
           </div>
-          <p className="text-[15px] leading-relaxed text-white/85">{q.explanation}</p>
+          <p className="text-[0.9375rem] leading-relaxed text-white/85">{q.explanation}</p>
           {q.tip && (
             <p className="mt-3 flex gap-2 rounded-xl bg-amber-400/10 p-3 text-sm text-amber-200 ring-1 ring-amber-400/20">
               <Lightbulb className="mt-0.5 h-4 w-4 shrink-0" />

@@ -23,7 +23,7 @@ export function PlayerChip() {
       <div className="flex items-center gap-2 rounded-full bg-white/5 py-1 pl-1 pr-3 ring-1 ring-white/10" title={`${r.name} — ${xp} XP`}>
         <span className="flex h-7 w-7 items-center justify-center rounded-full bg-lane/20 text-sm">{r.icon}</span>
         <div className="hidden leading-tight sm:block">
-          <div className="text-[11px] font-semibold text-white/60">Cấp {r.level}</div>
+          <div className="text-[0.6875rem] font-semibold text-white/60">Cấp {r.level}</div>
           <div className="text-xs font-bold text-white">{r.name}</div>
         </div>
         <span className="font-hud text-sm font-bold text-lane">{xp} XP</span>

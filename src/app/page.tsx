@@ -5,6 +5,7 @@ import { HeroDemo } from "@/components/home/HeroDemo";
 import { HeroRoad } from "@/components/home/HeroRoad";
 import { LicenseGarage } from "@/components/home/LicenseGarage";
 import { ContinueButton } from "@/components/home/ContinueButton";
+import { ExamChangeBanner } from "@/components/ui/ExamChangeBanner";
 import { QUESTIONS } from "@/data/questions";
 import { LICENSES } from "@/data/licenses";
 
@@ -44,7 +45,7 @@ export default function Home() {
               ].map(([n, l]) => (
                 <div key={l as string} className="rounded-2xl bg-white/5 p-3 text-center ring-1 ring-white/10">
                   <dt className="font-hud text-2xl font-bold text-white">{n}</dt>
-                  <dd className="text-[11px] leading-tight text-white/50">{l}</dd>
+                  <dd className="text-[0.6875rem] leading-tight text-white/50">{l}</dd>
                 </div>
               ))}
             </dl>
@@ -52,7 +53,8 @@ export default function Home() {
           <HeroDemo />
         </section>
 
-        <div className="mx-auto max-w-6xl px-4">
+        <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4">
+          <ExamChangeBanner />
           <HeroRoad />
         </div>
 
@@ -64,7 +66,7 @@ export default function Home() {
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {[
               ["📅", "Ôn tập hôm nay", "Lặp lại ngắt quãng: câu sai quay lại sau 10 phút, câu đúng giãn dần 1 – 3 – 7 – 16 – 35 ngày.", "#hang-bang"],
-              ["🏁", "Bộ đề 2026", "10 – 20 đề cố định mỗi hạng, đúng cấu trúc Thông tư 12/2025/TT-BCA, có câu điểm liệt.", "#hang-bang"],
+              ["🏁", "Bộ đề 2026 & 2027", "10 – 20 đề cố định mỗi hạng theo đề hiện hành và đề mới từ 01/3/2027, có dự đoán khả năng đậu.", "#hang-bang"],
               ["🪪", "Thử thách 12 điểm", "Chế độ sinh tồn: sai bị trừ điểm GPLX như luật mới, hết 12 điểm là bị tước bằng!", "#hang-bang"],
               ["🎯", "Săn biển báo", "60 giây nhận diện biển báo thật nhanh, combo càng dài điểm càng cao.", "/san-bien-bao"],
             ].map(([icon, title, desc, href], i) => (

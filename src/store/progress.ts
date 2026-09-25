@@ -3,7 +3,8 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { useSyncExternalStore } from "react";
-import type { LicenseId } from "@/lib/types";
+import type { ExamVersion, LicenseId } from "@/lib/types";
+import { TT108_DATE } from "@/data/licenses";
 
 export interface QStat {
   /** số lần đúng */
@@ -29,6 +30,8 @@ export interface ExamRecord {
   license: LicenseId;
   /** Số đề trong bộ đề (không có nếu là đề ngẫu nhiên). */
   setNo?: number;
+  /** Cấu trúc đề (mặc định tt12). */
+  version?: ExamVersion;
   at: number;
   correct: number;
   total: number;
@@ -53,6 +56,15 @@ interface ProgressState {
   arcadeBest: Partial<Record<LicenseId, number>>;
   /** điểm cao nhất mini-game săn biển báo */
   signBest: number;
+  /** Cấu trúc đề người dùng chọn (null = tự động theo ngày). */
+  examVersion: ExamVersion | null;
+  /** Cỡ chữ: 1 (chuẩn), 1.15 (lớn), 1.3 (rất lớn) */
+  fontScale: number;
+  /** Các bước đã hoàn thành trong lộ trình lấy bằng */
+  journey: Record<string, boolean>;
+  setExamVersion: (v: ExamVersion) => void;
+  setFontScale: (n: number) => void;
+  toggleJourney: (key: string) => void;
   setDriverName: (n: string) => void;
   setArcadeBest: (id: LicenseId, score: number) => void;
   setSignBest: (score: number) => void;
@@ -91,6 +103,9 @@ const initial = {
   driverName: "",
   arcadeBest: {} as Partial<Record<LicenseId, number>>,
   signBest: 0,
+  examVersion: null as ExamVersion | null,
+  fontScale: 1,
+  journey: {} as Record<string, boolean>,
 };
 
 export const useProgress = create<ProgressState>()(
@@ -128,8 +143,11 @@ export const useProgress = create<ProgressState>()(
       setDriverName: (n) => set({ driverName: n.slice(0, 32) }),
       setArcadeBest: (id, score) => set((s) => ({ arcadeBest: { ...s.arcadeBest, [id]: Math.max(s.arcadeBest[id] ?? 0, score) } })),
       setSignBest: (score) => set((s) => ({ signBest: Math.max(s.signBest, score) })),
+      setExamVersion: (v) => set({ examVersion: v }),
+      setFontScale: (n) => set({ fontScale: n }),
+      toggleJourney: (key) => set((s) => ({ journey: { ...s.journey, [key]: !s.journey[key] } })),
       setLastLicense: (id) => set({ lastLicense: id }),
-      reset: () => set({ ...initial, sound: get().sound, driverName: get().driverName }),
+      reset: () => set({ ...initial, sound: get().sound, driverName: get().driverName, fontScale: get().fontScale, examVersion: get().examVersion }),
       importData: (json) => {
         try {
           const data = JSON.parse(json);
@@ -165,6 +183,9 @@ export const useProgress = create<ProgressState>()(
         driverName: s.driverName,
         arcadeBest: s.arcadeBest,
         signBest: s.signBest,
+        examVersion: s.examVersion,
+        fontScale: s.fontScale,
+        journey: s.journey,
       }),
     },
   ),
@@ -183,4 +204,28 @@ export function activeStreak(s: { days: number; last: string }) {
   const y = new Date();
   y.setDate(y.getDate() - 1);
   return s.last === today || s.last === dayKey(y) ? s.days : 0;
+}
+
+/** Cấu trúc đề mặc định theo ngày hiện tại. */
+export function defaultExamVersion(now = new Date()): ExamVersion {
+  return now >= TT108_DATE ? "tt108" : "tt12";
+}
+
+/** Cấu trúc đề đang dùng (người dùng chọn hoặc tự động). */
+export function useExamVersion(): ExamVersion {
+  const hydrated = useHydrated();
+  const v = useProgress((s) => s.examVersion);
+  return (hydrated && v) || defaultExamVersion();
+}
+
+let nowMinute = 0;
+function readNowMinute() {
+  const m = Math.floor(Date.now() / 60_000);
+  if (m !== nowMinute) nowMinute = m;
+  return nowMinute;
+}
+
+/** Thời điểm hiện tại (ms, làm tròn theo phút) — an toàn khi hydrate. */
+export function useNow() {
+  return useSyncExternalStore(noop, readNowMinute, () => 0) * 60_000;
 }

@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { Logo } from "./Logo";
 import { PlayerChip } from "./PlayerChip";
+import { FontSizeToggle } from "./FontSizeToggle";
 import { MobileTabBar } from "./MobileTabBar";
 
 const NAV = [
   { href: "/#hang-bang", label: "Hạng bằng" },
+  { href: "/lo-trinh", label: "Lộ trình" },
   { href: "/bien-bao", label: "Biển báo" },
   { href: "/san-bien-bao", label: "Mini game" },
   { href: "/tien-do", label: "Tiến độ" },
@@ -25,7 +27,10 @@ export function SiteHeader() {
               ))}
             </nav>
           </div>
-          <PlayerChip />
+            <div className="flex items-center gap-2">
+            <FontSizeToggle />
+            <PlayerChip />
+          </div>
         </div>
       </header>
       {/* Đặt ngoài <header>: backdrop-blur của header sẽ làm vị trí fixed bị tính theo header */}

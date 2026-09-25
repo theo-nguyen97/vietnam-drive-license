@@ -4,13 +4,14 @@ import { CHAPTERS } from "@/data/chapters";
 import { CH1 } from "./ch1";
 import { CH1B } from "./ch1b";
 import { EXTRA } from "./extra";
+import { LAW2027 } from "./law2027";
 import { CH2 } from "./ch2";
 import { CH3 } from "./ch3";
 import { CH4 } from "./ch4";
 import { CH5 } from "./ch5";
 import { CH6 } from "./ch6";
 
-export const QUESTIONS: Question[] = [...CH1, ...CH1B, ...CH2, ...CH3, ...CH4, ...CH5, ...CH6, ...EXTRA].sort(
+export const QUESTIONS: Question[] = [...CH1, ...CH1B, ...CH2, ...CH3, ...CH4, ...CH5, ...CH6, ...EXTRA, ...LAW2027].sort(
   (a, b) => a.chapter - b.chapter || a.id - b.id,
 );
 

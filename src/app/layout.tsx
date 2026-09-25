@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Exo_2, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
+import { FontScaleApplier } from "@/components/ui/FontSizeToggle";
+import { ServiceWorkerRegister } from "@/components/ui/ServiceWorkerRegister";
 
 const body = Plus_Jakarta_Sans({
   variable: "--font-body",
@@ -35,8 +37,21 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="vi" className={`${body.variable} ${display.variable} h-full antialiased`}>
-      <body className="asphalt flex min-h-full flex-col">{children}</body>
+    <html lang="vi" suppressHydrationWarning className={`${body.variable} ${display.variable} h-full antialiased`}>
+      <head>
+        {/* Áp dụng cỡ chữ đã lưu trước khi vẽ trang để tránh nháy */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{var s=JSON.parse(localStorage.getItem('lai-lua-progress')||'{}').state;if(s&&s.fontScale&&s.fontScale!==1)document.documentElement.style.fontSize=16*s.fontScale+'px'}catch(e){}",
+          }}
+        />
+      </head>
+      <body className="asphalt flex min-h-full flex-col">
+        <FontScaleApplier />
+        <ServiceWorkerRegister />
+        {children}
+      </body>
     </html>
   );
 }

@@ -15,6 +15,7 @@ import { SceneStage, type Outcome } from "./SceneStage";
 import { QuestionView } from "./QuestionView";
 import { QuestionGrid } from "./QuestionGrid";
 import { SoundToggle } from "@/components/ui/SoundToggle";
+import { FontSizeToggle } from "@/components/ui/FontSizeToggle";
 import { BottomSheet } from "@/components/ui/BottomSheet";
 import { useSwipe } from "@/lib/useSwipe";
 import { Button, ButtonLink, iconButtonClass } from "@/components/ui/Button";
@@ -250,6 +251,7 @@ function PracticeSession({ license, set, onRestart }: { license: LicenseId; set:
             )}
           </AnimatePresence>
           <div className="hidden rounded-xl bg-lane/15 px-2.5 py-1.5 font-hud text-sm font-bold text-lane ring-1 ring-lane/30 sm:block">+{sessionXp} XP</div>
+          <FontSizeToggle />
           <span className="hidden sm:block">
             <SoundToggle />
           </span>
@@ -299,7 +301,7 @@ function PracticeSession({ license, set, onRestart }: { license: LicenseId; set:
         <div className="lg:sticky lg:top-24 lg:self-start">
           <SceneStage q={q} number={idx + 1} vehicle={lic.vehicle} outcome={outcome} mode="practice" xpGain={gains[q.id]} />
           <p className="mt-2 hidden text-center text-xs text-white/40 lg:block">Phím tắt: 1–4 chọn đáp án · Enter sang câu tiếp · ← câu trước</p>
-          <p className="mt-1.5 text-center text-[11px] text-white/35 lg:hidden">Vuốt ngang để chuyển câu</p>
+          <p className="mt-1.5 text-center text-[0.6875rem] text-white/35 lg:hidden">Vuốt ngang để chuyển câu</p>
         </div>
         <div className="flex flex-col gap-4 pb-24 lg:pb-0">
           <QuestionView
@@ -338,7 +340,7 @@ function PracticeSession({ license, set, onRestart }: { license: LicenseId; set:
 function FuelBar({ value }: { value: number }) {
   return (
     <div className="mt-1 flex items-center gap-2">
-      <span className="text-[10px] font-bold text-white/40">⛽</span>
+      <span className="text-[0.625rem] font-bold text-white/40">⛽</span>
       <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/10">
         <motion.div className="h-full rounded-full bg-gradient-to-r from-red-500 via-amber-400 to-green-500" animate={{ width: `${Math.round(value * 100)}%` }} />
       </div>

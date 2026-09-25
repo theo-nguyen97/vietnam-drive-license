@@ -56,7 +56,7 @@ export function WeaknessReport({ license }: { license: LicenseId }) {
               <div key={s} className="flex flex-col items-center gap-1.5 rounded-2xl bg-black/30 px-2 py-3 ring-1 ring-white/10 sm:px-3">
                 <span className={clsx("h-3.5 w-3.5 rounded-full", STATUS[s].dot)} />
                 <span className="font-hud text-xl text-white">{hydrated ? count(s) : "–"}</span>
-                <span className="text-center text-[10px] leading-tight text-white/50">{STATUS[s].label}</span>
+                <span className="text-center text-[0.625rem] leading-tight text-white/50">{STATUS[s].label}</span>
               </div>
             ))}
           </div>
@@ -162,7 +162,7 @@ function TopicRow({ r, href }: { r: TopicReport; href: string }) {
               style={{ width: `${(r.accuracy ?? 0) * 100}%` }}
             />
           </div>
-          <span className="w-24 shrink-0 text-right font-hud text-[11px] text-white/50">
+          <span className="w-24 shrink-0 text-right font-hud text-[0.6875rem] text-white/50">
             {r.seen}/{r.total} câu{r.wrongNow ? ` · ${r.wrongNow} sai` : ""}
           </span>
         </div>

@@ -5,97 +5,102 @@ import type { License, LicenseId } from "@/lib/types";
  * (hiệu lực từ 01/01/2025). Số câu / thời gian / điểm đạt của đề lý thuyết theo
  * Thông tư 12/2025/TT-BCA (bộ câu hỏi áp dụng từ 01/6/2025): A1, A dùng bộ 250 câu,
  * B1 dùng bộ 300 câu, các hạng ô tô dùng bộ 600 câu.
+ *
+ * `exam2027`: cấu trúc mới theo Thông tư 108/2026/TT-BCA, áp dụng từ 01/3/2027
+ * (A1, A: 40 câu/27 phút/đạt 36; B1, B: 50/33/45; C1: 60/40/54; C: 70/47/63;
+ * D1, D2, D: 80/53/72; C1E, CE: 90/60/81). BE, D1E, D2E, DE chưa có số liệu công bố
+ * rõ ràng nên tạm tính như CE — cần đối chiếu văn bản chính thức.
  */
 export const LICENSES: License[] = [
   {
     id: "A1", bank: 250, name: "Hạng A1", short: "Mô tô đến 125 cm³",
     desc: "Xe mô tô hai bánh có dung tích xi-lanh đến 125 cm³ hoặc công suất động cơ điện đến 11 kW.",
     group: "moto", family: "moto", vehicle: "scooter",
-    exam: { total: 25, minutes: 19, pass: 21 }, minAge: 18, validity: "Không thời hạn", color: "#22c55e",
+    exam: { total: 25, minutes: 19, pass: 21 }, exam2027: { total: 40, minutes: 27, pass: 36 }, minAge: 18, validity: "Không thời hạn", color: "#22c55e",
   },
   {
     id: "A", bank: 250, name: "Hạng A", short: "Mô tô trên 125 cm³",
     desc: "Xe mô tô hai bánh có dung tích xi-lanh trên 125 cm³ hoặc công suất động cơ điện trên 11 kW và các loại xe của hạng A1.",
     group: "moto", family: "moto", vehicle: "bigbike",
-    exam: { total: 25, minutes: 19, pass: 23 }, minAge: 18, validity: "Không thời hạn", color: "#10b981",
+    exam: { total: 25, minutes: 19, pass: 23 }, exam2027: { total: 40, minutes: 27, pass: 36 }, minAge: 18, validity: "Không thời hạn", color: "#10b981",
   },
   {
     id: "B1", bank: 300, name: "Hạng B1", short: "Mô tô ba bánh",
     desc: "Xe mô tô ba bánh và các loại xe quy định cho giấy phép lái xe hạng A1.",
     group: "moto", family: "moto", vehicle: "trike",
-    exam: { total: 25, minutes: 19, pass: 23 }, minAge: 18, validity: "Không thời hạn", color: "#14b8a6",
+    exam: { total: 25, minutes: 19, pass: 23 }, exam2027: { total: 50, minutes: 33, pass: 45 }, minAge: 18, validity: "Không thời hạn", color: "#14b8a6",
   },
   {
     id: "B", bank: 600, name: "Hạng B", short: "Ô tô đến 8 chỗ, tải ≤ 3,5 tấn",
     desc: "Ô tô chở người đến 08 chỗ (không kể chỗ người lái); ô tô tải, ô tô chuyên dùng có khối lượng toàn bộ theo thiết kế đến 3.500 kg; kéo rơ moóc đến 750 kg.",
     group: "car", family: "light", vehicle: "car",
-    exam: { total: 30, minutes: 20, pass: 27 }, minAge: 18, validity: "10 năm", color: "#3b82f6",
+    exam: { total: 30, minutes: 20, pass: 27 }, exam2027: { total: 50, minutes: 33, pass: 45 }, minAge: 18, validity: "10 năm", color: "#3b82f6",
   },
   {
     id: "C1", bank: 600, name: "Hạng C1", short: "Tải 3,5 – 7,5 tấn",
     desc: "Ô tô tải, ô tô chuyên dùng có khối lượng toàn bộ theo thiết kế trên 3.500 kg đến 7.500 kg; kéo rơ moóc đến 750 kg; các loại xe hạng B.",
     group: "car", family: "light", vehicle: "pickup",
-    exam: { total: 35, minutes: 22, pass: 32 }, minAge: 18, validity: "10 năm", color: "#6366f1",
+    exam: { total: 35, minutes: 22, pass: 32 }, exam2027: { total: 60, minutes: 40, pass: 54 }, minAge: 18, validity: "10 năm", color: "#6366f1",
   },
   {
     id: "C", bank: 600, name: "Hạng C", short: "Tải trên 7,5 tấn",
     desc: "Ô tô tải, ô tô chuyên dùng có khối lượng toàn bộ theo thiết kế trên 7.500 kg; kéo rơ moóc đến 750 kg; các loại xe hạng B, C1.",
     group: "car", family: "heavy", vehicle: "truck",
-    exam: { total: 40, minutes: 24, pass: 36 }, minAge: 21, validity: "05 năm", color: "#f97316",
+    exam: { total: 40, minutes: 24, pass: 36 }, exam2027: { total: 70, minutes: 47, pass: 63 }, minAge: 21, validity: "05 năm", color: "#f97316",
   },
   {
     id: "D1", bank: 600, name: "Hạng D1", short: "Khách 9 – 16 chỗ",
     desc: "Ô tô chở người trên 08 chỗ đến 16 chỗ (không kể chỗ người lái); kéo rơ moóc đến 750 kg; các loại xe hạng B, C1, C.",
     group: "car", family: "passenger", vehicle: "van",
-    exam: { total: 45, minutes: 26, pass: 41 }, minAge: 24, validity: "05 năm", color: "#eab308",
+    exam: { total: 45, minutes: 26, pass: 41 }, exam2027: { total: 80, minutes: 53, pass: 72 }, minAge: 24, validity: "05 năm", color: "#eab308",
   },
   {
     id: "D2", bank: 600, name: "Hạng D2", short: "Khách 17 – 29 chỗ",
     desc: "Ô tô chở người (kể cả xe buýt) trên 16 chỗ đến 29 chỗ (không kể chỗ người lái); kéo rơ moóc đến 750 kg; các loại xe hạng B, C1, C, D1.",
     group: "car", family: "passenger", vehicle: "bus",
-    exam: { total: 45, minutes: 26, pass: 41 }, minAge: 24, validity: "05 năm", color: "#f59e0b",
+    exam: { total: 45, minutes: 26, pass: 41 }, exam2027: { total: 80, minutes: 53, pass: 72 }, minAge: 24, validity: "05 năm", color: "#f59e0b",
   },
   {
     id: "D", bank: 600, name: "Hạng D", short: "Khách trên 29 chỗ",
     desc: "Ô tô chở người (kể cả xe buýt) trên 29 chỗ; xe ô tô chở người giường nằm; kéo rơ moóc đến 750 kg; các loại xe hạng B, C1, C, D1, D2.",
     group: "car", family: "passenger", vehicle: "bus",
-    exam: { total: 45, minutes: 26, pass: 41 }, minAge: 27, validity: "05 năm", color: "#ef4444",
+    exam: { total: 45, minutes: 26, pass: 41 }, exam2027: { total: 80, minutes: 53, pass: 72 }, minAge: 27, validity: "05 năm", color: "#ef4444",
   },
   {
     id: "BE", bank: 600, name: "Hạng BE", short: "B kéo rơ moóc > 750 kg",
     desc: "Xe ô tô quy định cho hạng B kéo rơ moóc có khối lượng toàn bộ theo thiết kế trên 750 kg.",
     group: "car", family: "trailer", vehicle: "trailer",
-    exam: { total: 45, minutes: 26, pass: 41 }, minAge: 21, validity: "05 năm", color: "#a855f7",
+    exam: { total: 45, minutes: 26, pass: 41 }, exam2027: { total: 90, minutes: 60, pass: 81 }, minAge: 21, validity: "05 năm", color: "#a855f7",
   },
   {
     id: "C1E", bank: 600, name: "Hạng C1E", short: "C1 kéo rơ moóc > 750 kg",
     desc: "Xe ô tô quy định cho hạng C1 kéo rơ moóc có khối lượng toàn bộ theo thiết kế trên 750 kg.",
     group: "car", family: "trailer", vehicle: "trailer",
-    exam: { total: 45, minutes: 26, pass: 41 }, minAge: 24, validity: "05 năm", color: "#c026d3",
+    exam: { total: 45, minutes: 26, pass: 41 }, exam2027: { total: 90, minutes: 60, pass: 81 }, minAge: 24, validity: "05 năm", color: "#c026d3",
   },
   {
     id: "CE", bank: 600, name: "Hạng CE", short: "Đầu kéo, sơ mi rơ moóc",
     desc: "Xe ô tô quy định cho hạng C kéo rơ moóc trên 750 kg; xe ô tô đầu kéo kéo sơ mi rơ moóc.",
     group: "car", family: "trailer", vehicle: "trailer",
-    exam: { total: 45, minutes: 26, pass: 41 }, minAge: 24, validity: "05 năm", color: "#db2777",
+    exam: { total: 45, minutes: 26, pass: 41 }, exam2027: { total: 90, minutes: 60, pass: 81 }, minAge: 24, validity: "05 năm", color: "#db2777",
   },
   {
     id: "D1E", bank: 600, name: "Hạng D1E", short: "D1 kéo rơ moóc > 750 kg",
     desc: "Xe ô tô quy định cho hạng D1 kéo rơ moóc có khối lượng toàn bộ theo thiết kế trên 750 kg.",
     group: "car", family: "trailer", vehicle: "trailer",
-    exam: { total: 45, minutes: 26, pass: 41 }, minAge: 27, validity: "05 năm", color: "#e11d48",
+    exam: { total: 45, minutes: 26, pass: 41 }, exam2027: { total: 90, minutes: 60, pass: 81 }, minAge: 27, validity: "05 năm", color: "#e11d48",
   },
   {
     id: "D2E", bank: 600, name: "Hạng D2E", short: "D2 kéo rơ moóc > 750 kg",
     desc: "Xe ô tô quy định cho hạng D2 kéo rơ moóc có khối lượng toàn bộ theo thiết kế trên 750 kg.",
     group: "car", family: "trailer", vehicle: "trailer",
-    exam: { total: 45, minutes: 26, pass: 41 }, minAge: 27, validity: "05 năm", color: "#be123c",
+    exam: { total: 45, minutes: 26, pass: 41 }, exam2027: { total: 90, minutes: 60, pass: 81 }, minAge: 27, validity: "05 năm", color: "#be123c",
   },
   {
     id: "DE", bank: 600, name: "Hạng DE", short: "D kéo rơ moóc, xe nối toa",
     desc: "Xe ô tô quy định cho hạng D kéo rơ moóc trên 750 kg; xe ô tô chở khách nối toa.",
     group: "car", family: "trailer", vehicle: "trailer",
-    exam: { total: 45, minutes: 26, pass: 41 }, minAge: 27, validity: "05 năm", color: "#9f1239",
+    exam: { total: 45, minutes: 26, pass: 41 }, exam2027: { total: 90, minutes: 60, pass: 81 }, minAge: 27, validity: "05 năm", color: "#9f1239",
   },
 ];
 
@@ -115,4 +120,11 @@ export function getLicense(id: string): License | undefined {
 
 export function licenseSlug(id: LicenseId) {
   return id.toLowerCase();
+}
+
+/** Ngày áp dụng cấu trúc đề mới (Thông tư 108/2026/TT-BCA). */
+export const TT108_DATE = new Date("2027-03-01T00:00:00+07:00");
+
+export function examConfig(lic: License, version: "tt12" | "tt108") {
+  return version === "tt108" ? lic.exam2027 : lic.exam;
 }

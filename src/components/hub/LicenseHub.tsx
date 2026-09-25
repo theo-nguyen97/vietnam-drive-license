@@ -8,17 +8,21 @@ import { dailySet, dueQuestions } from "@/lib/sets";
 import { analyze } from "@/lib/topics";
 import clsx from "clsx";
 import type { LicenseId } from "@/lib/types";
-import { getLicense } from "@/data/licenses";
+import { examConfig, getLicense } from "@/data/licenses";
 import { CHAPTERS } from "@/data/chapters";
-import { useHydrated, useProgress } from "@/store/progress";
+import { useExamVersion, useHydrated, useProgress } from "@/store/progress";
+import { ExamChangeBanner } from "@/components/ui/ExamChangeBanner";
+import { OfflineDownload } from "@/components/ui/OfflineDownload";
 import { licenseProgress } from "@/lib/stats";
 import { questionsFor } from "@/data/questions";
 import { VehicleIcon } from "@/components/ui/VehicleIcon";
-import { Gauge } from "./Gauge";
+import { PassPredictor } from "./PassPredictor";
 
 export function LicenseHub({ license }: { license: LicenseId }) {
   const lic = getLicense(license)!;
   const hydrated = useHydrated();
+  const version = useExamVersion();
+  const cfg = examConfig(lic, version);
   const stats = useProgress((s) => s.stats);
   const exams = useProgress((s) => s.exams);
   const bookmarks = useProgress((s) => s.bookmarks);
@@ -59,15 +63,15 @@ export function LicenseHub({ license }: { license: LicenseId }) {
               <Pill>Thời hạn: {lic.validity}</Pill>
               <Pill>Bộ {lic.bank} câu</Pill>
               <Pill>
-                Đề thi: {lic.exam.total} câu / {lic.exam.minutes} phút
+                Đề thi: {cfg.total} câu / {cfg.minutes} phút
               </Pill>
               <Pill>
-                Đạt: {lic.exam.pass}/{lic.exam.total}
+                Đạt: {cfg.pass}/{cfg.total}
               </Pill>
             </div>
           </div>
-          <div className="mx-auto w-40 sm:w-auto">
-            <Gauge value={p.pct} color={lic.color} label="Mức sẵn sàng" />
+          <div className="rounded-3xl bg-black/25 p-4 ring-1 ring-white/10 md:w-72">
+            <PassPredictor license={license} />
           </div>
           <div className="hidden w-44 md:block">
             <VehicleIcon kind={lic.vehicle} className="bob w-full drop-shadow-2xl" />
@@ -81,6 +85,10 @@ export function LicenseHub({ license }: { license: LicenseId }) {
         </div>
       </section>
 
+      <div className="mt-6">
+        <ExamChangeBanner license={license} />
+      </div>
+
       {/* Hành động nhanh */}
       <section className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
         <Link
@@ -92,10 +100,10 @@ export function LicenseHub({ license }: { license: LicenseId }) {
             <Trophy className="h-7 w-7" />
           </span>
           <div>
-            <div className="font-display text-xl leading-tight sm:text-2xl">BỘ ĐỀ 2026 · {setCount(license)} ĐỀ</div>
+            <div className="font-display text-xl leading-tight sm:text-2xl">BỘ ĐỀ {version === "tt108" ? "2027" : "2026"} · {setCount(license)} ĐỀ</div>
             <div className="text-xs font-semibold opacity-80 sm:text-sm">
-              {lic.exam.total} câu · {lic.exam.minutes} phút · đạt {lic.exam.pass}
-              <span className="hidden sm:inline"> · theo Thông tư 12/2025/TT-BCA</span>
+              {cfg.total} câu · {cfg.minutes} phút · đạt {cfg.pass}
+              <span className="hidden sm:inline"> · theo Thông tư {version === "tt108" ? "108/2026" : "12/2025"}/TT-BCA</span>
             </div>
           </div>
           <ChevronRight className="ml-auto mr-6 h-6 w-6 shrink-0 transition group-hover:translate-x-1 sm:mr-8" />
@@ -137,6 +145,10 @@ export function LicenseHub({ license }: { license: LicenseId }) {
         <QuickSet href="/san-bien-bao" icon={<Target className="h-5 w-5" />} title="Săn biển báo" desc="Mini game 60 giây" tone="text-cyan-300 bg-cyan-500/10 ring-cyan-400/25" />
       </section>
 
+      <div className="mt-6">
+        <OfflineDownload license={license} />
+      </div>
+
       {/* Bản đồ hành trình */}
       <section className="mt-12">
         <p className="font-hud text-sm font-bold uppercase tracking-[0.2em] text-lane">Bản đồ hành trình</p>
@@ -173,7 +185,7 @@ export function LicenseHub({ license }: { license: LicenseId }) {
                   >
                     {c.id}
                     {hydrated && i === current && (
-                      <span className="absolute -top-7 left-0 whitespace-nowrap rounded-md bg-lane md:left-1/2 md:-translate-x-1/2 px-1.5 py-0.5 text-[10px] font-extrabold text-slate-900">BẠN ĐANG Ở ĐÂY</span>
+                      <span className="absolute -top-7 left-0 whitespace-nowrap rounded-md bg-lane md:left-1/2 md:-translate-x-1/2 px-1.5 py-0.5 text-[0.625rem] font-extrabold text-slate-900">BẠN ĐANG Ở ĐÂY</span>
                     )}
                   </div>
                   <Link
@@ -234,7 +246,7 @@ function QuickSet({ href, icon, title, desc, tone }: { href: string; icon: React
       <span className={clsx("flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl ring-1 sm:h-11 sm:w-11", tone)}>{icon}</span>
       <div className="min-w-0">
         <div className="text-sm font-bold leading-tight text-white sm:text-base">{title}</div>
-        <div className="mt-0.5 line-clamp-2 text-[11px] leading-snug text-white/50 sm:truncate sm:text-xs">{desc}</div>
+        <div className="mt-0.5 line-clamp-2 text-[0.6875rem] leading-snug text-white/50 sm:truncate sm:text-xs">{desc}</div>
       </div>
       <ChevronRight className="ml-auto hidden h-5 w-5 shrink-0 text-white/30 transition group-hover:translate-x-0.5 group-hover:text-white/70 sm:block" />
     </Link>

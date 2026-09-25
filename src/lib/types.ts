@@ -101,6 +101,9 @@ export interface Question {
   topic?: string;
 }
 
+/** tt12: đề hiện hành (Thông tư 12/2025/TT-BCA) · tt108: đề từ 01/3/2027 (Thông tư 108/2026/TT-BCA). */
+export type ExamVersion = "tt12" | "tt108";
+
 export interface ExamConfig {
   total: number;
   minutes: number;
@@ -118,6 +121,8 @@ export interface License {
   family: "moto" | "light" | "heavy" | "passenger" | "trailer";
   vehicle: PlayerVehicle;
   exam: ExamConfig;
+  /** Cấu trúc đề áp dụng từ 01/3/2027. */
+  exam2027: ExamConfig;
   minAge: number;
   validity: string;
   color: string;

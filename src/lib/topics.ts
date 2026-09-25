@@ -37,6 +37,8 @@ export const TOPICS: Topic[] = [
   { id: "sa-hinh-tin-hieu", code: "E-19", name: "Sa hình: đèn & CSGT", icon: "👮", hint: "Đèn xanh/đỏ tại giao lộ, tư thế tay người điều khiển." },
   { id: "sa-hinh-vi-pham", code: "E-20", name: "Sa hình: nhận biết vi phạm", icon: "🚨", hint: "Xe nào vi phạm: vượt đèn, lấn vạch, quay đầu nơi cấm…" },
   { id: "tinh-huong", code: "E-21", name: "Xử lý tình huống thực tế", icon: "🧭", hint: "Mưa, sương mù, ban đêm, tai nạn phía trước, xe ưu tiên phía sau." },
+  { id: "phap-luat", code: "E-22", name: "Xử phạt & trách nhiệm hình sự", icon: "⚖️", hint: "Nội dung mới đề 2027: xử phạt, phạt nguội, truy cứu hình sự." },
+  { id: "ruou-bia", code: "E-23", name: "Phòng, chống tác hại rượu bia", icon: "🍺", hint: "Nội dung mới đề 2027: ảnh hưởng của cồn, cách xử lý đúng." },
 ];
 
 const RULES_CH1: [RegExp, string][] = [

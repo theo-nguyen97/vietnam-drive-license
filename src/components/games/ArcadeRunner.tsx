@@ -14,6 +14,7 @@ import { useHydrated, useProgress } from "@/store/progress";
 import { SceneStage, type Outcome } from "@/components/quiz/SceneStage";
 import { QuestionView } from "@/components/quiz/QuestionView";
 import { SoundToggle } from "@/components/ui/SoundToggle";
+import { FontSizeToggle } from "@/components/ui/FontSizeToggle";
 import { Button, ButtonLink, iconButtonClass } from "@/components/ui/Button";
 
 const MAX_POINTS = 12;
@@ -270,6 +271,7 @@ export function ArcadeRunner({ license }: { license: LicenseId }) {
             </span>
           )}
           <div className="rounded-xl bg-lane/15 px-3 py-1.5 font-hud text-lg text-lane ring-1 ring-lane/30">{score.toLocaleString("vi-VN")}</div>
+          <FontSizeToggle />
           <SoundToggle />
         </div>
       </div>
@@ -345,11 +347,11 @@ function Tile({ k, v }: { k: string; v: string }) {
 export function LicenseCard({ license, points, color }: { license: LicenseId; points: number; color: string }) {
   return (
     <div className="relative h-40 w-64 overflow-hidden rounded-2xl bg-[linear-gradient(135deg,#fde7ef,#dbeafe_55%,#e0e7ff)] p-3 text-slate-800 shadow-2xl ring-1 ring-white/40">
-      <div className="text-[8px] font-bold uppercase leading-tight text-slate-600">Cộng hoà xã hội chủ nghĩa Việt Nam</div>
-      <div className="text-[11px] font-extrabold uppercase text-red-700">Giấy phép lái xe</div>
+      <div className="text-[0.5rem] font-bold uppercase leading-tight text-slate-600">Cộng hoà xã hội chủ nghĩa Việt Nam</div>
+      <div className="text-[0.6875rem] font-extrabold uppercase text-red-700">Giấy phép lái xe</div>
       <div className="mt-2 flex gap-3">
         <div className="flex h-16 w-12 items-center justify-center rounded-md bg-slate-300 text-2xl">🧑</div>
-        <div className="text-[10px] leading-4">
+        <div className="text-[0.625rem] leading-4">
           <div>
             Hạng: <b className="rounded px-1 text-white" style={{ background: color }}>{license}</b>
           </div>

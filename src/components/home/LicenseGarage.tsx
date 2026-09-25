@@ -37,14 +37,14 @@ export function LicenseGarage() {
                       <div className="flex flex-1 flex-col gap-2 p-4 pl-5">
                         <div className="flex items-center gap-2">
                           <span className="font-display text-3xl leading-none text-white">{l.id}</span>
-                          {last === l.id && hydrated && <span className="rounded-md bg-lane px-1.5 py-0.5 text-[10px] font-extrabold text-slate-900">ĐANG HỌC</span>}
+                          {last === l.id && hydrated && <span className="rounded-md bg-lane px-1.5 py-0.5 text-[0.625rem] font-extrabold text-slate-900">ĐANG HỌC</span>}
                         </div>
                         <p className="text-sm font-semibold text-white/80">{l.short}</p>
                         <p className="font-hud text-xs text-white/45">
                           {l.exam.total} câu · {l.exam.minutes} phút · đạt {l.exam.pass}
                         </p>
                         <div className="mt-auto pt-2">
-                          <div className="flex items-center justify-between text-[11px] text-white/50">
+                          <div className="flex items-center justify-between text-[0.6875rem] text-white/50">
                             <span>Đã thuộc</span>
                             <span className="font-hud">{p ? `${p.mastered}/${p.total}` : "–"}</span>
                           </div>
