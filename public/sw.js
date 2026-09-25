@@ -5,7 +5,9 @@
  */
 const STATIC = "ll-static-v1";
 const PAGES = "ll-pages-v1";
-const CORE = ["/", "/manifest.webmanifest", "/icons/icon-192.png"];
+// Hỗ trợ triển khai dưới thư mục con (GitHub Pages): BASE = "/" hoặc "/<repo>/".
+const BASE = new URL(self.registration.scope).pathname;
+const CORE = [BASE, BASE + "manifest.webmanifest", BASE + "icons/icon-192.png"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(PAGES).then((c) => c.addAll(CORE)).then(() => self.skipWaiting()));
@@ -21,7 +23,7 @@ self.addEventListener("activate", (e) => {
 });
 
 function isStatic(url) {
-  return url.pathname.startsWith("/_next/static/") || url.pathname.startsWith("/icons/") || /\.(woff2?|png|svg|ico)$/.test(url.pathname);
+  return url.pathname.startsWith(BASE + "_next/static/") || url.pathname.startsWith(BASE + "icons/") || /\.(woff2?|png|svg|ico)$/.test(url.pathname);
 }
 
 self.addEventListener("fetch", (e) => {
@@ -51,7 +53,7 @@ self.addEventListener("fetch", (e) => {
           if (res.ok) caches.open(PAGES).then((c) => c.put(url.pathname, res.clone()));
           return res;
         })
-        .catch(async () => (await caches.match(url.pathname)) || (await caches.match(url.pathname + "/")) || (await caches.match("/")) || Response.error()),
+        .catch(async () => (await caches.match(url.pathname)) || (await caches.match(url.pathname + "/")) || (await caches.match(BASE)) || Response.error()),
     );
     return;
   }

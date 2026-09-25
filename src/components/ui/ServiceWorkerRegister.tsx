@@ -2,12 +2,13 @@
 
 import { useEffect, useSyncExternalStore } from "react";
 import { WifiOff } from "lucide-react";
+import { withBase } from "@/lib/basePath";
 
 /** Đăng ký service worker (chỉ khi build production). */
 export function ServiceWorkerRegister() {
   useEffect(() => {
     if (process.env.NODE_ENV !== "production" || !("serviceWorker" in navigator)) return;
-    navigator.serviceWorker.register("/sw.js").catch(() => {});
+    navigator.serviceWorker.register(withBase("/sw.js"), { scope: withBase("/") }).catch(() => {});
   }, []);
   const online = useOnline();
   if (online) return null;

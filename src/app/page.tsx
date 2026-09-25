@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ButtonLink } from "@/components/ui/Button";
 import { SiteHeader } from "@/components/ui/SiteHeader";
 import { Footer } from "@/components/ui/Footer";
@@ -65,12 +66,12 @@ export default function Home() {
           </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              ["📅", "Ôn tập hôm nay", "Lặp lại ngắt quãng: câu sai quay lại sau 10 phút, câu đúng giãn dần 1 – 3 – 7 – 16 – 35 ngày.", "#hang-bang"],
-              ["🏁", "Bộ đề 2026 & 2027", "10 – 20 đề cố định mỗi hạng theo đề hiện hành và đề mới từ 01/3/2027, có dự đoán khả năng đậu.", "#hang-bang"],
-              ["🪪", "Thử thách 12 điểm", "Chế độ sinh tồn: sai bị trừ điểm GPLX như luật mới, hết 12 điểm là bị tước bằng!", "#hang-bang"],
+              ["📅", "Ôn tập hôm nay", "Lặp lại ngắt quãng: câu sai quay lại sau 10 phút, câu đúng giãn dần 1 – 3 – 7 – 16 – 35 ngày.", "/#hang-bang"],
+              ["🏁", "Bộ đề 2026 & 2027", "10 – 20 đề cố định mỗi hạng theo đề hiện hành và đề mới từ 01/3/2027, có dự đoán khả năng đậu.", "/#hang-bang"],
+              ["🪪", "Thử thách 12 điểm", "Chế độ sinh tồn: sai bị trừ điểm GPLX như luật mới, hết 12 điểm là bị tước bằng!", "/#hang-bang"],
               ["🎯", "Săn biển báo", "60 giây nhận diện biển báo thật nhanh, combo càng dài điểm càng cao.", "/san-bien-bao"],
             ].map(([icon, title, desc, href], i) => (
-              <a
+              <Link
                 key={title}
                 href={href}
                 className="group relative overflow-hidden rounded-3xl bg-[linear-gradient(180deg,#222834,#1a1f29)] p-6 ring-1 ring-inset ring-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,.07),0_6px_0_#0b0d12] transition duration-150 hover:-translate-y-1 hover:ring-lane/40 active:translate-y-1 active:shadow-none"
@@ -79,7 +80,7 @@ export default function Home() {
                 <div className="text-3xl transition group-hover:scale-110">{icon}</div>
                 <h3 className="mt-3 text-lg font-bold text-white">{title}</h3>
                 <p className="mt-1 text-sm text-white/60">{desc}</p>
-              </a>
+              </Link>
             ))}
           </div>
         </section>

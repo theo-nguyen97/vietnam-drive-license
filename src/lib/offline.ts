@@ -1,6 +1,7 @@
 import type { LicenseId } from "@/lib/types";
 import { setCount } from "./exam";
 import { setKeysFor } from "./sets";
+import { withBase } from "./basePath";
 
 const PAGES = "ll-pages-v1";
 const STATIC = "ll-static-v1";
@@ -30,7 +31,7 @@ export function offlineSupported() {
 
 /** Tải và lưu các trang + tài nguyên vào bộ nhớ đệm. Gọi onProgress(0..1). */
 export async function downloadForOffline(license: LicenseId, onProgress: (p: number) => void) {
-  const urls = offlineUrls(license);
+  const urls = offlineUrls(license).map(withBase);
   const pages = await caches.open(PAGES);
   const stat = await caches.open(STATIC);
   const assets = new Set<string>();
@@ -41,7 +42,7 @@ export async function downloadForOffline(license: LicenseId, onProgress: (p: num
       if (res.ok) {
         const html = await res.clone().text();
         await pages.put(u, res);
-        for (const m of html.matchAll(/(?:src|href)="(\/_next\/static\/[^"]+)"/g)) assets.add(m[1]);
+        for (const m of html.matchAll(/(?:src|href)="([^"]*\/_next\/static\/[^"]+)"/g)) assets.add(m[1]);
         const txt = await fetch(`${u}index.txt`).catch(() => null);
         if (txt?.ok) await pages.put(`${u}index.txt`, txt);
       }

@@ -69,6 +69,12 @@ npm run lint
 
 Bản build là **trang tĩnh** nên có thể đưa lên Vercel, Netlify, GitHub Pages, Cloudflare Pages…
 
+### GitHub Pages
+
+Workflow `.github/workflows/deploy-pages.yml` tự build và deploy mỗi lần push. Web chạy tại
+`https://theo-nguyen97.github.io/vietnam-drive-license/` (build với `NEXT_PUBLIC_BASE_PATH=/vietnam-drive-license`).
+Lần đầu cần: repo ở chế độ **Public** và **Settings → Pages → Source: GitHub Actions**.
+
 ## Cấu trúc
 
 ```
