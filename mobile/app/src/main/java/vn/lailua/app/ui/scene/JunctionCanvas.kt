@@ -96,25 +96,30 @@ fun JunctionCanvas(spec: JunctionScene, phase: JunctionPhase, runKey: Any, onInt
     val introCb by rememberUpdatedState(onIntroDone)
     val doneCb by rememberUpdatedState(onDone)
 
+    // Vòng lặp khung hình chỉ chạy khi còn hoạt hình (vào vị trí / mô phỏng thứ tự);
+    // xong là dừng để không tốn pin và để Compose có thể "idle".
     LaunchedEffect(phase, runKey, geo) {
         var fired = false
         var t0 = -1L
-        while (true) {
+        var running = true
+        while (running) {
             withFrameNanos { now ->
                 if (t0 < 0) t0 = now
-                val el = (now - t0) / 1e9
+                val el = if (phase == JunctionPhase.IDLE || phase == JunctionPhase.DONE) 1e6 else (now - t0) / 1e9
                 clock = el
                 val next = HashMap<String, Float>()
                 var st = -1
                 if (phase == JunctionPhase.INTRO || phase == JunctionPhase.IDLE) {
-                    val dur = if (phase == JunctionPhase.IDLE) 0.0 else 1.5
                     var allDone = true
                     geo.forEachIndexed { i, g ->
-                        val k = if (dur == 0.0) 1.0 else ((el - i * 0.12) / dur).coerceIn(0.0, 1.0)
+                        val k = ((el - i * 0.12) / 1.5).coerceIn(0.0, 1.0)
                         if (k < 1) allDone = false
                         next[g.v.id] = (g.stop * (1 - (1 - k).pow(3))).toFloat()
                     }
-                    if (allDone && !fired) { fired = true; introCb() }
+                    if (allDone) {
+                        running = false
+                        if (!fired && phase == JunctionPhase.INTRO) { fired = true; introCb() }
+                    }
                 } else {
                     var finished = true
                     geo.forEach { g -> if (g.v.id !in moving) next[g.v.id] = g.stop }
@@ -132,7 +137,10 @@ fun JunctionCanvas(spec: JunctionScene, phase: JunctionPhase, runKey: Any, onInt
                         }
                     }
                     if (spec.stopAll && el < 1.8) finished = false
-                    if (finished && !fired) { fired = true; doneCb() }
+                    if (finished) {
+                        running = false
+                        if (!fired && phase == JunctionPhase.PLAY) { fired = true; doneCb() }
+                    }
                 }
                 pos = next
                 step = st

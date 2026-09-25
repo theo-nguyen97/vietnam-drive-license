@@ -1,6 +1,10 @@
 package vn.lailua.app.store
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
@@ -102,6 +106,16 @@ class ProgressStore private constructor(context: Context) {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     val flow: Flow<ProgressState> = store.data
+
+    private val mainHandler = Handler(Looper.getMainLooper())
+    private val _state = mutableStateOf<ProgressState?>(null)
+
+    /** Trạng thái hiện tại cho Compose — luôn được ghi trên main thread (null khi chưa đọc xong). */
+    val state: State<ProgressState?> get() = _state
+
+    init {
+        scope.launch { store.data.collect { s -> mainHandler.post { _state.value = s } } }
+    }
 
     private fun update(fn: (ProgressState) -> ProgressState) {
         scope.launch { store.updateData(fn) }

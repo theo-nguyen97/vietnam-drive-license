@@ -32,7 +32,7 @@ mobile/
     ui/          LaiLuaApp.kt (điều hướng), Widgets.kt, theme/, quiz/QuestionView.kt
     ui/scene/    JunctionCanvas.kt, RoadCanvas.kt, TopVehicles.kt, VehicleIcon.kt
     ui/screens/  Onboarding, Home, Practice, Exam, ExamSets, Signs, Me
-  app/src/test/  ExamParityTest.kt — bộ đề & RNG phải giống hệt web
+  app/src/test/  ExamParityTest.kt (bộ đề & RNG giống hệt web), AppSmokeTest.kt (Robolectric: chạy thử toàn bộ luồng app trên JVM)
 ```
 
 ## Cập nhật dữ liệu từ web
@@ -51,7 +51,7 @@ Yêu cầu JDK 17+ và Android SDK (platform 35, build-tools 35). Trong `mobile/
 
 ```bash
 ./gradlew assembleDebug          # app/build/outputs/apk/debug/app-debug.apk
-./gradlew testDebugUnitTest      # kiểm tra bộ đề trùng web
+./gradlew testDebugUnitTest      # bộ đề trùng web + chạy thử luồng app bằng Robolectric
 ./gradlew assembleRelease        # ký bằng ANDROID_KEYSTORE_PATH/PASSWORD, KEY_ALIAS/PASSWORD (thiếu thì dùng khoá debug)
 ```
 

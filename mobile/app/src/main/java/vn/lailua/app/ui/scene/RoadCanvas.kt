@@ -48,10 +48,13 @@ fun RoadCanvas(props: List<String>, vehicle: String, phase: RoadPhase, runKey: A
     var shake by remember { mutableStateOf(0.0) }
     var dFrom by remember { mutableStateOf(0.0) }
 
+    // Chỉ chạy vòng lặp khung hình trong lúc có chuyển động; hết hoạt hình thì dừng.
     LaunchedEffect(phase, runKey) {
         var t0 = -1L
         dFrom = d
-        while (true) {
+        val duration = when (phase) { RoadPhase.INTRO -> 2.2; RoadPhase.IDLE -> 0.0; RoadPhase.PASS -> 2.4; RoadPhase.FAIL -> 0.9 }
+        var running = true
+        while (running) {
             withFrameNanos { now ->
                 if (t0 < 0) t0 = now
                 val el = (now - t0) / 1e9
@@ -62,6 +65,7 @@ fun RoadCanvas(props: List<String>, vehicle: String, phase: RoadPhase, runKey: A
                     RoadPhase.PASS -> d = STOP + (GATE + 30 - STOP) * min(1.0, el / 2.4)
                     RoadPhase.FAIL -> { d = dFrom + 0.45 * easeOut(min(1.0, el / 0.3)); shake = if (el < 0.9) 1 - el / 0.9 else 0.0 }
                 }
+                if (el >= duration) running = false
             }
         }
     }

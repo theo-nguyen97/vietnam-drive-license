@@ -13,12 +13,8 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -29,8 +25,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import vn.lailua.app.AppContainer
 import vn.lailua.app.LocalApp
 import vn.lailua.app.store.ProgressState
@@ -43,6 +37,22 @@ import vn.lailua.app.ui.screens.PracticeScreen
 import vn.lailua.app.ui.screens.SignsScreen
 import vn.lailua.app.ui.theme.Asphalt
 import vn.lailua.app.ui.theme.LaiLuaTheme
+
+/** Nạp AppContainer (đọc JSON ~700 KB) trên luồng riêng rồi bàn giao về main thread. */
+object AppLoader {
+    private val state = mutableStateOf<AppContainer?>(null)
+    private var started = false
+
+    fun load(context: android.content.Context): androidx.compose.runtime.State<AppContainer?> {
+        if (!started) {
+            started = true
+            val appContext = context.applicationContext
+            val handler = android.os.Handler(android.os.Looper.getMainLooper())
+            Thread({ val c = AppContainer(appContext); handler.post { state.value = c } }, "lai-lua-init").start()
+        }
+        return state
+    }
+}
 
 /** Các đường dẫn điều hướng. */
 object Routes {
@@ -62,8 +72,7 @@ object Routes {
 @Composable
 fun LaiLuaApp() {
     val context = LocalContext.current
-    var app by remember { mutableStateOf<AppContainer?>(null) }
-    LaunchedEffect(Unit) { app = withContext(Dispatchers.IO) { AppContainer(context.applicationContext) } }
+    val app by AppLoader.load(context)
 
     LaiLuaTheme {
         val a = app
@@ -74,8 +83,7 @@ fun LaiLuaApp() {
             return@LaiLuaTheme
         }
         CompositionLocalProvider(LocalApp provides a) {
-            val state by a.store.flow.collectAsState(initial = null)
-            val s = state ?: return@CompositionLocalProvider
+            val s = a.store.state.value ?: return@CompositionLocalProvider
             a.sound.enabled = s.sound
             // Cỡ chữ người dùng chọn: phóng toàn bộ đơn vị sp
             val base = LocalDensity.current

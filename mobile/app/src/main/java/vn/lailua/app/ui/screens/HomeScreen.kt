@@ -21,8 +21,12 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.produceState
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import android.os.Handler
+import android.os.Looper
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,8 +37,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import vn.lailua.app.LocalApp
 import vn.lailua.app.logic.Prediction
 import vn.lailua.app.logic.licenseProgress
@@ -66,8 +68,15 @@ fun HomeScreen(state: ProgressState, nav: NavHostController) {
         val passed = mine.filter { it.passed }.mapNotNull { it.setNo }.toSet()
         (1..app.exams.setCount(license)).firstOrNull { it !in passed } ?: 1
     }
-    val prediction by produceState<Prediction?>(null, state.stats, state.exams, license, version) {
-        value = withContext(Dispatchers.Default) { app.predictor.predict(license, version, state.stats, state.exams) }
+    var prediction by remember { mutableStateOf<Prediction?>(null) }
+    val handler = remember { Handler(Looper.getMainLooper()) }
+    DisposableEffect(state.stats, state.exams, license, version) {
+        var alive = true
+        Thread({
+            val p = app.predictor.predict(license, version, state.stats, state.exams)
+            handler.post { if (alive) prediction = p }
+        }, "lai-lua-predict").start()
+        onDispose { alive = false }
     }
 
     Column(Modifier.fillMaxSize().background(Asphalt.bg).verticalScroll(rememberScrollState()).padding(16.dp)) {

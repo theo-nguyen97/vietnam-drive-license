@@ -1,7 +1,7 @@
 package vn.lailua.app.ui
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MenuBook
+import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Signpost
 import androidx.compose.material.icons.filled.Timer
@@ -18,7 +18,7 @@ import vn.lailua.app.ui.theme.Asphalt
 private data class Tab(val route: String, val label: String, val icon: ImageVector)
 
 private val TABS = listOf(
-    Tab(Routes.HOME, "Học", Icons.Filled.MenuBook),
+    Tab(Routes.HOME, "Học", Icons.AutoMirrored.Filled.MenuBook),
     Tab(Routes.EXAMS, "Thi thử", Icons.Filled.Timer),
     Tab(Routes.SIGNS, "Biển báo", Icons.Filled.Signpost),
     Tab(Routes.ME, "Tôi", Icons.Filled.Person),
