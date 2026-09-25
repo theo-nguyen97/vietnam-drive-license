@@ -23,17 +23,16 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      # Cần bật trước: Settings → Pages → Source: GitHub Actions (repo public hoặc gói trả phí).
       - name: Cấu hình Pages
         id: pages
         uses: actions/configure-pages@v5
-        with:
-          enablement: true
       - run: npm ci
       - name: Build trang tĩnh
         run: npm run build
         env:
           # https://<user>.github.io/<repo>/ → basePath = /<repo>
-          NEXT_PUBLIC_BASE_PATH: ${{ steps.pages.outputs.base_path }}
+          NEXT_PUBLIC_BASE_PATH: ${{ steps.pages.outputs.base_path || '/vietnam-drive-license' }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: out
