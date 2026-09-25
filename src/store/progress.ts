@@ -62,6 +62,11 @@ interface ProgressState {
   fontScale: number;
   /** Các bước đã hoàn thành trong lộ trình lấy bằng */
   journey: Record<string, boolean>;
+  /** Đã trả lời màn chào (chọn hạng, thời điểm thi) */
+  onboarded: boolean;
+  /** Dự định thời điểm thi: trước / từ 01/3/2027 / chưa biết */
+  examTiming: "before" | "after" | "unknown" | null;
+  completeOnboarding: (license: LicenseId, timing: "before" | "after" | "unknown") => void;
   setExamVersion: (v: ExamVersion) => void;
   setFontScale: (n: number) => void;
   toggleJourney: (key: string) => void;
@@ -106,6 +111,8 @@ const initial = {
   examVersion: null as ExamVersion | null,
   fontScale: 1,
   journey: {} as Record<string, boolean>,
+  onboarded: false,
+  examTiming: null as "before" | "after" | "unknown" | null,
 };
 
 export const useProgress = create<ProgressState>()(
@@ -145,9 +152,26 @@ export const useProgress = create<ProgressState>()(
       setSignBest: (score) => set((s) => ({ signBest: Math.max(s.signBest, score) })),
       setExamVersion: (v) => set({ examVersion: v }),
       setFontScale: (n) => set({ fontScale: n }),
+      completeOnboarding: (license, timing) =>
+        set({
+          lastLicense: license,
+          examTiming: timing,
+          examVersion: timing === "after" ? "tt108" : timing === "before" ? "tt12" : null,
+          onboarded: true,
+        }),
       toggleJourney: (key) => set((s) => ({ journey: { ...s.journey, [key]: !s.journey[key] } })),
       setLastLicense: (id) => set({ lastLicense: id }),
-      reset: () => set({ ...initial, sound: get().sound, driverName: get().driverName, fontScale: get().fontScale, examVersion: get().examVersion }),
+      reset: () =>
+        set({
+          ...initial,
+          sound: get().sound,
+          driverName: get().driverName,
+          fontScale: get().fontScale,
+          examVersion: get().examVersion,
+          onboarded: get().onboarded,
+          lastLicense: get().lastLicense,
+          examTiming: get().examTiming,
+        }),
       importData: (json) => {
         try {
           const data = JSON.parse(json);
@@ -186,6 +210,8 @@ export const useProgress = create<ProgressState>()(
         examVersion: s.examVersion,
         fontScale: s.fontScale,
         journey: s.journey,
+        onboarded: s.onboarded,
+        examTiming: s.examTiming,
       }),
     },
   ),

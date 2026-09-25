@@ -103,7 +103,7 @@ export function ProgressDashboard() {
       </section>
 
       {/* Bằng lái ảo */}
-      <section className="rounded-3xl bg-asphalt-850 p-6 ring-1 ring-white/10">
+      <section id="bang-lai" className="scroll-mt-20 rounded-3xl bg-asphalt-850 p-6 ring-1 ring-white/10">
         <h2 className="mb-4 text-lg font-bold text-white">🪪 Bằng lái ảo của bạn</h2>
         <VirtualLicense />
       </section>
@@ -113,7 +113,7 @@ export function ProgressDashboard() {
         <h2 className="text-lg font-bold text-white">Mức sẵn sàng theo hạng bằng</h2>
         {started.length === 0 ? (
           <p className="mt-2 text-white/60">
-            Bạn chưa bắt đầu hạng nào. <Link href="/#hang-bang" className="text-lane underline">Chọn hạng bằng</Link> để khởi hành!
+            Bạn chưa bắt đầu hạng nào. <Link href="/chon-hang" className="text-lane underline">Chọn hạng bằng</Link> để khởi hành!
           </p>
         ) : (
           <div className="mt-4 flex flex-col gap-3">

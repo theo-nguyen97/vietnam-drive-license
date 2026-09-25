@@ -2,23 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Car, Target, Route, BarChart3 } from "lucide-react";
 import clsx from "clsx";
 import { useHydrated, useProgress } from "@/store/progress";
+import { navItems } from "./navItems";
 
 /** Thanh tab cố định dưới đáy màn hình trên điện thoại (kiểu ứng dụng). */
 export function MobileTabBar() {
   const path = usePathname() ?? "/";
   const hydrated = useHydrated();
   const last = useProgress((s) => s.lastLicense);
-  const learnHref = hydrated && last ? `/hang/${last.toLowerCase()}` : "/#hang-bang";
-  const tabs = [
-    { href: "/", label: "Trang chủ", icon: Home, active: path === "/" },
-    { href: learnHref, label: hydrated && last ? `Học ${last}` : "Học", icon: Car, active: path.startsWith("/hang/") },
-    { href: "/san-bien-bao", label: "Mini game", icon: Target, active: path.startsWith("/san-bien-bao") },
-    { href: "/lo-trinh", label: "Lộ trình", icon: Route, active: path.startsWith("/lo-trinh") },
-    { href: "/tien-do", label: "Tiến độ", icon: BarChart3, active: path.startsWith("/tien-do") },
-  ];
+  const tabs = navItems(path, hydrated ? last : null);
   return (
     <nav
       className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-asphalt-950/92 pb-[env(safe-area-inset-bottom)] backdrop-blur-lg md:hidden"

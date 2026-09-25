@@ -71,7 +71,12 @@ export function ExamSetBoard({ license }: { license: LicenseId }) {
         </div>
       </div>
 
-      <ExamVersionSwitch license={license} className="mt-6 max-w-xl" />
+      <div className="mt-6 flex max-w-xl flex-col gap-1.5">
+        <ExamVersionSwitch license={license} />
+        <Link href="/tin-tuc/de-thi-2027" className="self-end text-xs font-semibold text-indigo-200 hover:underline">
+          Đề từ 01/3/2027 thay đổi gì? →
+        </Link>
+      </div>
 
       {/* Cấu trúc đề */}
       <div className="mt-4 flex flex-wrap gap-2">

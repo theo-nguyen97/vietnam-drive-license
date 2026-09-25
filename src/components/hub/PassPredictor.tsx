@@ -26,7 +26,7 @@ export function PassPredictor({ license, compact = false }: { license: LicenseId
   const C = 2 * Math.PI * R;
 
   return (
-    <div className={clsx("flex items-center gap-4", compact ? "" : "flex-col sm:flex-row lg:flex-col")}>
+    <div className={clsx("flex items-center gap-4", compact ? "" : "flex-col sm:flex-row")}>
       <div className="relative h-36 w-36 shrink-0">
         <svg viewBox="0 0 120 120" className="h-full w-full -rotate-90">
           <circle cx={60} cy={60} r={R} fill="none" stroke="#ffffff14" strokeWidth={11} />

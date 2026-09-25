@@ -6,6 +6,12 @@ mở và xe chạy tiếp, trả lời sai thì bị "thổi còi" kèm giải t
 
 ## Tính năng
 
+- **Vào là học ngay**: lần đầu mở web chỉ hỏi 2 câu — *bạn định thi bằng gì?* và *khi nào thi?* (trước/sau 01/3/2027, tự chọn cấu trúc đề).
+  Sau đó trang chủ chính là trang học của hạng đó (ôn tập hôm nay, đề tiếp theo, dự đoán đậu, luyện tập, ôn theo chương).
+- **Điều hướng 5 mục**: Học · Thi thử · Tin tức · Khám phá · Tôi (thanh tab dưới đáy trên điện thoại, menu trên cùng trên máy tính).
+  *Tôi* gồm cài đặt (đổi hạng, cấu trúc đề, cỡ chữ, âm thanh, tải offline) và tiến độ; *Khám phá* gom lộ trình, biển báo, mini game.
+- **Tin tức luật giao thông** (`/tin-tuc`): bài tóm tắt về đề thi 2027, bỏ thi mô phỏng, 12 điểm GPLX, nồng độ cồn, tốc độ, phân hạng…
+  Thông tin đề 2027 nằm riêng trong bài `/tin-tuc/de-thi-2027` (đếm ngược, bảng so sánh từng hạng) thay vì banner khắp nơi.
 - **15 hạng GPLX** theo Luật TTATGT đường bộ 2024: A1, A, B1, B, C1, C, D1, D2, D, BE, C1E, CE, D1E, D2E, DE — mỗi hạng một chiếc xe riêng
   (xe tay ga, mô tô phân khối lớn, ô tô con, xe tải, xe khách, đầu kéo container…).
 - **Chế độ ôn tập**: theo 6 chương, câu điểm liệt, câu hay sai, câu đã lưu, chạy ngẫu nhiên; phản hồi ngay, giải thích + mẹo nhớ,

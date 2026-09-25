@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Flame } from "lucide-react";
 import { activeStreak, useHydrated, useProgress } from "@/store/progress";
 import { rankOf } from "@/lib/rank";
@@ -12,7 +13,7 @@ export function PlayerChip() {
   const r = rankOf(xp);
   const days = activeStreak(streak);
   return (
-    <div className="flex items-center gap-2">
+    <Link href="/tien-do" className="flex items-center gap-2 rounded-full transition hover:opacity-90" aria-label="Hồ sơ của tôi">
       <div
         className="flex items-center gap-1 rounded-full bg-orange-500/15 px-2.5 py-1.5 text-sm font-bold text-orange-300 ring-1 ring-orange-400/30"
         title="Chuỗi ngày học liên tiếp"
@@ -28,6 +29,6 @@ export function PlayerChip() {
         </div>
         <span className="font-hud text-sm font-bold text-lane">{xp} XP</span>
       </div>
-    </div>
+    </Link>
   );
 }
