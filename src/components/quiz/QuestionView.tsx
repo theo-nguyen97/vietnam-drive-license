@@ -7,6 +7,7 @@ import type { Question } from "@/lib/types";
 import { TrafficSign } from "@/components/signs/TrafficSign";
 import { getSign } from "@/data/signs";
 import { getChapter } from "@/data/chapters";
+import { SpeakButton } from "./SpeakButton";
 
 export function QuestionView({
   q,
@@ -36,11 +37,14 @@ export function QuestionView({
       <div className="flex items-center justify-between gap-2">
         <div className="flex flex-wrap items-center gap-2 text-xs font-semibold">
           <span className="rounded-md bg-white/10 px-2 py-1 font-hud text-white">
-            Câu {number}/{total}
+            Câu {number}
+            {total > 0 && `/${total}`}
           </span>
           <span className="rounded-md bg-white/5 px-2 py-1 text-white/60">{chapter.short}</span>
           {q.critical && <span className="rounded-md bg-red-500/15 px-2 py-1 text-red-300 ring-1 ring-red-400/30">Điểm liệt</span>}
         </div>
+        <div className="flex items-center gap-1">
+        <SpeakButton text={`${q.text} ${q.options.map((o, i) => `Đáp án ${i + 1}: ${o}`).join(" ")}`} />
         {onBookmark && (
           <button
             type="button"
@@ -52,6 +56,7 @@ export function QuestionView({
             {bookmarked ? <BookmarkCheck className="h-5 w-5" /> : <Bookmark className="h-5 w-5" />}
           </button>
         )}
+        </div>
       </div>
 
       {q.signs && q.signs.length > 0 && (

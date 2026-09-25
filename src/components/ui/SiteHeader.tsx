@@ -5,6 +5,7 @@ import { PlayerChip } from "./PlayerChip";
 const NAV = [
   { href: "/#hang-bang", label: "Hạng bằng" },
   { href: "/bien-bao", label: "Biển báo" },
+  { href: "/san-bien-bao", label: "Mini game" },
   { href: "/tien-do", label: "Tiến độ" },
 ];
 

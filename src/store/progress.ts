@@ -14,7 +14,15 @@ export interface QStat {
   last: 0 | 1;
   /** thời điểm trả lời gần nhất */
   t: number;
+  /** hộp Leitner (0–5) cho ôn tập ngắt quãng */
+  box?: number;
+  /** thời điểm cần ôn lại (ms) */
+  due?: number;
 }
+
+/** Khoảng cách ôn lại theo hộp Leitner: 10 phút, 1, 3, 7, 16, 35 ngày. */
+const DAY = 86_400_000;
+export const REVIEW_INTERVALS = [10 * 60_000, DAY, 3 * DAY, 7 * DAY, 16 * DAY, 35 * DAY];
 
 export interface ExamRecord {
   id: string;
@@ -39,6 +47,15 @@ interface ProgressState {
   bookmarks: number[];
   sound: boolean;
   lastLicense: LicenseId | null;
+  /** tên in trên bằng lái ảo */
+  driverName: string;
+  /** điểm cao nhất thử thách 12 điểm theo hạng */
+  arcadeBest: Partial<Record<LicenseId, number>>;
+  /** điểm cao nhất mini-game săn biển báo */
+  signBest: number;
+  setDriverName: (n: string) => void;
+  setArcadeBest: (id: LicenseId, score: number) => void;
+  setSignBest: (score: number) => void;
   record: (qid: number, correct: boolean) => void;
   addXp: (n: number) => void;
   setBestCombo: (n: number) => void;
@@ -71,6 +88,9 @@ const initial = {
   bookmarks: [] as number[],
   sound: true,
   lastLicense: null as LicenseId | null,
+  driverName: "",
+  arcadeBest: {} as Partial<Record<LicenseId, number>>,
+  signBest: 0,
 };
 
 export const useProgress = create<ProgressState>()(
@@ -80,10 +100,19 @@ export const useProgress = create<ProgressState>()(
       record: (qid, correct) =>
         set((s) => {
           const prev = s.stats[qid] ?? { c: 0, w: 0, last: 0, t: 0 };
+          const now = Date.now();
+          const box = correct ? Math.min(REVIEW_INTERVALS.length - 1, (prev.box ?? 0) + (prev.t ? 1 : 2)) : 0;
           return {
             stats: {
               ...s.stats,
-              [qid]: { c: prev.c + (correct ? 1 : 0), w: prev.w + (correct ? 0 : 1), last: correct ? 1 : 0, t: Date.now() },
+              [qid]: {
+                c: prev.c + (correct ? 1 : 0),
+                w: prev.w + (correct ? 0 : 1),
+                last: correct ? 1 : 0,
+                t: now,
+                box,
+                due: now + REVIEW_INTERVALS[box],
+              },
             },
             streak: nextStreak(s.streak),
           };
@@ -96,8 +125,11 @@ export const useProgress = create<ProgressState>()(
           bookmarks: s.bookmarks.includes(qid) ? s.bookmarks.filter((x) => x !== qid) : [...s.bookmarks, qid],
         })),
       setSound: (v) => set({ sound: v }),
+      setDriverName: (n) => set({ driverName: n.slice(0, 32) }),
+      setArcadeBest: (id, score) => set((s) => ({ arcadeBest: { ...s.arcadeBest, [id]: Math.max(s.arcadeBest[id] ?? 0, score) } })),
+      setSignBest: (score) => set((s) => ({ signBest: Math.max(s.signBest, score) })),
       setLastLicense: (id) => set({ lastLicense: id }),
-      reset: () => set({ ...initial, sound: get().sound }),
+      reset: () => set({ ...initial, sound: get().sound, driverName: get().driverName }),
       importData: (json) => {
         try {
           const data = JSON.parse(json);
@@ -130,6 +162,9 @@ export const useProgress = create<ProgressState>()(
         bookmarks: s.bookmarks,
         sound: s.sound,
         lastLicense: s.lastLicense,
+        driverName: s.driverName,
+        arcadeBest: s.arcadeBest,
+        signBest: s.signBest,
       }),
     },
   ),

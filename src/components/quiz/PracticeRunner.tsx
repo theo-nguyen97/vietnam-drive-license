@@ -116,12 +116,16 @@ function PracticeSession({ license, set, onRestart }: { license: LicenseId; set:
   if (questions.length === 0) {
     return (
       <div className="mx-auto flex max-w-lg flex-1 flex-col items-center justify-center gap-4 p-8 text-center">
-        <div className="text-6xl">{set === "cau-sai" ? "🏁" : "🔖"}</div>
-        <h1 className="font-display text-2xl text-white">{set === "cau-sai" ? "Không còn câu sai!" : "Chưa có câu nào"}</h1>
+        <div className="text-6xl">{set === "hom-nay" ? "🎉" : set === "cau-sai" ? "🏁" : "🔖"}</div>
+        <h1 className="font-display text-2xl text-white">
+          {set === "hom-nay" ? "Hôm nay đã ôn xong!" : set === "cau-sai" ? "Không còn câu sai!" : "Chưa có câu nào"}
+        </h1>
         <p className="text-white/60">
-          {set === "cau-sai"
-            ? "Bạn chưa có câu nào trả lời sai ở lần gần nhất. Hãy ôn thêm các chương hoặc thi thử."
-            : "Bấm biểu tượng dấu trang trên câu hỏi để lưu lại những câu cần ôn."}
+          {set === "hom-nay"
+            ? "Bạn đã học hết các câu và chưa có câu nào đến hạn ôn lại. Quay lại vào ngày mai, hoặc thử Bộ đề 2026 nhé."
+            : set === "cau-sai"
+              ? "Bạn chưa có câu nào trả lời sai ở lần gần nhất. Hãy ôn thêm các chương hoặc thi thử."
+              : "Bấm biểu tượng dấu trang trên câu hỏi để lưu lại những câu cần ôn."}
         </p>
         <ButtonLink href={backHref}>Về bản đồ hạng {lic.id}</ButtonLink>
       </div>

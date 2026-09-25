@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { motion } from "motion/react";
-import { Trophy, Shuffle, AlertTriangle, RotateCcw, Bookmark, ListOrdered, ChevronRight, Dices } from "lucide-react";
+import { Trophy, Shuffle, AlertTriangle, RotateCcw, Bookmark, ListOrdered, ChevronRight, Dices, CalendarCheck, Gauge as GaugeIcon, Target } from "lucide-react";
 import { setCount } from "@/lib/exam";
+import { dailySet, dueQuestions } from "@/lib/sets";
 import clsx from "clsx";
 import type { LicenseId } from "@/lib/types";
 import { getLicense } from "@/data/licenses";
@@ -25,6 +26,10 @@ export function LicenseHub({ license }: { license: LicenseId }) {
   const base = `/hang/${license.toLowerCase()}`;
   const allIds = new Set(questionsFor(license).map((q) => q.id));
   const saved = hydrated ? bookmarks.filter((b) => allIds.has(b)).length : 0;
+  const pool = questionsFor(license);
+  const dueCount = hydrated ? dueQuestions(pool, stats).length : 0;
+  const dailyCount = hydrated ? dailySet(pool, stats).length : 0;
+  const arcadeBest = useProgress((s) => s.arcadeBest[license] ?? 0);
   const current = chapters.findIndex((c) => {
     const ch = p.chapters[c.id];
     return !ch || ch.mastered / ch.total < 0.8;
@@ -92,12 +97,35 @@ export function LicenseHub({ license }: { license: LicenseId }) {
           </div>
           <ChevronRight className="ml-auto mr-8 h-6 w-6 transition group-hover:translate-x-1" />
         </Link>
+        <Link
+          href={`${base}/on-tap/hom-nay`}
+          className="group relative flex items-center gap-4 overflow-hidden rounded-3xl bg-[linear-gradient(180deg,#34d399_0%,#10b981_50%,#059669_100%)] p-5 text-white shadow-[inset_0_1px_0_rgba(255,255,255,.45),0_6px_0_#065f46,0_18px_40px_-12px_rgba(16,185,129,.55)] transition duration-150 hover:-translate-y-0.5 active:translate-y-1.5 active:shadow-[0_1px_0_#065f46] sm:col-span-2"
+        >
+          <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-slate-950/85 text-emerald-300">
+            <CalendarCheck className="h-7 w-7" />
+          </span>
+          <div>
+            <div className="font-display text-2xl leading-tight">ÔN TẬP HÔM NAY</div>
+            <div className="text-sm font-semibold text-white/90">
+              {hydrated ? `${Math.min(dueCount, dailyCount)} câu đến hạn ôn · ${Math.max(0, dailyCount - dueCount)} câu mới` : "Lặp lại ngắt quãng — nhớ lâu hơn"}
+            </div>
+          </div>
+          <ChevronRight className="ml-auto h-6 w-6 transition group-hover:translate-x-1" />
+        </Link>
+        <QuickSet
+          href={`${base}/thu-thach`}
+          icon={<GaugeIcon className="h-5 w-5" />}
+          title="Thử thách 12 điểm"
+          desc={arcadeBest ? `Kỷ lục ${arcadeBest.toLocaleString("vi-VN")}` : "Giữ bằng lâu nhất có thể"}
+          tone="text-rose-300 bg-rose-500/10 ring-rose-400/25"
+        />
         <QuickSet href={`${base}/thi-thu`} icon={<Dices className="h-5 w-5" />} title="Thi thử ngẫu nhiên" desc="Đề trộn mới mỗi lần" tone="text-lane bg-lane/10 ring-lane/25" />
         <QuickSet href={`${base}/on-tap/diem-liet`} icon={<AlertTriangle className="h-5 w-5" />} title="Câu điểm liệt" desc={`${p.critical} câu — sai là trượt`} tone="text-red-300 bg-red-500/10 ring-red-400/25" />
         <QuickSet href={`${base}/on-tap/ngau-nhien`} icon={<Shuffle className="h-5 w-5" />} title="Chạy ngẫu nhiên" desc="20 câu bất kỳ" tone="text-sky-300 bg-sky-500/10 ring-sky-400/25" />
         <QuickSet href={`${base}/on-tap/cau-sai`} icon={<RotateCcw className="h-5 w-5" />} title="Câu hay sai" desc={hydrated ? `${p.wrong} câu cần ôn lại` : "Ôn lại câu sai"} tone="text-orange-300 bg-orange-500/10 ring-orange-400/25" />
         <QuickSet href={`${base}/on-tap/da-luu`} icon={<Bookmark className="h-5 w-5" />} title="Câu đã lưu" desc={`${saved} câu`} tone="text-violet-300 bg-violet-500/10 ring-violet-400/25" />
         <QuickSet href={`${base}/on-tap/tat-ca`} icon={<ListOrdered className="h-5 w-5" />} title="Toàn bộ câu hỏi" desc={`${p.total} câu theo thứ tự`} tone="text-emerald-300 bg-emerald-500/10 ring-emerald-400/25" />
+        <QuickSet href="/san-bien-bao" icon={<Target className="h-5 w-5" />} title="Săn biển báo" desc="Mini game 60 giây" tone="text-cyan-300 bg-cyan-500/10 ring-cyan-400/25" />
       </section>
 
       {/* Bản đồ hành trình */}

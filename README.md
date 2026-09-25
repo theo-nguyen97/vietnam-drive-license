@@ -18,6 +18,13 @@ mở và xe chạy tiếp, trả lời sai thì bị "thổi còi" kèm giải t
   (bộ câu hỏi áp dụng từ 01/6/2025), lưu kết quả từng đề. Ngoài ra có **thi thử ngẫu nhiên** trộn đề mới mỗi lần.
 - **Thi**: đúng số câu / thời gian / điểm đạt, đúng 01 câu điểm liệt mỗi đề (sai là trượt), đếm ngược 3‑2‑1,
   tự nộp khi hết giờ, xem lại bài có lọc câu sai / điểm liệt.
+- **Ôn tập hôm nay** — lặp lại ngắt quãng (hộp Leitner): câu sai quay lại sau 10 phút, câu đúng giãn dần 1 – 3 – 7 – 16 – 35 ngày;
+  mỗi ngày 20 câu gồm câu đến hạn + câu mới.
+- **Thử thách 12 điểm** — chế độ sinh tồn theo luật trừ điểm GPLX: mỗi câu 20 giây, sai/hết giờ trừ 2 điểm (câu điểm liệt trừ 6),
+  5 câu đúng liên tiếp phục hồi 1 điểm, hết 12 điểm là "tước bằng"; lưu kỷ lục theo hạng.
+- **Săn biển báo** — mini game 60 giây nhận diện biển báo, combo, cuối lượt liệt kê biển nhận nhầm để ôn.
+- **Đọc câu hỏi** bằng giọng tiếng Việt của trình duyệt (Web Speech API).
+- **Bằng lái ảo** — thẻ tổng hợp thành tích (tên, cấp bậc, hạng đã đạt thi thử), tải về ảnh PNG để chia sẻ.
 - **Lưu tiến độ** (localStorage): thống kê từng câu, lịch sử thi, XP & cấp bậc, chuỗi ngày học, câu đã lưu; xuất/nhập tệp JSON.
 - **Thư viện biển báo** vẽ bằng SVG, có tìm kiếm không dấu.
 

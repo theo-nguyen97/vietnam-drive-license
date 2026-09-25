@@ -11,6 +11,7 @@ import { activeStreak, useHydrated, useProgress } from "@/store/progress";
 import { licenseProgress } from "@/lib/stats";
 import { rankOf, RANKS } from "@/lib/rank";
 import { Button } from "@/components/ui/Button";
+import { VirtualLicense } from "./VirtualLicense";
 
 export function ProgressDashboard() {
   const hydrated = useHydrated();
@@ -99,6 +100,12 @@ export function ProgressDashboard() {
           <Tile icon={<Zap className="h-5 w-5" />} k="Combo cao nhất" v={`x${s.bestCombo}`} tone="text-sky-300" />
           <Tile icon={<Trophy className="h-5 w-5" />} k="Câu đã làm" v={`${answered}/${QUESTIONS.length}`} tone="text-violet-300" />
         </div>
+      </section>
+
+      {/* Bằng lái ảo */}
+      <section className="rounded-3xl bg-asphalt-850 p-6 ring-1 ring-white/10">
+        <h2 className="mb-4 text-lg font-bold text-white">🪪 Bằng lái ảo của bạn</h2>
+        <VirtualLicense />
       </section>
 
       {/* Theo hạng */}

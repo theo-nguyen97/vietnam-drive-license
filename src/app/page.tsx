@@ -57,18 +57,27 @@ export default function Home() {
         </div>
 
         <section className="mx-auto max-w-6xl px-4 py-14">
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="mb-6">
+            <p className="font-hud text-sm uppercase tracking-[0.2em] text-lane">Chế độ chơi</p>
+            <h2 className="font-display text-3xl text-white">Học như chơi — chơi mà đỗ</h2>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              ["🚗", "Chọn xe của bạn", "Mỗi hạng bằng là một chiếc xe khác nhau — từ xe tay ga A1 đến đầu kéo container CE."],
-              ["🚦", "Vượt từng trạm", "Chế độ ôn tập theo chương: trả lời ngay có giải thích, mẹo nhớ và mô phỏng sa hình."],
-              ["🏁", "Thi thử lấy bằng", "Đề ngẫu nhiên đúng số câu, thời gian, điểm đạt và luật câu điểm liệt như thi thật."],
-            ].map(([icon, title, desc], i) => (
-              <div key={title} className="relative overflow-hidden rounded-3xl bg-asphalt-850 p-6 ring-1 ring-white/10">
+              ["📅", "Ôn tập hôm nay", "Lặp lại ngắt quãng: câu sai quay lại sau 10 phút, câu đúng giãn dần 1 – 3 – 7 – 16 – 35 ngày.", "#hang-bang"],
+              ["🏁", "Bộ đề 2026", "10 – 20 đề cố định mỗi hạng, đúng cấu trúc Thông tư 12/2025/TT-BCA, có câu điểm liệt.", "#hang-bang"],
+              ["🪪", "Thử thách 12 điểm", "Chế độ sinh tồn: sai bị trừ điểm GPLX như luật mới, hết 12 điểm là bị tước bằng!", "#hang-bang"],
+              ["🎯", "Săn biển báo", "60 giây nhận diện biển báo thật nhanh, combo càng dài điểm càng cao.", "/san-bien-bao"],
+            ].map(([icon, title, desc, href], i) => (
+              <a
+                key={title}
+                href={href}
+                className="group relative overflow-hidden rounded-3xl bg-[linear-gradient(180deg,#222834,#1a1f29)] p-6 ring-1 ring-inset ring-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,.07),0_6px_0_#0b0d12] transition duration-150 hover:-translate-y-1 hover:ring-lane/40 active:translate-y-1 active:shadow-none"
+              >
                 <span className="absolute right-4 top-3 font-display text-5xl text-white/5">0{i + 1}</span>
-                <div className="text-3xl">{icon}</div>
+                <div className="text-3xl transition group-hover:scale-110">{icon}</div>
                 <h3 className="mt-3 text-lg font-bold text-white">{title}</h3>
                 <p className="mt-1 text-sm text-white/60">{desc}</p>
-              </div>
+              </a>
             ))}
           </div>
         </section>
