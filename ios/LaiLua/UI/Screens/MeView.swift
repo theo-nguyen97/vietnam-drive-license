@@ -97,6 +97,7 @@ struct MeView: View {
                 .padding(.top, 10)
 
                 // Cài đặt
+                Group {
                 SectionTitle("Cài đặt học")
                 CardView {
                     VStack(alignment: .leading, spacing: 0) {
@@ -154,7 +155,10 @@ struct MeView: View {
                     }
                 }
 
+                }
+
                 // Theo chương
+                Group {
                 if let lic {
                     SectionTitle("Độ chính xác theo chương")
                     CardView {
@@ -175,7 +179,10 @@ struct MeView: View {
                     }
                 }
 
+                }
+
                 // Lịch sử thi
+                Group {
                 SectionTitle("Lịch sử thi thử")
                 CardView {
                     VStack(spacing: 0) {
@@ -195,7 +202,10 @@ struct MeView: View {
                     }
                 }
 
+                }
+
                 // Sao lưu
+                Group {
                 SectionTitle("Sao lưu tiến độ")
                 CardView {
                     VStack(alignment: .leading, spacing: 0) {
@@ -208,6 +218,7 @@ struct MeView: View {
                         if let msg { Text(msg).afont(13, .bold).foregroundColor(Asphalt.lane).padding(.top, 8) }
                         Button { confirmReset = true } label: { Text("Xoá tiến độ").afont(14).foregroundColor(Asphalt.rose).padding(.vertical, 8) }
                     }
+                }
                 }
                 Spacer().frame(height: 24)
             }

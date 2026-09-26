@@ -53,7 +53,7 @@ struct PressStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         let shape = RoundedRectangle(cornerRadius: radius, style: .continuous)
-        configuration.label
+        return configuration.label
             .frame(height: height)
             .background(LinearGradient(colors: [top, bottom], startPoint: .top, endPoint: .bottom))
             .clipShape(shape)

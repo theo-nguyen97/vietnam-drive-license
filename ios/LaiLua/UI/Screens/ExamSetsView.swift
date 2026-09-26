@@ -29,18 +29,16 @@ struct ExamSetsView: View {
                         }
                         Spacer()
                     }
-                    Spacer().frame(height: 14)
-                    VersionSwitch(lic: lic, version: version) { store.setExamVersion($0.key) }
-                    Spacer().frame(height: 10)
+                    VersionSwitch(lic: lic, version: version) { store.setExamVersion($0.key) }.padding(.top, 14)
                     HStack(spacing: 6) {
                         Chip("\(cfg.total) câu", fg: .white)
                         Chip("\(cfg.minutes) phút", fg: .white)
                         Chip("đạt ≥ \(cfg.pass)", color: Asphalt.lane.opacity(0.15), fg: Asphalt.lane)
                         Chip("1 điểm liệt", color: Asphalt.red.opacity(0.15), fg: Asphalt.rose)
                     }
+                    .padding(.top, 10)
                     Text("Cấu trúc: " + plan.map { "\(app.repo.chapter($0.chapter)?.short ?? "Chương \($0.chapter)") \($0.count)" }.joined(separator: " · "))
                         .afont(12).foregroundColor(Asphalt.faint).padding(.top, 8).fixedSize(horizontal: false, vertical: true)
-                    Spacer().frame(height: 12)
                     CardView {
                         HStack {
                             Stat(value: "\(passedSets.count)/\(count)", label: "đề đã đạt", color: Asphalt.mint).frame(maxWidth: 120)
@@ -48,8 +46,7 @@ struct ExamSetsView: View {
                             PressButton(text: "🎲 Đề ngẫu nhiên", compact: true, fill: false) { nav.push(.exam(0)) }
                         }
                     }
-                    Spacer().frame(height: 16)
-
+                    .padding(.top, 12)
                     LazyVGrid(columns: columns, spacing: 10) {
                         ForEach(1...count, id: \.self) { n in
                             let best = mine.filter { $0.setNo == n }.max { $0.correct < $1.correct }
@@ -73,6 +70,7 @@ struct ExamSetsView: View {
                             .buttonStyle(.plain)
                         }
                     }
+                    .padding(.top, 16)
                     Spacer().frame(height: 24)
                 }
                 .padding(16)

@@ -146,10 +146,11 @@ private struct PracticeSummary: View {
         let pct = questions.isEmpty ? 0 : correct * 100 / questions.count
         ScrollView {
             VStack(spacing: 0) {
-                Spacer().frame(height: 24)
-                Text(pct >= 80 ? "🏁" : "🚧").font(.system(size: 56))
-                Text(pct >= 80 ? "Chặng này ngon rồi!" : "Cần chạy lại chặng này").afont(26, .black).foregroundColor(.white).multilineTextAlignment(.center)
-                Text("Đúng \(correct)/\(questions.count) câu (\(pct)%)").afont(15).foregroundColor(Asphalt.muted).padding(.top, 6)
+                Group {
+                    Text(pct >= 80 ? "🏁" : "🚧").font(.system(size: 56)).padding(.top, 24)
+                    Text(pct >= 80 ? "Chặng này ngon rồi!" : "Cần chạy lại chặng này").afont(26, .black).foregroundColor(.white).multilineTextAlignment(.center)
+                    Text("Đúng \(correct)/\(questions.count) câu (\(pct)%)").afont(15).foregroundColor(Asphalt.muted).padding(.top, 6)
+                }
                 Spacer().frame(height: 20)
                 CardView {
                     HStack {

@@ -190,8 +190,7 @@ private struct ExamResultView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
-                Spacer().frame(height: 28)
-                Text(r.passed ? "🎉" : "🚫").font(.system(size: 60))
+                Text(r.passed ? "🎉" : "🚫").font(.system(size: 60)).padding(.top, 28)
                 Text(r.passed ? "ĐẠT!" : "CHƯA ĐẠT").afont(40, .black).foregroundColor(r.passed ? Asphalt.mint : Asphalt.rose)
                 Text(
                     r.criticalFail ? "Sai câu điểm liệt — dù đủ điểm vẫn trượt. Học thuộc nhóm câu này trước!"
@@ -207,12 +206,12 @@ private struct ExamResultView: View {
                         Stat(value: "\(r.wrongIds.count)", label: "Câu sai", color: Asphalt.rose)
                     }
                 }
-                Spacer().frame(height: 16)
-                PressButton(text: "Xem lại từng câu", action: onReview)
-                Spacer().frame(height: 10)
-                PressButton(text: setNo >= 1 ? "Làm lại đề số \(setNo)" : "Đề ngẫu nhiên khác", tone: .ghost, action: onRetry)
-                Spacer().frame(height: 10)
-                PressButton(text: "Về bộ đề", tone: .ghost, action: onBack)
+                VStack(spacing: 10) {
+                    PressButton(text: "Xem lại từng câu", action: onReview)
+                    PressButton(text: setNo >= 1 ? "Làm lại đề số \(setNo)" : "Đề ngẫu nhiên khác", tone: .ghost, action: onRetry)
+                    PressButton(text: "Về bộ đề", tone: .ghost, action: onBack)
+                }
+                .padding(.top, 16)
             }
             .padding(20)
         }
