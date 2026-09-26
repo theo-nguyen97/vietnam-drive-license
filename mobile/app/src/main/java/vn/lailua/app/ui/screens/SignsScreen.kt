@@ -45,18 +45,22 @@ import vn.lailua.app.ui.theme.Asphalt
 
 /** Thư viện biển báo theo nhóm, bấm để xem ý nghĩa. */
 @Composable
-fun SignsScreen() {
+fun SignsScreen(onBack: (() -> Unit)? = null) {
     val repo = LocalApp.current.repo
     var group by remember { mutableStateOf<String?>(null) }
     var open by remember { mutableStateOf<SignInfo?>(null) }
     val list = repo.signs.filter { group == null || it.group == group }
 
-    LazyVerticalGrid(GridCells.Fixed(3), Modifier.fillMaxSize().background(Asphalt.bg), contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+    Column(Modifier.fillMaxSize().background(Asphalt.bg)) {
+    if (onBack != null) vn.lailua.app.ui.quiz.RunnerTopBar("Thư viện biển báo", "${repo.signs.size} biển · QCVN 41", onBack = onBack)
+    LazyVerticalGrid(GridCells.Fixed(3), Modifier.fillMaxSize(), contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
         item(span = { GridItemSpan(3) }) {
             Column {
-                Eyebrow("QCVN 41")
-                Text("Thư viện biển báo", color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Black)
-                Row(Modifier.fillMaxWidth().padding(top = 12.dp).horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                if (onBack == null) {
+                    Eyebrow("QCVN 41")
+                    Text("Thư viện biển báo", color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Black)
+                }
+                Row(Modifier.fillMaxWidth().padding(top = if (onBack == null) 12.dp else 0.dp).horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     FilterChip("Tất cả", group == null) { group = null }
                     for (g in repo.signGroups) FilterChip(g.name.removePrefix("Biển báo ").removePrefix("Biển "), group == g.id) { group = g.id }
                 }
@@ -76,6 +80,7 @@ fun SignsScreen() {
             }
         }
         item(span = { GridItemSpan(3) }) { Spacer(Modifier.height(24.dp)) }
+    }
     }
 
     open?.let { s ->

@@ -11,6 +11,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
 
 /** Bảng màu "nhựa đường" giống bản web. */
@@ -52,7 +53,9 @@ val AppTypography = Typography(
     headlineSmall = TextStyle(fontWeight = FontWeight.ExtraBold, fontSize = 22.sp, lineHeight = 26.sp),
     titleLarge = TextStyle(fontWeight = FontWeight.Bold, fontSize = 19.sp, lineHeight = 24.sp),
     titleMedium = TextStyle(fontWeight = FontWeight.Bold, fontSize = 16.sp, lineHeight = 22.sp),
-    bodyLarge = TextStyle(fontSize = 17.sp, lineHeight = 25.sp),
+    // Không đặt lineHeight cố định: Text đổi fontSize (chữ nhỏ) sẽ dùng khoảng cách dòng tự nhiên của font thay vì
+    // 25sp thưa thớt. Không dùng đơn vị em vì TextField nội suy giữa các kiểu chữ và không trộn được em với sp.
+    bodyLarge = TextStyle(fontSize = 17.sp, lineHeight = TextUnit.Unspecified),
     bodyMedium = TextStyle(fontSize = 15.sp, lineHeight = 22.sp),
     bodySmall = TextStyle(fontSize = 13.sp, lineHeight = 18.sp),
     labelLarge = TextStyle(fontWeight = FontWeight.Bold, fontSize = 15.sp),

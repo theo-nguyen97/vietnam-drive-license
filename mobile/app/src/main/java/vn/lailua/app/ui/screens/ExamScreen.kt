@@ -181,7 +181,8 @@ private fun ResultView(r: ExamBuilder.Result, pass: Int, total: Int, setNo: Int,
         Text(if (r.passed) "ĐẠT!" else "CHƯA ĐẠT", color = if (r.passed) Color(0xFF6EE7B7) else Color(0xFFFCA5A5), fontSize = 40.sp, fontWeight = FontWeight.Black)
         Text(
             when {
-                r.criticalFail -> "Sai câu điểm liệt — dù đủ điểm vẫn trượt. Học thuộc nhóm câu này trước!"
+                r.criticalFail && r.correct >= pass -> "Đủ ${r.correct}/$total câu nhưng sai câu điểm liệt nên vẫn trượt. Học thuộc nhóm câu này trước!"
+                r.criticalFail -> "Đúng ${r.correct}/$total câu (cần $pass) và sai câu điểm liệt. Ôn câu điểm liệt trước rồi làm lại nhé."
                 r.passed -> "Bạn đúng ${r.correct}/$total câu, cần ${pass} câu. Giữ phong độ này nhé!"
                 else -> "Bạn đúng ${r.correct}/$total câu, cần ${pass} câu. Thiếu ${pass - r.correct} câu nữa thôi."
             },

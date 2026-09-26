@@ -86,14 +86,14 @@ fun HomeScreen(state: ProgressState, nav: NavHostController) {
             Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f)) {
                 Text("Chào ${state.driverName.ifBlank { "bạn" }} 👋", color = Asphalt.muted, fontSize = 13.sp)
-                Text("Luyện thi hạng ${lic.id}", color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Black)
+                Text("Luyện thi hạng ${lic.id}", color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Black, maxLines = 1)
+                Text("${version.title} · ${cfg.total} câu · ${cfg.minutes} phút · đạt ${cfg.pass}", color = Asphalt.faint, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
             }
-            Chip("${version.title} · ${cfg.total} câu", fg = Color.White)
         }
 
         // Hôm nay
         Box(Modifier.fillMaxWidth().padding(top = 16.dp).clip(RoundedCornerShape(24.dp)).background(Asphalt.surface).border(1.dp, Asphalt.line, RoundedCornerShape(24.dp))) {
-            Box(Modifier.fillMaxWidth().height(230.dp).background(Brush.radialGradient(listOf(parseColor(lic.color).copy(alpha = 0.35f), Color.Transparent), center = Offset(900f, 0f), radius = 700f)))
+            Box(Modifier.matchParentSize().background(Brush.radialGradient(listOf(parseColor(lic.color).copy(alpha = 0.35f), Color.Transparent), center = Offset(900f, 0f), radius = 700f)))
             Column(Modifier.padding(16.dp)) {
                 Eyebrow("Hôm nay")
                 Spacer(Modifier.height(10.dp))
@@ -124,10 +124,12 @@ fun HomeScreen(state: ProgressState, nav: NavHostController) {
 
         SectionTitle("Luyện tập")
         val quick = listOf(
-            Quad("diem-yeu", "🩺", "Luyện điểm yếu", "Chẩn đoán lỗi hay mắc"),
+            Quad("diem-yeu", vn.lailua.app.data.Emoji.compat("🩺"), "Luyện điểm yếu", "Chẩn đoán lỗi hay mắc"),
             Quad("diem-liet", "⚠️", "Câu điểm liệt", "${p.critical} câu — sai là trượt"),
             Quad("cau-sai", "🔁", "Câu hay sai", "${p.wrong} câu cần ôn lại"),
             Quad("da-luu", "🔖", "Câu đã lưu", "${state.bookmarks.size} câu"),
+            Quad("mo-phong", "🎬", "Mô phỏng", "Chọn sai, xem hậu quả"),
+            Quad("co-meo", "💡", "Học theo mẹo", "Câu có mẹo nhớ"),
             Quad("ngau-nhien", "🎲", "Chạy ngẫu nhiên", "20 câu khởi động"),
             Quad("tat-ca", "🛣️", "Toàn bộ câu hỏi", "${p.total} câu theo thứ tự"),
         )
@@ -152,6 +154,21 @@ fun HomeScreen(state: ProgressState, nav: NavHostController) {
                     }
                     Spacer(Modifier.width(10.dp))
                     Text("${cp?.mastered ?: 0}/${cp?.total ?: 0}", color = Asphalt.muted, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                }
+            }
+        }
+        SectionTitle("Tin tức & luật mới") {
+            Text("Xem tất cả →", color = Asphalt.muted, fontSize = 13.sp, fontWeight = FontWeight.Bold, modifier = Modifier.clickable { nav.navigate(Routes.NEWS) })
+        }
+        for (n in app.repo.news.items.take(3)) {
+            Card(Modifier.fillMaxWidth().padding(bottom = 8.dp), padding = androidx.compose.foundation.layout.PaddingValues(12.dp), onClick = { nav.navigate(Routes.article(n.slug)) }) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(n.emoji, fontSize = 24.sp)
+                    Spacer(Modifier.width(10.dp))
+                    Column(Modifier.weight(1f)) {
+                        Text("${n.category} · ${n.date}", color = Asphalt.faint, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        Text(n.title, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp, maxLines = 2, lineHeight = 19.sp)
+                    }
                 }
             }
         }

@@ -1,7 +1,8 @@
 /**
  * Xuất dữ liệu dùng chung cho ứng dụng Android (mobile/) và iOS (ios/ tham chiếu thẳng thư mục assets này):
  *   - assets/data/questions.json  (câu hỏi + quỹ đạo xe cho sa hình, đã tính sẵn)
- *   - assets/data/licenses.json, chapters.json, signs.json
+ *   - assets/data/licenses.json, chapters.json, signs.json, topics.json
+ *   - assets/data/news.json (tin tức luật), journey.json (lộ trình + sa hình thực hành), tips.json (học mẹo)
  *   - assets/signs/<code>.png     (biển báo vẽ từ SignGraphic, 256 px)
  *
  * Chạy: npx tsx scripts/export-mobile-data.tsx
@@ -19,6 +20,9 @@ import { SignGraphic } from "@/components/signs/SignGraphic";
 import { vehiclePath } from "@/components/scene/junctionPaths";
 import { TOP_LABEL } from "@/components/scene/sprites";
 import { TOPICS, topicOf } from "@/lib/topics";
+import { NEWS_CATEGORIES, OFFICIAL_LINKS, SORTED_NEWS } from "@/data/news";
+import { COURSE, STEPS } from "@/data/journey";
+import { TIPS, TIP_GROUPS } from "@/data/tips";
 
 const ROOT = join(__dirname, "..", "mobile", "app", "src", "main", "assets");
 const DATA = join(ROOT, "data");
@@ -44,6 +48,9 @@ write("licenses.json", LICENSES);
 write("chapters.json", CHAPTERS);
 write("signs.json", { groups: SIGN_GROUPS, signs: SIGNS });
 write("topics.json", TOPICS);
+write("news.json", { categories: NEWS_CATEGORIES, items: SORTED_NEWS, links: OFFICIAL_LINKS });
+write("journey.json", { steps: STEPS, course: COURSE });
+write("tips.json", { groups: TIP_GROUPS, tips: TIPS });
 
 async function renderSigns() {
   const { chromium } = await import(process.env.PLAYWRIGHT_MODULE ?? "playwright");

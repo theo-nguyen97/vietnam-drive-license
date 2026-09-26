@@ -13,8 +13,9 @@ android {
         applicationId = "vn.lailua.app"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0.0"
+        // Google Play yêu cầu versionCode tăng dần: trên CI lấy theo số lần chạy workflow
+        versionCode = System.getenv("ANDROID_VERSION_CODE")?.toIntOrNull() ?: System.getenv("GITHUB_RUN_NUMBER")?.toIntOrNull() ?: 1
+        versionName = "1.1.0"
         vectorDrawables.useSupportLibrary = true
     }
 

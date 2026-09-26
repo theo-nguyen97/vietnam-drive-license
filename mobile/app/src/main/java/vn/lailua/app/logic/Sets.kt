@@ -8,14 +8,15 @@ import vn.lailua.app.store.QStat
 class SetBuilder(private val repo: Repo) {
     companion object {
         const val DAILY_SIZE = 20
-        val STATIC = listOf("hom-nay", "tat-ca", "diem-liet", "cau-sai", "ngau-nhien", "da-luu")
+        val STATIC = listOf("hom-nay", "tat-ca", "diem-liet", "cau-sai", "ngau-nhien", "da-luu", "co-meo", "mo-phong")
     }
 
     data class Meta(val title: String, val desc: String, val icon: String)
 
     fun meta(key: String): Meta = when {
         key.startsWith("chu-de-") -> repo.topic(key.removePrefix("chu-de-"))?.let { Meta(it.name, it.hint, it.icon) } ?: Meta("Ôn tập", "", "📘")
-        key == "diem-yeu" -> Meta("Luyện điểm yếu", "Câu hỏi từ các chủ đề bạn hay sai nhất", "🩺")
+        key.startsWith("meo-") -> repo.tips.groups.firstOrNull { it.id == key.removePrefix("meo-") }?.let { Meta("Luyện mẹo: ${it.name}", it.desc, it.icon) } ?: Meta("Ôn tập", "", "📘")
+        key == "diem-yeu" -> Meta("Luyện điểm yếu", "Câu hỏi từ các chủ đề bạn hay sai nhất", vn.lailua.app.data.Emoji.compat("🩺"))
         key.startsWith("chuong-") -> repo.chapters.firstOrNull { it.id == key.removePrefix("chuong-").toIntOrNull() }
             ?.let { Meta(it.short, it.name, it.icon) } ?: Meta("Ôn tập", "", "📘")
         key == "hom-nay" -> Meta("Ôn tập hôm nay", "Lặp lại ngắt quãng: câu đến hạn ôn + câu mới", "📅")
@@ -24,6 +25,8 @@ class SetBuilder(private val repo: Repo) {
         key == "cau-sai" -> Meta("Câu hay sai", "Những câu bạn trả lời sai ở lần gần nhất", "🔁")
         key == "ngau-nhien" -> Meta("Chạy ngẫu nhiên", "20 câu bất kỳ — khởi động nhanh", "🎲")
         key == "da-luu" -> Meta("Câu đã lưu", "Các câu bạn đánh dấu để ôn lại", "🔖")
+        key == "co-meo" -> Meta("Học theo mẹo", "Các câu có mẹo nhớ — luyện để thuộc mẹo", "💡")
+        key == "mo-phong" -> Meta("Tình huống mô phỏng", "Câu có hình động — thử chọn sai để xem hậu quả", "🎬")
         else -> Meta("Ôn tập", "", "📘")
     }
 
@@ -38,8 +41,20 @@ class SetBuilder(private val repo: Repo) {
             key == "cau-sai" -> all.filter { stats[it.id]?.last == 0 }
             key == "ngau-nhien" -> all.shuffled().take(20)
             key == "da-luu" -> all.filter { it.id in bookmarks }
+            key == "co-meo" -> all.filter { it.tip != null }
+            key == "mo-phong" -> all.filter { it.scene != null || it.consequences != null }.shuffled()
+            key.startsWith("meo-") -> tipQuestions(licenseId, key.removePrefix("meo-"))
             else -> all
         }
+    }
+
+    /** Câu minh hoạ của một nhóm mẹo (Học mẹo → "Luyện ngay"): câu được mẹo trỏ tới, rồi câu thuộc chủ đề của nhóm. */
+    fun tipQuestions(licenseId: String, groupId: String): List<Question> {
+        val all = repo.questionsFor(licenseId)
+        val group = repo.tips.groups.firstOrNull { it.id == groupId } ?: return emptyList()
+        val linked = repo.tips.tips.filter { it.group == groupId }.flatMap { it.questions }.toSet()
+        val byTopic = all.filter { it.topic in group.topics }
+        return (all.filter { it.id in linked } + byTopic).distinctBy { it.id }
     }
 
     /** Câu đến hạn ôn (theo hộp Leitner), ưu tiên câu điểm liệt và câu quá hạn lâu. */

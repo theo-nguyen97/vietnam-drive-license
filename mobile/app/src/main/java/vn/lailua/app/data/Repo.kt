@@ -15,6 +15,9 @@ class Repo private constructor(
     val signs: List<SignInfo>,
     val signGroups: List<SignGroup>,
     val topics: List<Topic>,
+    val news: NewsBundle,
+    val journey: JourneyBundle,
+    val tips: TipBundle,
     private val signLoader: (String) -> Bitmap?,
 ) {
     private val byId = questions.associateBy { it.id }
@@ -64,7 +67,7 @@ class Repo private constructor(
         private fun load(context: Context): Repo {
             val am = context.assets
             return fromJson(
-                read = { name -> am.open("data/$name").bufferedReader().use { it.readText() } },
+                read = { name -> Emoji.compat(am.open("data/$name").bufferedReader().use { it.readText() }) },
                 signLoader = { code -> am.open("signs/$code.png").use { BitmapFactory.decodeStream(it) } },
             )
         }
@@ -79,6 +82,9 @@ class Repo private constructor(
                 signs = signs.signs,
                 signGroups = signs.groups,
                 topics = json.decodeFromString(read("topics.json")),
+                news = json.decodeFromString(read("news.json")),
+                journey = json.decodeFromString(read("journey.json")),
+                tips = json.decodeFromString(read("tips.json")),
                 signLoader = signLoader,
             )
         }

@@ -30,6 +30,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
@@ -86,16 +90,21 @@ fun PressButton(
         ButtonTone.GHOST -> listOf(Color(0xFF2A3140), Color(0xFF1C2230), Color(0xFF0B0D12), Color.White)
     }
     val depth = if (compact) 3.dp else 5.dp
+    val height = if (compact) 44.dp else 56.dp
     val shape = RoundedCornerShape(if (compact) 12.dp else 16.dp)
-    Box(modifier.height(if (compact) 44.dp else 56.dp)) {
-        Box(Modifier.matchParentSize().offset(y = depth).clip(shape).background(base))
+    // Mặt nút có chiều rộng theo nội dung; khi caller kéo giãn (fillMaxWidth/weight) thì
+    // propagateMinConstraints ép mặt nút rộng theo. Đế nút vẽ phía sau, lệch xuống `depth`.
+    Box(modifier.height(height), propagateMinConstraints = true) {
         Row(
             Modifier
-                .matchParentSize()
+                .height(height - depth)
                 .offset(y = depth * (1 - lift))
+                .drawBehind {
+                    drawRoundRect(base, topLeft = Offset(0f, depth.toPx() * lift), size = size, cornerRadius = CornerRadius((if (compact) 12.dp else 16.dp).toPx()))
+                }
                 .clip(shape)
                 .background(Brush.verticalGradient(listOf(top, bottom)))
-                .clickable(interactionSource = interaction, indication = null, enabled = enabled, onClick = onClick)
+                .clickable(interactionSource = interaction, indication = null, enabled = enabled, role = Role.Button, onClick = onClick)
                 .padding(horizontal = if (compact) 14.dp else 20.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,
@@ -107,6 +116,7 @@ fun PressButton(
                 fontWeight = FontWeight.ExtraBold,
                 fontSize = if (compact) 14.sp else 17.sp,
                 textAlign = TextAlign.Center,
+                maxLines = 1,
             )
         }
     }

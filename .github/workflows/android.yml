@@ -3,6 +3,8 @@ name: Android app
 on:
   push:
     branches: [main, "claude/**"]
+    # Đẩy tag app-v1.2.0 → build + tạo GitHub Release kèm APK/AAB (bộ lọc paths không áp dụng cho tag)
+    tags: ["app-v*"]
     paths: ["mobile/**", ".github/workflows/android.yml"]
   workflow_dispatch:
 
@@ -16,17 +18,25 @@ jobs:
       run:
         working-directory: mobile
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "17"
 
       - uses: gradle/actions/setup-gradle@v4
 
-      - name: Unit tests (bộ đề trùng khớp bản web)
+      - name: Unit tests (bộ đề & mô phỏng trùng web) + chạy thử toàn bộ app bằng Robolectric
         run: ./gradlew testDebugUnitTest --no-daemon
+
+      # Ảnh chụp từng màn hình do AppSmokeTest tạo — xem nhanh giao diện mà không cần máy thật
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lai-lua-screenshots
+          path: mobile/app/build/screenshots/
+          if-no-files-found: ignore
 
       - name: Build debug APK
         run: ./gradlew assembleDebug --no-daemon
@@ -41,7 +51,7 @@ jobs:
           if [ -n "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" ]; then
             echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > /tmp/release.jks
           fi
-          ./gradlew assembleRelease --no-daemon
+          ./gradlew assembleRelease bundleRelease --no-daemon
 
       - uses: actions/upload-artifact@v4
         with:
@@ -53,6 +63,12 @@ jobs:
           name: lai-lua-release-apk
           path: mobile/app/build/outputs/apk/release/app-release.apk
 
+      # Gói AAB để tải lên Google Play Console (chỉ hợp lệ khi đã cấu hình secrets ký bản release)
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lai-lua-release-aab
+          path: mobile/app/build/outputs/bundle/release/app-release.aab
+
       # Đẩy lên tag dạng app-v* thì đính kèm APK vào GitHub Release để tải trực tiếp.
       - name: GitHub Release
         if: startsWith(github.ref, 'refs/tags/app-v')
@@ -60,4 +76,5 @@ jobs:
         with:
           files: |
             mobile/app/build/outputs/apk/release/app-release.apk
+            mobile/app/build/outputs/bundle/release/app-release.aab
             mobile/app/build/outputs/apk/debug/app-debug.apk

@@ -16,6 +16,7 @@ class AppContainer(context: Context) {
     val sets = SetBuilder(repo)
     val predictor = Predictor(repo, exams, sets)
     val sound = vn.lailua.app.ui.Sfx(context)
+    val speech = vn.lailua.app.ui.Speech(context)
 }
 
 val LocalApp = staticCompositionLocalOf<AppContainer> { error("AppContainer chưa được cung cấp") }

@@ -28,7 +28,15 @@ import androidx.navigation.compose.rememberNavController
 import vn.lailua.app.AppContainer
 import vn.lailua.app.LocalApp
 import vn.lailua.app.store.ProgressState
+import vn.lailua.app.ui.screens.ArcadeScreen
 import vn.lailua.app.ui.screens.ExamScreen
+import vn.lailua.app.ui.screens.ExploreScreen
+import vn.lailua.app.ui.screens.JourneyScreen
+import vn.lailua.app.ui.screens.NewsArticleScreen
+import vn.lailua.app.ui.screens.NewsListScreen
+import vn.lailua.app.ui.screens.SignHuntScreen
+import vn.lailua.app.ui.screens.TipsScreen
+import vn.lailua.app.ui.screens.WeaknessScreen
 import vn.lailua.app.ui.screens.ExamSetsScreen
 import vn.lailua.app.ui.screens.HomeScreen
 import vn.lailua.app.ui.screens.MeScreen
@@ -61,12 +69,21 @@ object Routes {
     const val EXAMS = "exams"
     const val SIGNS = "signs"
     const val ME = "me"
+    const val NEWS = "news"
+    const val EXPLORE = "explore"
+    const val ARTICLE = "news/{slug}"
+    const val JOURNEY = "journey"
+    const val TIPS = "tips"
+    const val WEAKNESS = "weakness"
+    const val SIGN_HUNT = "sign-hunt"
+    const val ARCADE = "arcade"
     const val CHANGE = "change-license"
     const val PRACTICE = "practice/{set}"
     const val EXAM = "exam/{setNo}"
     fun practice(set: String) = "practice/$set"
     fun exam(setNo: Int) = "exam/$setNo"
-    val topLevel = setOf(HOME, EXAMS, SIGNS, ME)
+    fun article(slug: String) = "news/$slug"
+    val topLevel = setOf(HOME, EXAMS, NEWS, EXPLORE, ME)
 }
 
 @Composable
@@ -121,8 +138,16 @@ private fun AppNav(state: ProgressState) {
             composable(Routes.CHANGE) { OnboardingScreen(state, onDone = { nav.popBackStack() }, change = true) }
             composable(Routes.HOME) { HomeScreen(state, nav) }
             composable(Routes.EXAMS) { ExamSetsScreen(state, nav) }
-            composable(Routes.SIGNS) { SignsScreen() }
+            composable(Routes.NEWS) { NewsListScreen(nav) }
+            composable(Routes.ARTICLE) { NewsArticleScreen(it.arguments?.getString("slug").orEmpty(), state, nav) }
+            composable(Routes.EXPLORE) { ExploreScreen(state, nav) }
             composable(Routes.ME) { MeScreen(state, nav) }
+            composable(Routes.SIGNS) { SignsScreen(onBack = { nav.popBackStack() }) }
+            composable(Routes.JOURNEY) { JourneyScreen(state, nav) }
+            composable(Routes.TIPS) { TipsScreen(state, nav) }
+            composable(Routes.WEAKNESS) { WeaknessScreen(state, nav) }
+            composable(Routes.SIGN_HUNT) { SignHuntScreen(state, nav) }
+            composable(Routes.ARCADE) { ArcadeScreen(state, nav) }
             composable(Routes.PRACTICE) { PracticeScreen(state, it.arguments?.getString("set") ?: "tat-ca", nav) }
             composable(Routes.EXAM) { ExamScreen(state, it.arguments?.getString("setNo")?.toIntOrNull() ?: 0, nav) }
         }

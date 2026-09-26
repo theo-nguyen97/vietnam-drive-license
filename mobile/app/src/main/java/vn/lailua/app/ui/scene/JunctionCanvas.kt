@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.sp
 import vn.lailua.app.LocalApp
 import vn.lailua.app.data.JunctionScene
 import vn.lailua.app.data.JunctionVehicle
+import vn.lailua.app.logic.WhatIf
 import kotlin.math.atan2
 import kotlin.math.pow
 
@@ -58,6 +59,8 @@ private const val C = 200f
 
 private class Geo(val v: JunctionVehicle, val path: Path, val measure: PathMeasure, val stop: Float) {
     val len = measure.length
+    /** Điểm lấy mẫu dọc quỹ đạo, cách nhau 2 đơn vị — dùng để tìm chỗ hai xe cắt nhau. */
+    val pts: List<Offset> by lazy { (0..(len / 2f).toInt()).map { measure.getPosition(it * 2f) } }
     fun at(s: Float): Triple<Float, Float, Float> {
         val d = s.coerceIn(0f, len)
         val p = measure.getPosition(d)
@@ -67,12 +70,36 @@ private class Geo(val v: JunctionVehicle, val path: Path, val measure: PathMeasu
     }
 }
 
+/** Chỗ hai quỹ đạo cắt nhau (quãng đường của từng xe tới điểm đó), bỏ qua đoạn trước vạch dừng. */
+private fun crossing(a: Geo, b: Geo): Pair<Float, Float>? {
+    val i0 = ((a.stop + 20) / 2f).toInt() + 1
+    val j0 = ((b.stop + 20) / 2f).toInt() + 1
+    for (i in i0 until a.pts.size) {
+        val pa = a.pts[i]
+        for (j in j0 until b.pts.size) {
+            val dx = pa.x - b.pts[j].x
+            val dy = pa.y - b.pts[j].y
+            if (dx * dx + dy * dy < 225f) return i * 2f to j * 2f
+        }
+    }
+    return null
+}
+
 /**
  * Sa hình giao lộ nhìn từ trên xuống, mô phỏng thứ tự đi (chuyển từ JunctionScene.tsx).
+ * Có [plan] thì diễn lại theo đáp án người học chọn (xe đi sai lượt, va chạm).
  * Hệ toạ độ gốc 400×400 (tâm giao lộ 200,200); khung nhìn -120..520 × 20..380.
  */
 @Composable
-fun JunctionCanvas(spec: JunctionScene, phase: JunctionPhase, runKey: Any, onIntroDone: () -> Unit = {}, onDone: () -> Unit = {}, modifier: Modifier = Modifier) {
+fun JunctionCanvas(
+    spec: JunctionScene,
+    phase: JunctionPhase,
+    runKey: Any,
+    onIntroDone: () -> Unit = {},
+    onDone: () -> Unit = {},
+    modifier: Modifier = Modifier,
+    plan: WhatIf.Plan? = null,
+) {
     val repo = LocalApp.current.repo
     val measurer = rememberTextMeasurer()
     val geo = remember(spec) {
@@ -81,14 +108,28 @@ fun JunctionCanvas(spec: JunctionScene, phase: JunctionPhase, runKey: Any, onInt
             Geo(v, path, PathMeasure().apply { setPath(path, false) }, v.path.stop.toFloat())
         }
     }
-    val schedule = remember(spec) {
-        val gaps = spec.order.map { group ->
+    val order = plan?.order ?: spec.order
+    val stepsText = plan?.steps ?: spec.steps
+    val violators = plan?.violators ?: spec.violators
+    val conflict = plan?.conflict
+    val stopAllNow = if (plan != null) plan.correct && spec.stopAll else spec.stopAll
+    val schedule = remember(spec, plan) {
+        val gaps = order.map { group ->
             val minSpeed = group.minOf { id -> spec.vehicles.firstOrNull { it.id == id }?.speed ?: 1.0 }
             maxOf(1.0, 250 / (SPEED * minSpeed))
         }
-        spec.order.mapIndexed { i, group -> group to (0.2 + gaps.take(i).sum()) }
+        order.mapIndexed { i, group -> group to (0.2 + gaps.take(i).sum()) }
     }
-    val moving = remember(spec) { spec.order.flatten().toSet() }
+    val moving = remember(spec, plan) { order.flatten().toSet() }
+    // Điểm va chạm; xe bị cắt ngang được chỉnh tốc độ để hai xe tới điểm giao cắt cùng lúc
+    val hit = remember(conflict, geo) {
+        val c = conflict ?: return@remember null
+        val a = geo.firstOrNull { it.v.id == c.offender } ?: return@remember null
+        val b = geo.firstOrNull { it.v.id == c.victim } ?: return@remember null
+        val (sA, sB) = crossing(a, b) ?: return@remember null
+        Triple(sA, sB, ((sB - b.stop) / maxOf(1f, sA - a.stop)).coerceIn(0.55f, 1.8f))
+    }
+    var crash by remember { mutableStateOf(0.0) }
 
     var pos by remember { mutableStateOf<Map<String, Float>>(emptyMap()) }
     var step by remember { mutableStateOf(-1) }
@@ -98,8 +139,10 @@ fun JunctionCanvas(spec: JunctionScene, phase: JunctionPhase, runKey: Any, onInt
 
     // Vòng lặp khung hình chỉ chạy khi còn hoạt hình (vào vị trí / mô phỏng thứ tự);
     // xong là dừng để không tốn pin và để Compose có thể "idle".
-    LaunchedEffect(phase, runKey, geo) {
+    LaunchedEffect(phase, runKey, geo, plan) {
         var fired = false
+        var crashAt = -1.0
+        crash = 0.0
         var t0 = -1L
         var running = true
         while (running) {
@@ -123,20 +166,34 @@ fun JunctionCanvas(spec: JunctionScene, phase: JunctionPhase, runKey: Any, onInt
                 } else {
                     var finished = true
                     geo.forEach { g -> if (g.v.id !in moving) next[g.v.id] = g.stop }
+                    val last = schedule.size - 1
                     schedule.forEachIndexed { gi, (ids, start) ->
                         if (el >= start) st = gi
+                        val isConflict = hit != null && conflict != null && gi == last
                         for (id in ids) {
                             val g = geo.firstOrNull { it.v.id == id } ?: continue
                             val v = SPEED * g.v.speed
                             val tt = maxOf(0.0, el - start)
                             val acc = 0.45
-                            val dist = if (tt < acc) v * tt * tt / (2 * acc) else v * (tt - acc / 2)
-                            val s = minOf(g.len.toDouble(), g.stop + dist).toFloat()
+                            var dist = if (tt < acc) v * tt * tt / (2 * acc) else v * (tt - acc / 2)
+                            if (isConflict && id == conflict!!.victim) dist *= hit!!.third
+                            var s = minOf(g.len.toDouble(), g.stop + dist).toFloat()
+                            if (isConflict) {
+                                val limit = if (id == conflict!!.offender) hit!!.first else hit!!.second
+                                // Ở pha DONE (vẽ lại trạng thái cuối) coi như va chạm đã xảy ra từ lâu — nếu không
+                                // `el` đứng yên khiến crash = 0 mãi và vòng lặp khung hình không bao giờ dừng.
+                                if (s >= limit) { s = limit; if (crashAt < 0) crashAt = if (phase == JunctionPhase.DONE) el - 10 else el }
+                            }
                             next[id] = s
-                            if (s < g.len - 1) finished = false
+                            if (!isConflict && s < g.len - 1) finished = false
                         }
+                        if (isConflict && crashAt < 0) finished = false
                     }
-                    if (spec.stopAll && el < 1.8) finished = false
+                    if (crashAt >= 0) {
+                        crash = el - crashAt
+                        if (crash < 1.6) finished = false
+                    }
+                    if (stopAllNow && el < 1.8) finished = false
                     if (finished) {
                         running = false
                         if (!fired && phase == JunctionPhase.PLAY) { fired = true; doneCb() }
@@ -149,12 +206,16 @@ fun JunctionCanvas(spec: JunctionScene, phase: JunctionPhase, runKey: Any, onInt
     }
 
     val playing = phase == JunctionPhase.PLAY || phase == JunctionPhase.DONE
+    val crashed = playing && crash > 0
     val caption = when {
         !playing -> null
-        spec.stopAll -> "Tất cả các xe phải dừng lại!"
-        step >= 0 -> "${step + 1}. " + (spec.steps?.getOrNull(step) ?: spec.order[step].joinToString(" + ") { id -> spec.vehicles.first { it.id == id }.label })
+        crashed -> "💥 Va chạm! Xe đi sai lượt cắt ngang xe đang có quyền đi."
+        stopAllNow -> "Tất cả các xe phải dừng lại!"
+        step >= 0 -> "${step + 1}. " + (stepsText?.getOrNull(step) ?: order[step].joinToString(" + ") { id -> spec.vehicles.first { it.id == id }.label })
+        plan != null && !plan.correct && order.isEmpty() -> plan.verdict.text
         else -> null
     }
+    val shake = if (crashed && crash < 0.5) (kotlin.math.sin(crash * 60) * 5 * (1 - crash / 0.5)).toFloat() else 0f
     val tick = ((clock * 2.5).toInt() % 2) == 0
 
     Box(modifier) {
@@ -163,7 +224,7 @@ fun JunctionCanvas(spec: JunctionScene, phase: JunctionPhase, runKey: Any, onInt
             val ox = (size.width - 640f * sc) / 2f + 120f * sc
             val oy = (size.height - 360f * sc) / 2f - 20f * sc
             clipRect {
-                withTransform({ translate(ox, oy); scale(sc, sc, Offset.Zero) }) {
+                withTransform({ translate(ox + shake * sc, oy + shake * sc / 2); scale(sc, sc, Offset.Zero) }) {
                     drawBoard(spec, repo::signBitmap)
                     if (!playing) geo.forEach { g -> drawIntent(g, g.v.player) }
                     spec.police?.let { drawPoliceTop(it.facing, it.pose) }
@@ -171,13 +232,14 @@ fun JunctionCanvas(spec: JunctionScene, phase: JunctionPhase, runKey: Any, onInt
                         val s = pos[g.v.id] ?: 0f
                         if (s >= g.len - 1) return@forEachIndexed
                         val (x, y, ang) = g.at(s)
-                        val violator = g.v.id in spec.violators
+                        val violator = g.v.id in violators
                         val waiting = playing && g.v.id !in moving
                         val blink = when (g.v.move) { "left", "uturn" -> "left"; "right" -> "right"; else -> null }
-                        withTransform({ translate(x, y); rotate(ang, Offset.Zero) }) {
+                        val spin = if (crashed && conflict?.offender == g.v.id) minOf(14f, (crash * 40).toFloat()) else 0f
+                        withTransform({ translate(x, y); rotate(ang + spin, Offset.Zero) }) {
                             if (g.v.player) ring(30f, Color(0xFFFACC15), 3f, dashed = true)
                             if (playing && violator) drawCircle(Color(0x4DEF4444), 32f, Offset.Zero)
-                            if ((spec.stopAll || waiting) && playing) ring(30f, Color(0xCCEF4444), 3f)
+                            if ((stopAllNow || waiting) && playing) ring(30f, Color(0xCCEF4444), 3f)
                             drawTopVehicle(g.v.kind, g.v.color?.let { c -> runCatching { Color(android.graphics.Color.parseColor(c)) }.getOrDefault(PALETTE[i % PALETTE.size]) } ?: PALETTE[i % PALETTE.size], if (s <= g.stop + 60) blink else null, tick)
                         }
                         // nhãn
@@ -194,15 +256,49 @@ fun JunctionCanvas(spec: JunctionScene, phase: JunctionPhase, runKey: Any, onInt
                             drawText(layout, topLeft = Offset(x - layout.size.width / 2f, y - 30 - 10 + h / 2 - layout.size.height / 2f))
                         }
                     }
+                    if (crashed && hit != null && conflict != null) {
+                        val a = geo.first { it.v.id == conflict.offender }.at(hit.first)
+                        val b = geo.first { it.v.id == conflict.victim }.at(hit.second)
+                        drawBurst((a.first + b.first) / 2, (a.second + b.second) / 2, crash.toFloat(), measurer, sc)
+                    }
                     spec.police?.let { drawPoseCard(it.pose, measurer, sc) }
                 }
+                if (crashed && crash < 0.35) drawRect(Color.White, alpha = (0.7 * (1 - crash / 0.35)).toFloat().coerceIn(0f, 1f))
             }
         }
         if (caption != null) {
-            Box(Modifier.align(Alignment.BottomCenter).padding(8.dp).clip(RoundedCornerShape(50)).background(Color(0xD90F172A)).padding(horizontal = 14.dp, vertical = 6.dp)) {
+            Box(Modifier.align(Alignment.BottomCenter).padding(8.dp).clip(RoundedCornerShape(50)).background(if (crashed) Color(0xF2DC2626) else Color(0xD90F172A)).padding(horizontal = 14.dp, vertical = 6.dp)) {
                 Text(caption, color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
             }
         }
+    }
+}
+
+/** Hình nổ "VA CHẠM!" tại điểm giao cắt. */
+private fun DrawScope.drawBurst(x: Float, y: Float, t: Float, measurer: androidx.compose.ui.text.TextMeasurer, sc: Float) {
+    val k = minOf(1f, t / 0.6f)
+    val r = 14 + k * 26
+    val alpha = 1 - k * 0.55f
+    val star = Path().apply {
+        for (i in 0 until 12) {
+            val a = i / 12f * 2 * Math.PI
+            val rr = if (i % 2 == 0) r else r * 0.55f
+            val px = x + kotlin.math.cos(a).toFloat() * rr
+            val py = y + kotlin.math.sin(a).toFloat() * rr
+            if (i == 0) moveTo(px, py) else lineTo(px, py)
+        }
+        close()
+    }
+    drawPath(star, Color(0xFFFBBF24), alpha = alpha)
+    drawPath(star, Color(0xFFEF4444), alpha = alpha, style = Stroke(3f))
+    for (i in 0 until 8) {
+        val a = i / 8f * 2 * Math.PI + 0.3
+        val d = 18 + k * 44
+        drawCircle(if (i % 2 == 1) Color(0xFFFDE68A) else Color(0xFFF87171), maxOf(0.5f, 3 - k * 2), Offset(x + kotlin.math.cos(a).toFloat() * d, y + kotlin.math.sin(a).toFloat() * d), alpha = alpha)
+    }
+    val label = measurer.measure("VA CHẠM!", TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Black, color = Color.White))
+    withTransform({ scale(1 / sc, 1 / sc, Offset(x, y - r - 14)) }) {
+        drawText(label, topLeft = Offset(x - label.size.width / 2f, y - r - 14 - label.size.height / 2f), alpha = alpha)
     }
 }
 

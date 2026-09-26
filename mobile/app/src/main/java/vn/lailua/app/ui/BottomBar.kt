@@ -2,8 +2,9 @@ package vn.lailua.app.ui
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.MenuBook
+import androidx.compose.material.icons.filled.Explore
+import androidx.compose.material.icons.filled.Newspaper
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Signpost
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -20,7 +21,8 @@ private data class Tab(val route: String, val label: String, val icon: ImageVect
 private val TABS = listOf(
     Tab(Routes.HOME, "Học", Icons.AutoMirrored.Filled.MenuBook),
     Tab(Routes.EXAMS, "Thi thử", Icons.Filled.Timer),
-    Tab(Routes.SIGNS, "Biển báo", Icons.Filled.Signpost),
+    Tab(Routes.NEWS, "Tin tức", Icons.Filled.Newspaper),
+    Tab(Routes.EXPLORE, "Khám phá", Icons.Filled.Explore),
     Tab(Routes.ME, "Tôi", Icons.Filled.Person),
 )
 
@@ -32,7 +34,7 @@ fun BottomBar(current: String, onSelect: (String) -> Unit) {
                 selected = current == t.route,
                 onClick = { onSelect(t.route) },
                 icon = { Icon(t.icon, contentDescription = null) },
-                label = { Text(t.label) },
+                label = { Text(t.label, maxLines = 1, softWrap = false) },
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = Asphalt.bg,
                     selectedTextColor = Asphalt.text,

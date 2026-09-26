@@ -1,0 +1,212 @@
+501	0	1	[["truck"],["car"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+501	1	0	[["car","truck"]]	car>truck	crash	Xe con đi trước xe tải trong khi xe tải đang có quyền đi trước (đến từ bên phải xe con) — va chạm ngay giữa giao lộ.
+502	0	1	[["moto"],["truck"],["car"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+502	1	0	[["car","moto"]]	car>moto	crash	Xe con đi trước xe mô tô trong khi xe mô tô đang có quyền đi trước (bên phải trống) — va chạm ngay giữa giao lộ.
+502	2	0	[["truck","moto"]]	truck>moto	crash	Xe tải đi trước xe mô tô trong khi xe mô tô đang có quyền đi trước (bên phải trống) — va chạm ngay giữa giao lộ.
+503	0	1	[["amb"],["truck"],["car"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+503	1	0	[["amb"],["car","truck"]]	car>truck	crash	Xe con đi trước xe tải trong khi xe tải đang có quyền đi trước (bên phải xe con) — va chạm ngay giữa giao lộ.
+503	2	0	[["car","amb"]]	car>amb	crash	Xe con đi trước xe cứu thương trong khi xe cứu thương đang có quyền đi trước (xe ưu tiên) — va chạm ngay giữa giao lộ.
+504	0	1	[["truck"],["car"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+504	1	0	[["car","truck"]]	car>truck	crash	Xe con đi trước xe tải trong khi xe tải đang có quyền đi trước (đi thẳng) — va chạm ngay giữa giao lộ.
+504	2	0	[["car","truck"]]	car>truck	crash	Xe con đi trước xe tải trong khi xe tải đang có quyền đi trước (đi thẳng) — va chạm ngay giữa giao lộ.
+505	0	1	[["truck"],["moto"],["car"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+505	1	0	[["car","truck"]]	car>truck	crash	Xe con đi trước xe tải trong khi xe tải đang có quyền đi trước (đường ưu tiên, đi thẳng) — va chạm ngay giữa giao lộ.
+505	2	0	[["moto","truck"]]	moto>truck	crash	Xe mô tô đi trước xe tải trong khi xe tải đang có quyền đi trước (đường ưu tiên, đi thẳng) — va chạm ngay giữa giao lộ.
+506	0	1	[["car"],["moto"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+506	1	0	[["truck","car"]]	truck>car	crash	Xe tải đang gặp đèn đỏ nhưng vẫn đi, cắt ngang xe con đang được đi (đèn xanh, đi thẳng) — va chạm ngay giữa giao lộ.
+506	2	0	[["moto","car"]]	moto>car	crash	Xe mô tô đi trước xe con trong khi xe con đang có quyền đi trước (đèn xanh, đi thẳng) — va chạm ngay giữa giao lộ.
+507	0	0	[["truck","car"]]	-	ok	Xe tải đi đúng đèn xanh của hướng Đông – Tây, không vi phạm; nếu bạn quy lỗi cho xe tải thì bạn đang đọc sai đèn tín hiệu và sẽ tự vượt đèn đỏ ở tình huống tương tự.
+507	1	1	[["truck","car"]]	-	ok	Nhận diện đúng: xe con vượt đèn đỏ — đó là hành vi vi phạm.
+507	2	0	[["truck","car"]]	-	ok	Xe tải đi theo đèn xanh là hoàn toàn đúng luật; chỉ xe con vượt đèn đỏ mới vi phạm (ô tô 18–20 triệu, trừ 4 điểm GPLX) — kết luận "cả hai" là oan cho xe tải.
+508	0	0	[["car","truck"]]	car>truck	crash	Xe con ở ngay phía trước CSGT đang dang tay ngang — hướng phải dừng — nhưng vẫn đi, đâm ngang hông xe tải đang được phép đi từ bên trái người điều khiển. Không chấp hành hiệu lệnh: 18–20 triệu, trừ 4 điểm GPLX.
+508	1	1	[["truck"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+508	2	0	[["car","truck"]]	car>truck	crash	Cả hai cùng đi, xe con (hướng bị chặn) và xe tải (hướng được đi) cắt nhau ngay giữa giao lộ — va chạm; xe con bị lập biên bản không chấp hành hiệu lệnh người điều khiển giao thông.
+509	0	1	[]	-	ok	Tất cả các xe dừng lại theo hiệu lệnh — an toàn.
+509	1	0	[["moto"]]	-	crash	Xe mô tô và xe tải cho rằng chỉ xe con phải dừng và cùng tiến vào giao lộ theo hai hướng vuông góc — va chạm ngay trước mặt CSGT; cả hai bị phạt không chấp hành hiệu lệnh (ô tô 18–20 triệu, xe máy 4–6 triệu, trừ 4 điểm GPLX).
+509	2	0	[["moto"]]	-	crash	Xe mô tô từ Tây và xe tải từ Bắc cùng đi khi CSGT giơ tay thẳng — hai hướng cắt nhau giữa ngã tư, xe mô tô bị xe tải tông ngang; cả hai bị xử phạt không chấp hành hiệu lệnh người điều khiển giao thông.
+510	0	0	[["truck","car"]]	truck>car	crash	Xe tải đi trước xe con trong khi xe con đang có quyền đi trước (đến từ bên trái) — va chạm ngay giữa giao lộ.
+510	1	1	[["car"],["truck"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+511	0	1	[["truck"],["car"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+511	1	0	[["car","truck"]]	car>truck	crash	Xe con đi trước xe tải trong khi xe tải đang có quyền đi trước (đến từ bên phải) — va chạm ngay giữa giao lộ.
+512	0	1	[["fire"],["police"],["amb"],["car"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+512	1	0	[["police","fire"]]	police>fire	crash	Xe công an đi trước xe cứu hoả trong khi xe cứu hoả đang có quyền đi trước (xe cứu hoả) — va chạm ngay giữa giao lộ.
+512	2	0	[["amb","fire"]]	amb>fire	crash	Xe cứu thương đi trước xe cứu hoả trong khi xe cứu hoả đang có quyền đi trước (xe cứu hoả) — va chạm ngay giữa giao lộ.
+513	0	1	[["moto"],["car"],["truck"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+513	1	0	[["car","moto"]]	car>moto	crash	Xe con đi trước xe mô tô trong khi xe mô tô đang có quyền đi trước (đường ưu tiên, đi thẳng) — va chạm ngay giữa giao lộ.
+513	2	0	[["truck","moto"]]	truck>moto	crash	Xe tải đi trước xe mô tô trong khi xe mô tô đang có quyền đi trước (đường ưu tiên, đi thẳng) — va chạm ngay giữa giao lộ.
+514	0	1	[["bus"],["truck"],["car"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+514	1	0	[["truck","bus"]]	truck>bus	crash	Xe tải đi trước xe khách trong khi xe khách đang có quyền đi trước (đã vào giao lộ) — va chạm ngay giữa giao lộ.
+514	2	0	[["car","bus"]]	car>bus	crash	Xe con đi trước xe khách trong khi xe khách đang có quyền đi trước (đã vào giao lộ) — va chạm ngay giữa giao lộ.
+515	0	1	[["truck"],["car"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+515	1	0	[["car","truck"]]	car>truck	crash	Xe con đi trước xe tải trong khi xe tải đang có quyền đi trước (đi thẳng) — va chạm ngay giữa giao lộ.
+515	2	0	[["car","truck"]]	car>truck	crash	Xe con đi trước xe tải trong khi xe tải đang có quyền đi trước (đi thẳng) — va chạm ngay giữa giao lộ.
+516	0	1	[["car","truck"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+516	1	0	[["moto","car"]]	moto>car	crash	Xe mô tô (bên phải CSGT) và xe khách (phía sau CSGT) là các hướng phải dừng nhưng vẫn đi, cắt ngang lối của xe con rẽ phải và xe tải — va chạm giữa giao lộ; bị phạt không chấp hành hiệu lệnh (ô tô 18–20 triệu, xe máy 4–6 triệu, trừ 4 điểm GPLX).
+516	2	0	[]	-	ok	Bạn dừng xe con dù được phép rẽ phải, xe tải cũng dừng — giao lộ ùn lại, CSGT phải ra hiệu thúc đi; không bị phạt nhưng cho thấy bạn chưa đọc được hiệu lệnh tay phải giơ trước.
+517	0	0	[["truck","car"]]	-	ticket	Xe con đè lên vạch liền để vượt xe tải, CSGT đứng phía trước dừng xe: vượt xe không đúng quy định (lấn vạch liền) — ô tô 4–6 triệu, trừ 2 điểm GPLX; nếu bất ngờ có xe ngược chiều xuất hiện sau khúc cua thì va chạm trực diện.
+517	1	1	[["truck","car"]]	-	ok	Nhận diện đúng: xe con lấn qua vạch liền để vượt — đó là hành vi vi phạm.
+518	0	1	[["truck","car"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+518	1	0	[["truck","car"]]	-	crash	Bạn ép sang bên phải để vượt, xe tải đúng lúc ôm sát lề để tránh ổ gà và ép xe con xuống lề đường; vượt bên phải sai quy định: ô tô 4–6 triệu, trừ 2 điểm GPLX.
+519	0	1	[["car"],["truck"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+519	1	0	[["truck","car"]]	truck>car	crash	Xe tải đi trước xe con trong khi xe con đang có quyền đi trước (rẽ phải) — va chạm ngay giữa giao lộ.
+520	0	1	[["truck"],["moto"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+520	1	0	[["car","truck"]]	car>truck	crash	Xe con đang gặp đèn đỏ nhưng vẫn đi, cắt ngang xe tải đang được đi (đèn xanh, đi thẳng) — va chạm ngay giữa giao lộ.
+520	2	0	[["moto","truck"]]	moto>truck	crash	Xe mô tô đi trước xe tải trong khi xe tải đang có quyền đi trước (đèn xanh, đi thẳng) — va chạm ngay giữa giao lộ.
+521	0	1	[["amb"],["car"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+521	1	0	[["car","amb"]]	car>amb	crash	Xe con đi trước xe cứu thương trong khi xe cứu thương đang có quyền đi trước (xe ưu tiên) — va chạm ngay giữa giao lộ.
+522	0	1	[["truck"],["car"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+522	1	0	[["car","truck"]]	car>truck	crash	Xe con đi trước xe tải trong khi xe tải đang có quyền đi trước (đường ưu tiên) — va chạm ngay giữa giao lộ.
+523	0	0	[["car"]]	-	ticket	Bạn cho xe con quay đầu ngay dưới biển P.124a, CSGT gần đó dừng xe lập biên bản quay đầu xe tại nơi có biển cấm quay đầu: ô tô 800 nghìn – 1 triệu; xe phía sau còn phải phanh gấp vì bị bất ngờ.
+523	1	1	[["car"]]	-	ok	Nhận diện đúng: xe con quay đầu tại nơi có biển cấm — đó là hành vi vi phạm.
+524	0	0	[["truck"],["car"]]	-	ok	Xe tải đi thẳng, không có biển cấm nào với hướng của nó nên hoàn toàn đúng luật; quy lỗi cho xe tải nghĩa là bạn đã bỏ qua biển P.123a ở hướng xe con.
+524	1	1	[["truck"],["car"]]	-	ok	Nhận diện đúng: xe con rẽ trái nơi có biển cấm — đó là hành vi vi phạm.
+524	2	0	[["truck"],["car"]]	-	ticket	Xe con rẽ trái dưới biển "Cấm rẽ trái" và cắt ngang đầu xe tải đang đi thẳng — xe tải phải phanh gấp; xe con bị CSGT xử phạt không chấp hành biển báo hiệu và có thể bị trừ điểm GPLX.
+525	0	1	[["moto"],["truck"],["car"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+525	1	0	[["truck","moto"]]	truck>moto	crash	Xe tải đi trước xe mô tô trong khi xe mô tô đang có quyền đi trước (bên trái trống) — va chạm ngay giữa giao lộ.
+525	2	0	[["car","moto"]]	car>moto	crash	Xe con đi trước xe mô tô trong khi xe mô tô đang có quyền đi trước (bên trái trống) — va chạm ngay giữa giao lộ.
+526	0	1	[["truck"],["car"],["moto"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+526	1	0	[["moto","truck"]]	moto>truck	crash	Xe mô tô đi trước xe tải trong khi xe tải đang có quyền đi trước (bên phải trống) — va chạm ngay giữa giao lộ.
+526	2	0	[["car","truck"]]	car>truck	crash	Xe con đi trước xe tải trong khi xe tải đang có quyền đi trước (bên phải trống) — va chạm ngay giữa giao lộ.
+527	0	1	[["car","moto"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+527	1	0	[["truck","car"]]	truck>car	crash	Xe tải hướng Tây đang gặp đèn đỏ mà vẫn đi, tông ngang hông xe mô tô đang đi thẳng theo đèn xanh. Vượt đèn đỏ: ô tô 18–20 triệu, trừ 4 điểm GPLX.
+527	2	0	[["truck","car"]]	truck>car	crash	Cả ba cùng đi, xe tải (đèn đỏ) cắt ngang lối xe mô tô (đèn xanh) giữa giao lộ — xe mô tô bị tông ngã; xe tải bị phạt vượt đèn đỏ 18–20 triệu, trừ 4 điểm GPLX.
+528	0	1	[["amb"],["car"],["bus"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+528	1	0	[["car","amb"]]	car>amb	crash	Xe con đi trước xe cứu thương trong khi xe cứu thương đang có quyền đi trước (xe ưu tiên) — va chạm ngay giữa giao lộ.
+528	2	0	[["bus","amb"]]	bus>amb	crash	Xe khách đi trước xe cứu thương trong khi xe cứu thương đang có quyền đi trước (xe ưu tiên) — va chạm ngay giữa giao lộ.
+529	0	1	[["car"],["truck"],["moto"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+529	1	0	[["truck","car"]]	truck>car	crash	Xe tải đi trước xe con trong khi xe con đang có quyền đi trước (đã vào giao lộ) — va chạm ngay giữa giao lộ.
+529	2	0	[["moto","car"]]	moto>car	crash	Xe mô tô đi trước xe con trong khi xe con đang có quyền đi trước (đã vào giao lộ) — va chạm ngay giữa giao lộ.
+537	0	1	[["car"],["truck"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+537	1	0	[["truck","car"]]	truck>car	crash	Xe tải đi trước xe con trong khi xe con đang có quyền đi trước (bên trái trống) — va chạm ngay giữa giao lộ.
+538	0	1	[["car"],["moto"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+538	1	0	[["truck","car"]]	truck>car	crash	Xe tải bị người điều khiển giao thông ra hiệu lệnh dừng nhưng vẫn đi, cắt ngang xe con đang được đi (đi thẳng) — va chạm ngay giữa giao lộ.
+538	2	0	[["moto","car"]]	moto>car	crash	Xe mô tô đi trước xe con trong khi xe con đang có quyền đi trước (đi thẳng) — va chạm ngay giữa giao lộ.
+6001	0	0	[["bus","car"]]	bus>car	crash	Xe khách lao ra trước mũi xe bạn — va chạm ngang hông ngay giữa giao lộ; xe khách sai vì không nhường xe đến từ bên phải.
+6001	1	1	[["car"],["bus"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+6002	0	0	[["car","truck"]]	car>truck	crash	Xe con đi trước xe tải trong khi xe tải đang có quyền đi trước (bên phải trống) — va chạm ngay giữa giao lộ.
+6002	1	0	[["moto","truck"]]	moto>truck	crash	Xe mô tô đi trước xe tải trong khi xe tải đang có quyền đi trước (bên phải trống) — va chạm ngay giữa giao lộ.
+6002	2	1	[["truck"],["car"],["moto"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+6003	0	0	[["car","truck"]]	car>truck	crash	Bạn đi trước, xe tải rẽ phải nhập vào đúng lúc — hai xe cạ vào nhau khi cùng vào một làn.
+6003	1	1	[["truck"],["car"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+6004	0	1	[["moto"],["car"],["truck"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+6004	1	0	[["car","moto"]]	car>moto	crash	Xe con đi trước xe mô tô trong khi xe mô tô đang có quyền đi trước (bên phải trống) — va chạm ngay giữa giao lộ.
+6004	2	0	[["truck","moto"]]	truck>moto	crash	Xe tải đi trước xe mô tô trong khi xe mô tô đang có quyền đi trước (bên phải trống) — va chạm ngay giữa giao lộ.
+6005	0	1	[["bus"],["moto"],["truck"],["car"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+6005	1	0	[["bus"],["car","moto"]]	car>moto	crash	Xe con đi trước xe mô tô trong khi xe mô tô đang có quyền đi trước (bên phải trống) — va chạm ngay giữa giao lộ.
+6005	2	0	[["moto","bus"]]	moto>bus	crash	Xe mô tô đi trước xe khách trong khi xe khách đang có quyền đi trước (đã vào giao lộ) — va chạm ngay giữa giao lộ.
+6006	0	0	[["car","truck"]]	car>truck	crash	Bạn vọt lên từ đường nhánh, xe tải trên đường ưu tiên tông thẳng vào sườn xe; bạn chịu lỗi không nhường đường (phạt 4–6 triệu, trừ 2 điểm).
+6006	1	1	[["truck"],["bus"],["car"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+6006	2	0	[["bus","truck"]]	bus>truck	crash	Xe khách rẽ trái cắt ngang đầu xe tải đang đi thẳng ngược chiều — hai xe trên đường ưu tiên đâm nhau.
+6007	0	0	[["moto","truck"]]	moto>truck	crash	Xe mô tô đi trước xe tải trong khi xe tải đang có quyền đi trước (đường ưu tiên, rẽ phải) — va chạm ngay giữa giao lộ.
+6007	1	0	[["car","truck"]]	car>truck	crash	Xe con đi trước xe tải trong khi xe tải đang có quyền đi trước (đường ưu tiên, rẽ phải) — va chạm ngay giữa giao lộ.
+6007	2	1	[["truck"],["moto"],["car"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+6008	0	0	[["bus","moto"]]	bus>moto	crash	Xe khách đi trước xe mô tô trong khi xe mô tô đang có quyền đi trước (đường ưu tiên, rẽ phải) — va chạm ngay giữa giao lộ.
+6008	1	0	[["car","moto"]]	car>moto	crash	Xe con đi trước xe mô tô trong khi xe mô tô đang có quyền đi trước (đường ưu tiên, rẽ phải) — va chạm ngay giữa giao lộ.
+6008	2	1	[["moto"],["bus"],["car"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+6009	0	0	[["truck"],["car","moto"]]	car>moto	crash	Xe con đi trước xe mô tô trong khi xe mô tô đang có quyền đi trước (đi thẳng) — va chạm ngay giữa giao lộ.
+6009	1	0	[["moto","truck"]]	moto>truck	crash	Xe mô tô đi trước xe tải trong khi xe tải đang có quyền đi trước (đã vào giao lộ) — va chạm ngay giữa giao lộ.
+6009	2	1	[["truck"],["moto"],["car"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+6010	0	1	[["bus"],["car"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+6010	1	0	[["car","bus"]]	car>bus	crash	Xe con đi trước xe khách trong khi xe khách đang có quyền đi trước (đã vào giao lộ) — va chạm ngay giữa giao lộ.
+6011	0	0	[["police","fire"]]	police>fire	crash	Xe công an đi trước xe cứu hoả trong khi xe cứu hoả đang có quyền đi trước (ưu tiên cao nhất) — va chạm ngay giữa giao lộ.
+6011	1	0	[["fire"],["car","police"]]	car>police	crash	Xe con đi trước xe công an trong khi xe công an đang có quyền đi trước (xe công an làm nhiệm vụ khẩn cấp) — va chạm ngay giữa giao lộ.
+6011	2	1	[["fire"],["police"],["car"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+6012	0	0	[["truck","amb"]]	truck>amb	crash	Xe tải và xe con cứ đi theo đèn xanh mà không nhường — xe cứu thương đang hú còi bị chặn giữa giao lộ; không nhường xe ưu tiên bị phạt 6–8 triệu, trừ 4 điểm.
+6012	1	0	[["amb"],["moto","truck"]]	moto>truck	ticket	Xe mô tô vượt đèn đỏ theo sau xe cứu thương — bị phạt 4–6 triệu, trừ 4 điểm GPLX.
+6012	2	1	[["amb"],["truck"],["car"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+6013	0	0	[["amb","police"]]	amb>police	crash	Xe cứu thương đi trước xe công an trong khi xe công an đang có quyền đi trước (ưu tiên trước xe cứu thương) — va chạm ngay giữa giao lộ.
+6013	1	0	[["car","police"]]	car>police	crash	Xe con đi trước xe công an trong khi xe công an đang có quyền đi trước (ưu tiên trước xe cứu thương) — va chạm ngay giữa giao lộ.
+6013	2	1	[["police"],["amb"],["car"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+6014	0	0	[["car","bus"]]	car>bus	crash	Xe con đi trước xe khách trong khi xe khách đang có quyền đi trước (đèn xanh, đi thẳng) — va chạm ngay giữa giao lộ.
+6014	1	0	[["truck","bus"]]	truck>bus	crash	Xe tải đang gặp đèn đỏ nhưng vẫn đi, cắt ngang xe khách đang được đi (đèn xanh, đi thẳng) — va chạm ngay giữa giao lộ.
+6014	2	1	[["bus"],["car"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+6015	0	1	[["moto"],["car"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+6015	1	0	[["car","moto"]]	car>moto	crash	Xe con đi trước xe mô tô trong khi xe mô tô đang có quyền đi trước (rẽ phải) — va chạm ngay giữa giao lộ.
+6015	2	0	[["truck","moto"]]	truck>moto	crash	Xe tải đang gặp đèn đỏ nhưng vẫn đi, cắt ngang xe mô tô đang được đi (rẽ phải) — va chạm ngay giữa giao lộ.
+6016	0	0	[["car","truck"]]	car>truck	crash	Xe con đi trước xe tải trong khi xe tải đang có quyền đi trước (bên phải trống, đi thẳng) — va chạm ngay giữa giao lộ.
+6016	1	1	[["truck"],["bus"],["car"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+6016	2	0	[["bus","truck"]]	bus>truck	crash	Xe khách đi trước xe tải trong khi xe tải đang có quyền đi trước (bên phải trống, đi thẳng) — va chạm ngay giữa giao lộ.
+6017	0	0	[["car","truck"]]	car>truck	crash	Bạn rẽ trái cắt qua đúng lúc xe tải rẽ phải nhập làn — hai xe cạ nhau tại làn ra hướng Bắc.
+6017	1	1	[["truck"],["car"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+6017	2	0	[["car","truck"]]	car>truck	crash	Hai xe cùng đổ vào một làn đường trong cùng một lúc — không đủ chỗ, va chạm khi nhập làn.
+6018	0	1	[["truck"],["carA"],["carB"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+6018	1	0	[["carA","truck"]]	carA>truck	crash	Xe con A đi trước xe tải trong khi xe tải đang có quyền đi trước (đến từ bên phải) — va chạm ngay giữa giao lộ.
+6018	2	0	[["carA","truck"]]	carA>truck	crash	Xe con A đi trước xe tải trong khi xe tải đang có quyền đi trước (đến từ bên phải) — va chạm ngay giữa giao lộ.
+6019	0	1	[["carA"],["moto"],["carB"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+6019	1	0	[["carB","carA"]]	carB>carA	crash	Xe con B đi trước xe con A trong khi xe con A đang có quyền đi trước (bên phải trống) — va chạm ngay giữa giao lộ.
+6019	2	0	[["moto","carA"]]	moto>carA	crash	Xe mô tô đi trước xe con A trong khi xe con A đang có quyền đi trước (bên phải trống) — va chạm ngay giữa giao lộ.
+6020	0	0	[["moto","truck"]]	moto>truck	crash	Xe mô tô đi trước xe tải trong khi xe tải đang có quyền đi trước (đi thẳng) — va chạm ngay giữa giao lộ.
+6020	1	1	[["truck"],["moto"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+6021	0	0	[["car","moto"]]	car>moto	crash	Xe con đi trước xe mô tô trong khi xe mô tô đang có quyền đi trước (đường ưu tiên, đi thẳng) — va chạm ngay giữa giao lộ.
+6021	1	0	[["moto"],["car","bus"]]	car>bus	crash	Xe con đi trước xe khách trong khi xe khách đang có quyền đi trước (đường ưu tiên, rẽ trái) — va chạm ngay giữa giao lộ.
+6021	2	1	[["moto"],["bus"],["car"],["truck"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+6022	0	0	[["truck","fire"]]	truck>fire	crash	Xe tải trên đường ưu tiên lao qua khi xe cứu hoả đang hú còi vào giao lộ — va chạm với xe cứu hoả; lỗi không nhường xe ưu tiên (6–8 triệu, trừ 4 điểm).
+6022	1	1	[["fire"],["truck"],["car"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+6022	2	0	[["fire"],["car","truck"]]	car>truck	crash	Bạn rẽ trái ngay sau xe cứu hoả, cắt đầu xe tải đang đi thẳng ngược chiều — đâm trực diện phần đầu xe.
+6023	0	0	[["moto","car"]]	moto>car	crash	Xe mô tô đi trước xe con trong khi xe con đang có quyền đi trước (bên trái trống) — va chạm ngay giữa giao lộ.
+6023	1	1	[["car"],["moto"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+6024	0	0	[["car","truck"]]	car>truck	crash	Xe con đi trước xe tải trong khi xe tải đang có quyền đi trước (bên trái trống) — va chạm ngay giữa giao lộ.
+6024	1	1	[["truck"],["car"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+6025	0	0	[["car","bus"]]	car>bus	crash	Bạn vào vòng xuyến ngay, xe tải từ bên trái đang chạy vòng tông vào hông xe; lỗi không nhường đường tại vòng xuyến (4–6 triệu, trừ 2 điểm).
+6025	1	0	[["truck","bus"]]	truck>bus	crash	Xe tải chen vào trước khi xe khách đang chạy vòng từ bên trái — hai xe va nhau trên vòng xuyến.
+6025	2	1	[["bus"],["truck"],["car"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+6026	0	1	[["amb"],["truck"],["moto"],["car"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+6026	1	0	[["amb"],["car","truck"]]	car>truck	crash	Xe con đi trước xe tải trong khi xe tải đang có quyền đi trước (bên trái trống) — va chạm ngay giữa giao lộ.
+6026	2	0	[["truck","amb"]]	truck>amb	crash	Xe tải đi trước xe cứu thương trong khi xe cứu thương đang có quyền đi trước (xe ưu tiên) — va chạm ngay giữa giao lộ.
+6027	0	1	[["moto"],["car"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+6027	1	0	[["car","moto"]]	car>moto	crash	Xe con đi trước xe mô tô trong khi xe mô tô đang có quyền đi trước (bên trái trống, đi vòng để quay đầu) — va chạm ngay giữa giao lộ.
+6028	0	0	[["truck","bus"]]	truck>bus	crash	Xe tải đi trước xe khách trong khi xe khách đang có quyền đi trước (bên trái trống) — va chạm ngay giữa giao lộ.
+6028	1	1	[["bus"],["truck"],["car"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+6028	2	0	[["car","bus"]]	car>bus	crash	Xe con đi trước xe khách trong khi xe khách đang có quyền đi trước (bên trái trống) — va chạm ngay giữa giao lộ.
+6029	0	0	[["bus","car"]]	bus>car	crash	Xe khách vào vòng xuyến khi xe con từ bên trái đang chạy vòng qua — tông ngang đầu xe con; lỗi không nhường đường ở vòng xuyến.
+6029	1	1	[["car"],["bus"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+6030	0	0	[["car","moto"]]	car>moto	crash	Xe con đi trước xe mô tô trong khi xe mô tô đang có quyền đi trước (bên trái trống) — va chạm ngay giữa giao lộ.
+6030	1	0	[["truck","moto"]]	truck>moto	crash	Xe tải đi trước xe mô tô trong khi xe mô tô đang có quyền đi trước (bên trái trống) — va chạm ngay giữa giao lộ.
+6030	2	1	[["moto"],["truck"],["car"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+6031	0	0	[["car","moto"]]	car>moto	crash	Xe con đi trước xe mô tô trong khi xe mô tô đang có quyền đi trước (bên trái trống) — va chạm ngay giữa giao lộ.
+6031	1	1	[["moto"],["car"],["truck"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+6031	2	0	[["truck","moto"]]	truck>moto	crash	Xe tải đi trước xe mô tô trong khi xe mô tô đang có quyền đi trước (bên trái trống) — va chạm ngay giữa giao lộ.
+6032	0	1	[["car"],["truck"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+6032	1	0	[["truck","car"]]	truck>car	crash	Xe tải đi trước xe con trong khi xe con đang có quyền đi trước (bên trái trống) — va chạm ngay giữa giao lộ.
+6033	0	0	[["moto","car"]]	moto>car	crash	Xe mô tô đang gặp đèn đỏ nhưng vẫn đi, cắt ngang xe con đang được đi (đèn xanh, đi thẳng) — va chạm ngay giữa giao lộ.
+6033	1	0	[["truck","car"]]	truck>car	crash	Xe tải đi trước xe con trong khi xe con đang có quyền đi trước (đèn xanh, đi thẳng) — va chạm ngay giữa giao lộ.
+6033	2	1	[["car"],["truck"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+6034	0	0	[["bus","moto"]]	bus>moto	crash	Xe khách đi trước xe mô tô trong khi xe mô tô đang có quyền đi trước (bên cạnh người điều khiển, đi thẳng) — va chạm ngay giữa giao lộ.
+6034	1	1	[["moto"],["bus"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+6034	2	0	[["moto"],["bus"]]	-	danger	Cách hiểu này chưa đúng. Đáp án đúng: Xe con và xe tải.
+6035	0	1	[["truck","car"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+6035	1	0	[["moto","truck"]]	moto>truck	crash	Xe mô tô bị người điều khiển giao thông ra hiệu lệnh dừng nhưng vẫn đi, cắt ngang xe tải đang được đi (được đi) — va chạm ngay giữa giao lộ.
+6035	2	0	[]	-	ok	Không gây va chạm, nhưng xe tải, xe con không cần dừng lại — đáp án đúng: Xe tải được rẽ phải, xe con được đi; xe mô tô và xe khách phải dừng lại.
+6036	0	0	[["car"]]	-	ticket	Xe con phải dừng theo hiệu lệnh tay giơ thẳng đứng nhưng vẫn đi — vi phạm hiệu lệnh, tín hiệu giao thông.
+6036	1	0	[["truck"]]	-	ticket	Xe tải phải dừng theo hiệu lệnh tay giơ thẳng đứng nhưng vẫn đi — vi phạm hiệu lệnh, tín hiệu giao thông.
+6036	2	1	[]	-	ok	Tất cả các xe dừng lại theo hiệu lệnh — an toàn.
+6037	0	1	[["truck"],["moto"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+6037	1	0	[["moto","truck"]]	moto>truck	ticket	Xe con rẽ phải khi đèn đỏ — bị xử phạt như vượt đèn đỏ: ô tô 18–20 triệu, trừ 4 điểm GPLX.
+6037	2	0	[["moto","truck"]]	moto>truck	crash	Xe con rẽ phải nhập vào làn xe tải đang chạy đèn xanh — bị xe tải húc từ phía sau.
+6038	0	0	[["bus","truck"]]	bus>truck	crash	Xe khách bị người điều khiển giao thông ra hiệu lệnh dừng nhưng vẫn đi, cắt ngang xe tải đang được đi (bên cạnh người điều khiển, đi thẳng) — va chạm ngay giữa giao lộ.
+6038	1	0	[["car","truck"]]	car>truck	crash	Xe con đi trước xe tải trong khi xe tải đang có quyền đi trước (bên cạnh người điều khiển, đi thẳng) — va chạm ngay giữa giao lộ.
+6038	2	1	[["truck"],["car"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+6039	0	0	[["truck","car"]]	truck>car	danger	Xe con đứng chết giữa giao lộ, chắn ngang dòng xe hướng Đông – Tây đang có đèn xanh — gây ùn tắc và nguy cơ bị tông ngang.
+6039	1	1	[["car"],["truck"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+6039	2	0	[["truck","car"]]	truck>car	crash	Xe tải lao ra khi xe con còn đang giữa giao lộ — tông vào hông xe con.
+6040	0	0	[["truck","bus"]]	truck>bus	crash	Xe tải bị người điều khiển giao thông ra hiệu lệnh dừng nhưng vẫn đi, cắt ngang xe khách đang được đi (bên trái người điều khiển, được đi) — va chạm ngay giữa giao lộ.
+6040	1	1	[["bus"]]	-	ok	Các xe đi đúng thứ tự — qua giao lộ an toàn, không xung đột.
+6040	2	0	[["car","bus"]]	car>bus	crash	Xe con bị người điều khiển giao thông ra hiệu lệnh dừng nhưng vẫn đi, cắt ngang xe khách đang được đi (bên trái người điều khiển, được đi) — va chạm ngay giữa giao lộ.
+6041	0	0	[["bus","moto"]]	-	ticket	Bạn chọn "Xe khách" — chưa đúng. Xe vi phạm là xe mô tô: xe mô tô rẽ trái khi đèn đỏ.
+6041	1	0	[["bus","moto"]]	-	ticket	Xe vi phạm là xe mô tô: xe mô tô rẽ trái khi đèn đỏ.
+6041	2	1	[["bus","moto"]]	-	ok	Nhận diện đúng: xe mô tô rẽ trái khi đèn đỏ — đó là hành vi vi phạm.
+6042	0	0	[["car"],["bus"]]	-	ticket	Bạn chọn "Xe con" — chưa đúng. Xe vi phạm là xe khách: xe khách quay đầu nơi có biển cấm.
+6042	1	1	[["car"],["bus"]]	-	ok	Nhận diện đúng: xe khách quay đầu nơi có biển cấm — đó là hành vi vi phạm.
+6042	2	0	[["car"],["bus"]]	-	ticket	Xe vi phạm là xe khách: xe khách quay đầu nơi có biển cấm.
+6043	0	0	[["truck"],["car"]]	-	ticket	Bạn chọn "Xe tải" — chưa đúng. Xe vi phạm là xe con: xe con đi thẳng nơi chỉ được rẽ phải.
+6043	1	0	[["truck"],["car"]]	-	ticket	Xe vi phạm là xe con: xe con đi thẳng nơi chỉ được rẽ phải.
+6043	2	1	[["truck"],["car"]]	-	ok	Nhận diện đúng: xe con đi thẳng nơi chỉ được rẽ phải — đó là hành vi vi phạm.
+6044	0	1	[["car"],["moto"]]	-	ok	Nhận diện đúng: xe mô tô đi ngược chiều đường một chiều — đó là hành vi vi phạm.
+6044	1	0	[["car"],["moto"]]	-	ticket	Bạn chọn "Xe con" — chưa đúng. Xe vi phạm là xe mô tô: xe mô tô đi ngược chiều đường một chiều.
+6044	2	0	[["car"],["moto"]]	-	ticket	Xe vi phạm là xe mô tô: xe mô tô đi ngược chiều đường một chiều.
+6045	0	0	[["fire","car"]]	-	ticket	Bạn chọn "Xe cứu hoả" — chưa đúng. Xe vi phạm là xe con: xe con không nhường xe cứu hoả.
+6045	1	1	[["fire","car"]]	-	ok	Nhận diện đúng: xe con không nhường xe cứu hoả — đó là hành vi vi phạm.
+6045	2	0	[["fire","car"]]	-	ticket	Xe vi phạm là xe con: xe con không nhường xe cứu hoả.
+6046	0	0	[["car","moto"]]	-	ticket	Bạn chọn "Xe mô tô" — chưa đúng. Xe vi phạm là xe con và xe mô tô: xe mô tô vượt đèn đỏ, xe con rẽ trái nơi cấm — cả hai; xe mô tô vượt đèn đỏ, xe con rẽ trái nơi cấm — cả hai.
+6046	1	0	[["car","moto"]]	-	ticket	Bạn chọn "Xe con" — chưa đúng. Xe vi phạm là xe con và xe mô tô: xe mô tô vượt đèn đỏ, xe con rẽ trái nơi cấm — cả hai; xe mô tô vượt đèn đỏ, xe con rẽ trái nơi cấm — cả hai.
+6046	2	1	[["car","moto"]]	-	ok	Nhận diện đúng: xe mô tô vượt đèn đỏ, xe con rẽ trái nơi cấm — cả hai; xe mô tô vượt đèn đỏ, xe con rẽ trái nơi cấm — cả hai — đó là hành vi vi phạm.

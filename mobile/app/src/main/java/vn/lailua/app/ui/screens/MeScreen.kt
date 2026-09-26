@@ -173,6 +173,17 @@ fun MeScreen(state: ProgressState, nav: NavHostController) {
                     Column(Modifier.weight(1f)) { Label("Âm thanh & rung"); Text(if (state.sound) "Đang bật" else "Đang tắt", color = Color.White, fontWeight = FontWeight.SemiBold) }
                     Switch(state.sound, { app.store.setSound(it) }, colors = SwitchDefaults.colors(checkedTrackColor = Asphalt.green, checkedThumbColor = Color.White))
                 }
+                Spacer(Modifier.height(14.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Column(Modifier.weight(1f)) {
+                        Label("Tự đọc câu hỏi")
+                        Text(
+                            if (!app.speech.available.value) "Máy chưa có giọng đọc tiếng Việt" else if (state.autoSpeak) "Đọc to mỗi câu mới" else "Bấm 🔊 ở từng câu để nghe",
+                            color = Color.White, fontWeight = FontWeight.SemiBold,
+                        )
+                    }
+                    Switch(state.autoSpeak, { app.store.setAutoSpeak(it) }, enabled = app.speech.available.value, colors = SwitchDefaults.colors(checkedTrackColor = Asphalt.green, checkedThumbColor = Color.White))
+                }
             }
         }
 

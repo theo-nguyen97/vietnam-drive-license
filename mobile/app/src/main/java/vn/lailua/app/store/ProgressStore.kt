@@ -75,6 +75,14 @@ data class ProgressState(
     val onboarded: Boolean = false,
     /** "before" | "after" | "unknown" */
     val examTiming: String? = null,
+    /** Điểm cao nhất Thử thách 12 điểm theo hạng. */
+    val arcadeBest: Map<String, Int> = emptyMap(),
+    /** Điểm cao nhất mini game Săn biển báo. */
+    val signBest: Int = 0,
+    /** Các bước đã hoàn thành trong lộ trình lấy bằng. */
+    val journey: Map<String, Boolean> = emptyMap(),
+    /** Đọc câu hỏi bằng giọng nói tự động khi sang câu mới. */
+    val autoSpeak: Boolean = false,
 )
 
 /** Khoảng cách ôn lại theo hộp Leitner: 10 phút, 1, 3, 7, 16, 35 ngày. */
@@ -147,6 +155,10 @@ class ProgressStore private constructor(context: Context) {
     fun setExamVersion(v: String?) = update { it.copy(examVersion = v) }
     fun setFontScale(f: Float) = update { it.copy(fontScale = f) }
     fun setLastLicense(id: String) = update { it.copy(lastLicense = id) }
+    fun setArcadeBest(license: String, score: Int) = update { it.copy(arcadeBest = it.arcadeBest + (license to maxOf(it.arcadeBest[license] ?: 0, score))) }
+    fun setSignBest(score: Int) = update { it.copy(signBest = maxOf(it.signBest, score)) }
+    fun toggleJourney(key: String) = update { it.copy(journey = it.journey + (key to !(it.journey[key] ?: false))) }
+    fun setAutoSpeak(v: Boolean) = update { it.copy(autoSpeak = v) }
 
     fun completeOnboarding(license: String, timing: String) = update {
         it.copy(
@@ -162,6 +174,7 @@ class ProgressStore private constructor(context: Context) {
         ProgressState(
             sound = it.sound, driverName = it.driverName, fontScale = it.fontScale, examVersion = it.examVersion,
             onboarded = it.onboarded, lastLicense = it.lastLicense, examTiming = it.examTiming,
+            journey = it.journey, autoSpeak = it.autoSpeak,
         )
     }
 
