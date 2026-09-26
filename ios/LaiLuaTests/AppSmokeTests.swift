@@ -56,6 +56,15 @@ final class AppSmokeTests: XCTestCase {
         if let name { capture(name) }
     }
 
+    /// Một câu hỏi đơn lẻ, đặt trong khung cuộn có lề như trong app.
+    private func question(_ q: Question, selected: Int?, revealed: Bool, vehicle: String = "car") -> some View {
+        ScrollView {
+            QuestionView(q: q, index: 0, total: 1, selected: selected, revealed: revealed, bookmarked: false, vehicle: vehicle, onSelect: { _ in }, onBookmark: {})
+                .padding(16)
+        }
+        .background(Asphalt.bg.ignoresSafeArea())
+    }
+
     private func capture(_ name: String) {
         shot += 1
         let file = String(format: "%02d-%@", shot, name)
@@ -118,11 +127,11 @@ final class AppSmokeTests: XCTestCase {
         host(PracticeView(setKey: "meo-\(app.repo.tips.groups[0].id)"))
         // Câu tình huống trên đường (RoadCanvas) và câu thường có biển báo
         let road = app.repo.questions.first { $0.road != nil }!
-        host(QuestionView(q: road, index: 0, total: 1, selected: road.answer, revealed: true, bookmarked: false, vehicle: "car", onSelect: { _ in }, onBookmark: {}), "road-scene")
+        host(question(road, selected: road.answer, revealed: true), "road-scene", wait: 1.5)
         let junction = app.repo.questions.first { $0.junction != nil }!
         host(QuestionView(q: junction, index: 0, total: 1, selected: 0, revealed: true, bookmarked: true, vehicle: "car", onSelect: { _ in }, onBookmark: {}))
         let signed = app.repo.questions.first { !$0.signs.isEmpty }!
-        host(QuestionView(q: signed, index: 0, total: 1, selected: nil, revealed: false, bookmarked: false, vehicle: "scooter", onSelect: { _ in }, onBookmark: {}), "question-signs")
+        host(question(signed, selected: nil, revealed: false, vehicle: "scooter"), "question-signs")
 
         // Chọn sai ở câu sa hình → xe đi sai lượt lao vào giao lộ và va chạm
         var crashCase: (Question, Int)?
@@ -130,8 +139,7 @@ final class AppSmokeTests: XCTestCase {
             if let i = q.options.indices.first(where: { $0 != q.answer && WhatIf.plan(q, choice: $0)?.conflict != nil }) { crashCase = (q, i); break }
         }
         let (cq, wrong) = try XCTUnwrap(crashCase)
-        host(ScrollView { QuestionView(q: cq, index: 0, total: 1, selected: wrong, revealed: true, bookmarked: false, vehicle: "car", onSelect: { _ in }, onBookmark: {}).padding(16) }
-            .background(Asphalt.bg), "whatif-crash", wait: 4)
+        host(question(cq, selected: wrong, revealed: true), "whatif-crash", wait: 4)
 
         // Thi thử đề số 1 và đề ngẫu nhiên
         host(ExamView(setNo: 1), "exam")

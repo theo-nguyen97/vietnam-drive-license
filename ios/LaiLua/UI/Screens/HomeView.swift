@@ -30,9 +30,9 @@ struct HomeView: View {
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Chào \(state.driverName.isEmpty ? "bạn" : state.driverName) 👋").afont(13).foregroundColor(Asphalt.muted)
                             Text("Luyện thi hạng \(lic.id)").afont(24, .black).foregroundColor(.white).lineLimit(1).minimumScaleFactor(0.8)
+                            Chip("\(version.title) · \(cfg.total) câu · \(cfg.minutes) phút", fg: .white).padding(.top, 2)
                         }
-                        Spacer(minLength: 6)
-                        Chip("\(version.title) · \(cfg.total) câu", fg: .white)
+                        Spacer(minLength: 0)
                     }
 
                     // Hôm nay
