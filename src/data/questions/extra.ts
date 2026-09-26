@@ -13,6 +13,11 @@ export const EXTRA: Question[] = [
     ],
     answer: 1,
     explanation: "Trước khi sơ cứu phải bảo đảm an toàn hiện trường để tránh tai nạn thứ cấp, sau đó kiểm tra nạn nhân (ý thức, hô hấp, chảy máu) và gọi 115.",
+    consequences: [
+      { kind: "danger", text: "Bạn bế nạn nhân lên xe ngay khi họ có thể bị chấn thương cột sống, khiến tổn thương nặng thêm hoặc liệt vĩnh viễn; trong khi đó xe khác không được cảnh báo lao tới hiện trường." },
+      null,
+      { kind: "danger", text: "Bạn đứng quay phim mà không cảnh báo, không gọi cấp cứu — nạn nhân mất máu trong khoảng thời gian vàng; người không cứu giúp người đang nguy hiểm đến tính mạng có thể bị truy cứu trách nhiệm hình sự." },
+    ],
     scene: { kind: "road", props: ["accident"] },
   },
   {
@@ -36,6 +41,11 @@ export const EXTRA: Question[] = [
     ],
     answer: 1,
     explanation: "Rút chốt – hướng loa vào gốc lửa – bóp van; đứng đầu hướng gió để bột không bay ngược vào người và dập đúng nguồn cháy.",
+    consequences: [
+      { kind: "danger", text: "Bạn đứng cuối hướng gió, bột và khói bị gió thổi ngược trùm vào mặt khiến bạn ngạt và không thấy đám cháy; phun vào ngọn lửa phía trên chỉ làm tan ngọn lửa bề mặt, gốc cháy vẫn bùng lại." },
+      null,
+      { kind: "danger", text: "Bạn mở nắp bình — bình chữa cháy có áp suất không mở được, bạn mất thời gian vàng để dập lửa và đám cháy nhỏ lan rộng ra toàn bộ xe." },
+    ],
     scene: { kind: "road", props: ["fire"] },
   },
   /* ---------- Chương 3 ---------- */
@@ -60,6 +70,11 @@ export const EXTRA: Question[] = [
     ],
     answer: 1,
     explanation: "Độ bám của lốp giảm mạnh trên đường trơn, nên mọi thao tác phải nhẹ nhàng, tốc độ thấp và giữ khoảng cách lớn hơn.",
+    consequences: [
+      { kind: "crash", text: "Bạn tăng ga lao qua đoạn có cát sỏi, bánh sau mất độ bám và văng ngang, xe đổ trượt dài trên đường." },
+      null,
+      { kind: "crash", text: "Bạn bóp mạnh phanh trước trên mặt đường trơn, bánh trước bó cứng và trượt ngang, xe đổ ngay tại chỗ — bạn văng ra đường trước đầu xe phía sau." },
+    ],
     scene: { kind: "road", props: ["rain"] },
   },
   {
@@ -192,6 +207,11 @@ export const EXTRA: Question[] = [
     options: ["Xe con và xe mô tô.", "Chỉ xe tải.", "Cả ba xe."],
     answer: 0,
     explanation: "Hướng Bắc – Nam đèn xanh nên xe con (rẽ phải) và xe mô tô (đi thẳng) được đi; hai hướng đi không cắt nhau. Xe tải gặp đèn đỏ phải dừng lại.",
+    consequences: [
+      null,
+      { kind: "crash", text: "Xe tải hướng Tây đang gặp đèn đỏ mà vẫn đi, tông ngang hông xe mô tô đang đi thẳng theo đèn xanh. Vượt đèn đỏ: ô tô 18–20 triệu, trừ 4 điểm GPLX." },
+      { kind: "crash", text: "Cả ba cùng đi, xe tải (đèn đỏ) cắt ngang lối xe mô tô (đèn xanh) giữa giao lộ — xe mô tô bị tông ngã; xe tải bị phạt vượt đèn đỏ 18–20 triệu, trừ 4 điểm GPLX." },
+    ],
     scene: {
       kind: "junction", layout: "cross", lights: { NS: "green", EW: "red" },
       vehicles: [
@@ -278,6 +298,11 @@ export const EXTRA: Question[] = [
     ],
     answer: 1,
     explanation: "Trên cao tốc tuyệt đối không lùi xe, quay đầu. Đi tiếp đến lối ra kế tiếp là cách xử lý an toàn và đúng luật.",
+    consequences: [
+      { kind: "crash", text: "Bạn dừng ở làn khẩn cấp rồi lùi lại lối ra, xe phía sau nhập vào làn khẩn cấp để tránh sự cố và tông trực diện vào đuôi xe bạn. Lùi xe trên đường cao tốc: 30–40 triệu, trừ 10 điểm GPLX." },
+      null,
+      { kind: "crash", text: "Bạn quay đầu qua khe hở dải phân cách, đối đầu với dòng xe ngược chiều đang chạy 100 km/h — tai nạn đối đầu cực nặng. Quay đầu xe trên đường cao tốc: 30–40 triệu, trừ 10 điểm GPLX." },
+    ],
     scene: { kind: "road", props: ["highway"] },
   },
   {
@@ -290,6 +315,11 @@ export const EXTRA: Question[] = [
     ],
     answer: 1,
     explanation: "Đèn chiếu xa bị sương phản chiếu gây chói. Hãy dùng đèn chiếu gần/đèn sương mù, giảm tốc độ, giữ khoảng cách, và dừng ở nơi an toàn nếu không bảo đảm tầm nhìn.",
+    consequences: [
+      { kind: "crash", text: "Đèn chiếu xa bị sương mù phản chiếu thành màn trắng làm bạn không thấy gì; giữ tốc độ trên đường đèo, bạn không kịp ôm cua và lao vào vách núi hoặc xuống vực." },
+      null,
+      { kind: "crash", text: "Bạn bám sát đèn hậu xe trước, xe đó phanh gấp trước khúc cua và bạn đâm thẳng vào đuôi xe. Không giữ khoảng cách an toàn gây tai nạn: 20–22 triệu, trừ 10 điểm GPLX." },
+    ],
     scene: { kind: "road", props: ["fog"] },
   },
   {
@@ -302,6 +332,11 @@ export const EXTRA: Question[] = [
     ],
     answer: 1,
     explanation: "Khi có người điều khiển giao thông, phải chấp hành hiệu lệnh của người điều khiển. Tay giơ thẳng đứng: tất cả các hướng phải dừng lại.",
+    consequences: [
+      { kind: "crash", text: "Bạn đi tiếp theo đèn xanh trong khi CSGT đang yêu cầu mọi hướng dừng để nhường xe cứu thương — xe bạn tông vào xe cứu thương giữa giao lộ. Không chấp hành hiệu lệnh người điều khiển giao thông: ô tô 18–20 triệu, xe máy 4–6 triệu, trừ 4 điểm GPLX." },
+      null,
+      { kind: "ticket", text: "Bạn đi chậm qua giao lộ thay vì dừng theo lệnh tay giơ thẳng, CSGT thổi còi dừng xe ngay tại chỗ và lập biên bản: ô tô 18–20 triệu, xe máy 4–6 triệu, trừ 4 điểm GPLX." },
+    ],
     scene: { kind: "road", props: ["police-up", "light-green"] },
   },
 ];

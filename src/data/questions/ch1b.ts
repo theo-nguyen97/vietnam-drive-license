@@ -12,6 +12,11 @@ export const CH1B: Question[] = [
     ],
     answer: 1,
     explanation: "Trên cao tốc xe chạy tốc độ cao, dừng đỗ trên phần đường xe chạy rất dễ gây tai nạn liên hoàn. Chỉ dừng, đỗ ở nơi quy định; khi bắt buộc phải dừng phải đưa xe vào làn dừng khẩn cấp, bật đèn khẩn cấp và đặt biển cảnh báo.",
+    consequences: [
+      { kind: "crash", text: "Bạn dừng trên làn xe chạy để nghe điện thoại, xe phía sau đang chạy 100 km/h không kịp tránh và tông thẳng vào đuôi xe. Dừng xe trên đường cao tốc không đúng quy định: 12–14 triệu, trừ 6 điểm GPLX." },
+      null,
+      { kind: "crash", text: "Bạn dừng sát dải phân cách giữa — làn nhanh nhất của cao tốc; xe khách phía sau đổi làn không kịp và đâm vào xe bạn. Dừng xe trên cao tốc không đúng nơi quy định: 12–14 triệu, trừ 6 điểm GPLX." },
+    ],
     scene: { kind: "road", props: ["highway"] },
   },
   {
@@ -31,6 +36,11 @@ export const CH1B: Question[] = [
     ],
     answer: 1,
     explanation: "Tín hiệu đèn đỏ là cấm đi. Vượt đèn đỏ là nguyên nhân của nhiều vụ tai nạn nghiêm trọng tại giao lộ, dù đường vắng cũng không được đi.",
+    consequences: [
+      { kind: "crash", text: "Bạn tưởng đường trống và vượt đèn đỏ, xe mô tô từ hướng khuất lao tới với đèn xanh — va chạm ngang hông. Vượt đèn đỏ: ô tô 18–20 triệu, xe máy 4–6 triệu, trừ 4 điểm GPLX." },
+      null,
+      { kind: "ticket", text: "Ban đêm đường vắng bạn vượt đèn đỏ, camera phạt nguội ghi lại biển số — giấy phạt gửi về nhà: ô tô 18–20 triệu, xe máy 4–6 triệu, trừ 4 điểm GPLX." },
+    ],
     scene: { kind: "road", props: ["light-red"] },
   },
   {
@@ -57,6 +67,11 @@ export const CH1B: Question[] = [
     ],
     answer: 2,
     explanation: "Lùi xe, quay đầu, đi ngược chiều trên cao tốc là hành vi bị nghiêm cấm, cực kỳ nguy hiểm. Đi nhầm thì đi tiếp đến nút giao hoặc lối ra kế tiếp.",
+    consequences: [
+      { kind: "crash", text: "Bạn lùi xe trên cao tốc, xe phía sau chạy 100 km/h không ngờ có xe đang lùi và tông trực diện vào đuôi xe. Lùi xe trên đường cao tốc: 30–40 triệu, trừ 10 điểm GPLX." },
+      { kind: "crash", text: "Bạn quay đầu qua dải phân cách, đối đầu với dòng xe ngược chiều đang chạy tốc độ cao — tai nạn đối đầu cực nặng. Quay đầu xe trên đường cao tốc: 30–40 triệu, trừ 10 điểm GPLX." },
+      null,
+    ],
     scene: { kind: "road", props: ["highway"] },
   },
   {
@@ -70,6 +85,11 @@ export const CH1B: Question[] = [
     answer: 1,
     explanation: "Đường sắt không có rào chắn: phải tự quan sát cả hai phía, chỉ đi qua khi chắc chắn an toàn. Tàu hoả có quán tính rất lớn, không thể dừng kịp.",
     signs: ["W.211a"],
+    consequences: [
+      { kind: "crash", text: "Bạn tăng tốc lao qua đường ray không rào chắn, tàu hoả xuất hiện từ phía bị che khuất và tông ngang thân xe — hầu như không ai sống sót." },
+      null,
+      { kind: "crash", text: "Bấm còi không làm tàu dừng lại; bạn đi qua mà không quan sát, tàu hoả đang đến va vào phần đuôi xe. Không quan sát khi qua đường sắt không rào chắn: bị xử phạt và trừ điểm GPLX." },
+    ],
     scene: { kind: "road", props: ["rail"] },
   },
   {
@@ -113,6 +133,11 @@ export const CH1B: Question[] = [
     options: ["Được, khi làn đường chính ùn tắc.", "Không được; làn dừng khẩn cấp chỉ dùng khi xe gặp sự cố hoặc cho xe ưu tiên.", "Được, nếu bật đèn khẩn cấp."],
     answer: 1,
     explanation: "Làn dừng khẩn cấp dành cho xe gặp sự cố và xe ưu tiên đi làm nhiệm vụ. Chạy trên làn này để vượt có thể đâm vào xe đang dừng khẩn cấp.",
+    consequences: [
+      { kind: "crash", text: "Bạn chạy trên làn dừng khẩn cấp để vượt, một xe đang dừng do hỏng hóc hiện ra sau khúc cua và bạn tông thẳng vào đuôi xe. Chạy trên làn dừng khẩn cấp: 4–6 triệu, trừ 2 điểm GPLX." },
+      null,
+      { kind: "ticket", text: "Bật đèn khẩn cấp không biến bạn thành xe ưu tiên: CSGT tuần tra cao tốc dừng xe và lập biên bản chạy trên làn dừng khẩn cấp — 4–6 triệu, trừ 2 điểm GPLX." },
+    ],
     scene: { kind: "road", props: ["highway"] },
   },
   {
@@ -135,6 +160,11 @@ export const CH1B: Question[] = [
     options: ["Được, để tận dụng đường trống.", "Không được.", "Được, nếu giữ khoảng cách 10 m."],
     answer: 1,
     explanation: "Bám theo xe ưu tiên là hành vi nguy hiểm và gây cản trở. Người lái xe phải giảm tốc độ, tránh, dừng sát lề bên phải để nhường đường.",
+    consequences: [
+      { kind: "crash", text: "Bạn bám sát đuôi xe cứu thương, xe ưu tiên phanh gấp khi có xe cắt ngang và bạn đâm vào đuôi xe. Gây cản trở xe ưu tiên: ô tô 6–8 triệu, xe máy 4–6 triệu, trừ 4 điểm GPLX." },
+      null,
+      { kind: "ticket", text: "Khoảng cách 10 m ở tốc độ cao không đủ để dừng và vẫn là hành vi bám theo xe ưu tiên; CSGT dừng xe và phạt cản trở xe ưu tiên: ô tô 6–8 triệu, trừ 4 điểm GPLX." },
+    ],
     scene: { kind: "road", props: ["ambulance"] },
   },
   {
@@ -192,6 +222,11 @@ export const CH1B: Question[] = [
     ],
     answer: 1,
     explanation: "Xe vào cao tốc phải nhường đường cho xe đang chạy, dùng làn tăng tốc để đạt tốc độ phù hợp rồi mới nhập vào làn đường xe chạy.",
+    consequences: [
+      { kind: "crash", text: "Bạn tạt ngay vào làn trong cùng với tốc độ thấp, xe con đang chạy 100 km/h ở làn đó không kịp giảm và tông vào đuôi xe bạn. Không tuân thủ quy định khi vào cao tốc: 4–6 triệu, trừ 2 điểm GPLX." },
+      null,
+      { kind: "danger", text: "Bạn dừng hẳn ở cuối làn tăng tốc, xe sau nhập làn theo đà bị bất ngờ phải phanh gấp; khi bạn nhập vào từ tốc độ 0, xe trên cao tốc phải phanh dúi dụi để tránh bạn." },
+    ],
     scene: { kind: "road", props: ["highway"] },
   },
   {
@@ -211,6 +246,11 @@ export const CH1B: Question[] = [
     options: ["Được đi.", "Phải dừng lại.", "Được đi nhưng phải nhường đường cho tất cả các xe."],
     answer: 0,
     explanation: "Đèn xanh: được đi. Tuy nhiên vẫn phải chú ý quan sát, nhường đường cho người đi bộ đang ở trên phần đường qua đường và xe đi ngược chiều khi rẽ trái.",
+    consequences: [
+      null,
+      { kind: "ok", text: "Bạn dừng lại khi đèn xanh, dòng xe phía sau bấm còi inh ỏi; dừng vô cớ trên phần đường xe chạy gây cản trở giao thông có thể bị xử phạt." },
+      { kind: "danger", text: "Bạn nhường đường cho cả xe hướng vuông góc đang gặp đèn đỏ, khiến họ tưởng được đi và lao ra — xung đột nguy hiểm giữa giao lộ; đèn xanh cho bạn quyền đi, chỉ nhường người đi bộ và xe đi thẳng ngược chiều khi rẽ trái." },
+    ],
     scene: { kind: "road", props: ["light-green"] },
   },
   {

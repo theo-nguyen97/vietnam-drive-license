@@ -23,6 +23,11 @@ export const CH2: Question[] = [
     ],
     answer: 2,
     explanation: "Người có mặt tại nơi xảy ra tai nạn có trách nhiệm bảo vệ hiện trường, giúp đỡ, cứu chữa kịp thời người bị nạn, báo tin cho cơ quan chức năng. Các xe đi qua có trách nhiệm chở người bị nạn đi cấp cứu (trừ xe ưu tiên đang làm nhiệm vụ và xe được miễn trừ theo quy định).",
+    consequences: [
+      { kind: "danger", text: "Bạn dừng xe giữa đường quay phim, gây ùn tắc và cản trở xe cứu thương tiếp cận nạn nhân; dừng xe không đúng quy định bị xử phạt, đăng hình ảnh nạn nhân còn có thể bị xử lý về xâm phạm đời tư." },
+      { kind: "danger", text: "Bạn bỏ đi, nạn nhân không được đưa đi cấp cứu kịp thời; người có điều kiện mà không cứu giúp người đang trong tình trạng nguy hiểm đến tính mạng có thể bị truy cứu trách nhiệm hình sự (Điều 132 Bộ luật Hình sự)." },
+      null,
+    ],
     scene: { kind: "road", props: ["accident"] },
   },
   {
@@ -43,6 +48,11 @@ export const CH2: Question[] = [
     ],
     answer: 1,
     explanation: "Ưu tiên an toàn tính mạng: dừng xe, tắt máy (ngắt nguồn nhiên liệu, điện), đưa người ra xa, gọi 114. Chỉ chữa cháy bằng bình chữa cháy khi an toàn; không mở toang nắp ca-pô vì lửa bùng lên do gặp thêm ô-xy.",
+    consequences: [
+      { kind: "crash", text: "Bạn tiếp tục chạy, gió thổi lửa lan nhanh vào khoang động cơ và bình nhiên liệu, xe bùng cháy giữa đường trước khi đến cây xăng — mang xe cháy vào cây xăng còn có thể gây nổ." },
+      null,
+      { kind: "danger", text: "Bạn mở toang nắp ca-pô, ô-xy tràn vào làm ngọn lửa bùng lên táp thẳng vào mặt và tay; nước đổ vào hệ thống điện và xăng dầu không dập được lửa mà còn làm cháy lan." },
+    ],
     scene: { kind: "road", props: ["fire"] },
   },
   {
@@ -77,6 +87,11 @@ export const CH2: Question[] = [
     ],
     answer: 1,
     explanation: "Nhường đường cho người đi bộ là hành vi đúng luật và có văn hoá. Bấm còi inh ỏi, đi lên vỉa hè là thiếu văn hoá và vi phạm pháp luật.",
+    consequences: [
+      { kind: "ticket", text: "Bạn bấm còi liên tục khi đèn vừa chuyển xanh, người phía trước giật mình; CSGT gần đó dừng xe lập biên bản bấm còi liên tục trong đô thị: ô tô 800 nghìn – 1 triệu." },
+      null,
+      { kind: "ticket", text: "Bạn leo lên vỉa hè để tránh ùn tắc, người đi bộ phải nép vào tường tránh xe; CSGT xử phạt đi xe trên vỉa hè: 4–6 triệu, trừ 2 điểm GPLX." },
+    ],
     scene: { kind: "road", props: ["crosswalk"] },
   },
   {
@@ -111,6 +126,11 @@ export const CH2: Question[] = [
     ],
     answer: 1,
     explanation: "Trên cao tốc, xe gặp sự cố phải vào làn dừng khẩn cấp (nếu có) hoặc sát lề phải, bật đèn khẩn cấp và đặt biển cảnh báo phía sau xe tối thiểu 150 m; người trên xe di chuyển ra khỏi phần đường xe chạy để bảo đảm an toàn.",
+    consequences: [
+      { kind: "crash", text: "Bạn dừng ngay trên làn đang chạy và cúi xuống sửa xe, xe tải phía sau chạy 90 km/h không kịp phanh và tông vào đuôi xe. Dừng xe trên cao tốc không đúng quy định: 12–14 triệu, trừ 6 điểm GPLX." },
+      null,
+      { kind: "crash", text: "Bạn lùi xe về lối ra, xe phía sau chạy tốc độ cao đâm trực diện vào đuôi xe đang lùi. Lùi xe trên đường cao tốc: 30–40 triệu, trừ 10 điểm GPLX." },
+    ],
     scene: { kind: "road", props: ["highway"] },
   },
   {
@@ -134,6 +154,11 @@ export const CH2: Question[] = [
     ],
     answer: 1,
     explanation: "Người đi bộ đang ở trên phần đường qua đường cần được bảo đảm an toàn; người lái xe phải kiên nhẫn chờ họ qua hết.",
+    consequences: [
+      { kind: "danger", text: "Bạn bấm còi giục, người đi bộ cao tuổi giật mình loạng choạng ngay trước đầu xe; bạn phải phanh gấp và xe sau suýt đâm vào đuôi xe bạn." },
+      null,
+      { kind: "crash", text: "Bạn lách xe qua khoảng trống, một em nhỏ bước hụt sang và bị xe bạn quệt ngã trên vạch qua đường. Gây tai nạn cho người đi bộ: bị xử phạt nặng, tước GPLX và phải bồi thường." },
+    ],
     scene: { kind: "road", props: ["crosswalk", "light-green"] },
   },
 ];

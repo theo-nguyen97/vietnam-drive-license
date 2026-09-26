@@ -115,6 +115,11 @@ export const CH6: Question[] = [
     options: ["Xe tải.", "Xe con.", "Cả hai xe."],
     answer: 1,
     explanation: "Hướng Bắc – Nam đang là đèn đỏ nhưng xe con vẫn đi qua giao lộ — vi phạm tín hiệu đèn. Xe tải đi theo đèn xanh là đúng.",
+    consequences: [
+      { kind: "ok", text: "Xe tải đi đúng đèn xanh của hướng Đông – Tây, không vi phạm; nếu bạn quy lỗi cho xe tải thì bạn đang đọc sai đèn tín hiệu và sẽ tự vượt đèn đỏ ở tình huống tương tự." },
+      null,
+      { kind: "ok", text: "Xe tải đi theo đèn xanh là hoàn toàn đúng luật; chỉ xe con vượt đèn đỏ mới vi phạm (ô tô 18–20 triệu, trừ 4 điểm GPLX) — kết luận \"cả hai\" là oan cho xe tải." },
+    ],
     scene: {
       kind: "junction", layout: "cross", lights: { NS: "red", EW: "green" },
       vehicles: [
@@ -132,6 +137,11 @@ export const CH6: Question[] = [
     options: ["Xe con.", "Xe tải.", "Cả hai xe."],
     answer: 1,
     explanation: "Người điều khiển giao thông dang ngang tay, mặt hướng về xe con: xe con ở phía trước phải dừng lại. Xe tải ở bên trái người điều khiển nên được đi.",
+    consequences: [
+      { kind: "crash", text: "Xe con ở ngay phía trước CSGT đang dang tay ngang — hướng phải dừng — nhưng vẫn đi, đâm ngang hông xe tải đang được phép đi từ bên trái người điều khiển. Không chấp hành hiệu lệnh: 18–20 triệu, trừ 4 điểm GPLX." },
+      null,
+      { kind: "crash", text: "Cả hai cùng đi, xe con (hướng bị chặn) và xe tải (hướng được đi) cắt nhau ngay giữa giao lộ — va chạm; xe con bị lập biên bản không chấp hành hiệu lệnh người điều khiển giao thông." },
+    ],
     scene: {
       kind: "junction", layout: "cross", police: { pose: "side", facing: "S" },
       vehicles: [
@@ -148,6 +158,11 @@ export const CH6: Question[] = [
     options: ["Tất cả các xe phải dừng lại.", "Chỉ xe con phải dừng lại.", "Xe mô tô và xe tải được đi."],
     answer: 0,
     explanation: "Tay giơ thẳng đứng: người tham gia giao thông ở tất cả các hướng phải dừng lại.",
+    consequences: [
+      null,
+      { kind: "crash", text: "Xe mô tô và xe tải cho rằng chỉ xe con phải dừng và cùng tiến vào giao lộ theo hai hướng vuông góc — va chạm ngay trước mặt CSGT; cả hai bị phạt không chấp hành hiệu lệnh (ô tô 18–20 triệu, xe máy 4–6 triệu, trừ 4 điểm GPLX)." },
+      { kind: "crash", text: "Xe mô tô từ Tây và xe tải từ Bắc cùng đi khi CSGT giơ tay thẳng — hai hướng cắt nhau giữa ngã tư, xe mô tô bị xe tải tông ngang; cả hai bị xử phạt không chấp hành hiệu lệnh người điều khiển giao thông." },
+    ],
     scene: {
       kind: "junction", layout: "cross", police: { pose: "up", facing: "S" }, stopAll: true,
       vehicles: [
@@ -265,6 +280,11 @@ export const CH6: Question[] = [
     options: ["Xe con (chỉ được rẽ phải) và xe tải.", "Xe mô tô và xe khách.", "Tất cả các xe phải dừng lại."],
     answer: 0,
     explanation: "Tay phải giơ về phía trước: người ở phía sau (xe khách) và bên phải (xe mô tô) người điều khiển phải dừng; phía trước (xe con) được rẽ phải; bên trái (xe tải) được đi tất cả các hướng.",
+    consequences: [
+      null,
+      { kind: "crash", text: "Xe mô tô (bên phải CSGT) và xe khách (phía sau CSGT) là các hướng phải dừng nhưng vẫn đi, cắt ngang lối của xe con rẽ phải và xe tải — va chạm giữa giao lộ; bị phạt không chấp hành hiệu lệnh (ô tô 18–20 triệu, xe máy 4–6 triệu, trừ 4 điểm GPLX)." },
+      { kind: "ok", text: "Bạn dừng xe con dù được phép rẽ phải, xe tải cũng dừng — giao lộ ùn lại, CSGT phải ra hiệu thúc đi; không bị phạt nhưng cho thấy bạn chưa đọc được hiệu lệnh tay phải giơ trước." },
+    ],
     scene: {
       kind: "junction", layout: "cross", police: { pose: "forward", facing: "S" },
       vehicles: [
@@ -286,6 +306,10 @@ export const CH6: Question[] = [
     ],
     answer: 1,
     explanation: "Vạch liền giữa đường phân chia hai chiều xe chạy, xe không được đè lên hoặc lấn qua vạch. Muốn vượt phải ở đoạn có vạch đứt và bảo đảm an toàn.",
+    consequences: [
+      { kind: "ticket", text: "Xe con đè lên vạch liền để vượt xe tải, CSGT đứng phía trước dừng xe: vượt xe không đúng quy định (lấn vạch liền) — ô tô 4–6 triệu, trừ 2 điểm GPLX; nếu bất ngờ có xe ngược chiều xuất hiện sau khúc cua thì va chạm trực diện." },
+      null,
+    ],
     scene: {
       kind: "junction", layout: "road", centerLine: "solid",
       vehicles: [
@@ -304,6 +328,10 @@ export const CH6: Question[] = [
     options: ["Đúng.", "Không đúng, phải vượt về bên phải."],
     answer: 0,
     explanation: "Vạch đứt cho phép xe cắt qua để vượt khi bảo đảm an toàn. Xe xin vượt phải có tín hiệu và vượt về bên trái.",
+    consequences: [
+      null,
+      { kind: "crash", text: "Bạn ép sang bên phải để vượt, xe tải đúng lúc ôm sát lề để tránh ổ gà và ép xe con xuống lề đường; vượt bên phải sai quy định: ô tô 4–6 triệu, trừ 2 điểm GPLX." },
+    ],
     scene: {
       kind: "junction", layout: "road", centerLine: "dashed",
       vehicles: [
@@ -387,6 +415,10 @@ export const CH6: Question[] = [
     options: ["Không vi phạm.", "Vi phạm, vì có biển cấm quay đầu xe."],
     answer: 1,
     explanation: "Biển P.124a \"Cấm quay đầu xe\" đặt ở hướng xe con đi đến nên xe con không được quay đầu tại nơi giao nhau này.",
+    consequences: [
+      { kind: "ticket", text: "Bạn cho xe con quay đầu ngay dưới biển P.124a, CSGT gần đó dừng xe lập biên bản quay đầu xe tại nơi có biển cấm quay đầu: ô tô 800 nghìn – 1 triệu; xe phía sau còn phải phanh gấp vì bị bất ngờ." },
+      null,
+    ],
     scene: {
       kind: "junction", layout: "cross",
       signs: [{ at: "S", code: "P.124a" }],
@@ -402,6 +434,11 @@ export const CH6: Question[] = [
     options: ["Xe tải.", "Xe con.", "Không xe nào vi phạm."],
     answer: 1,
     explanation: "Hướng xe con đi có biển P.123a \"Cấm rẽ trái\" nhưng xe con vẫn rẽ trái — vi phạm. Xe tải đi thẳng là đúng.",
+    consequences: [
+      { kind: "ok", text: "Xe tải đi thẳng, không có biển cấm nào với hướng của nó nên hoàn toàn đúng luật; quy lỗi cho xe tải nghĩa là bạn đã bỏ qua biển P.123a ở hướng xe con." },
+      null,
+      { kind: "ticket", text: "Xe con rẽ trái dưới biển \"Cấm rẽ trái\" và cắt ngang đầu xe tải đang đi thẳng — xe tải phải phanh gấp; xe con bị CSGT xử phạt không chấp hành biển báo hiệu và có thể bị trừ điểm GPLX." },
+    ],
     scene: {
       kind: "junction", layout: "cross",
       signs: [{ at: "S", code: "P.123a" }],
@@ -441,6 +478,11 @@ export const CH6: Question[] = [
     ],
     answer: 1,
     explanation: "Tuyệt đối không vượt rào chắn khi đang đóng. Dừng trước vạch dừng (cách ray gần nhất tối thiểu 5 m nếu không có vạch), chờ đến khi rào chắn mở hết, đèn tắt, chuông ngừng.",
+    consequences: [
+      { kind: "crash", text: "Bạn tăng tốc lao qua khi rào chắn đang hạ, thanh chắn đập xuống nóc xe và tàu hoả tới ngay sau đó tông ngang thân xe — hầu như không ai sống sót. Vượt rào chắn đang dịch chuyển: bị xử phạt nặng, trừ điểm GPLX." },
+      null,
+      { kind: "crash", text: "Bạn lách vòng qua rào chắn, tàu hoả bị khuất tầm nhìn xuất hiện chỉ cách vài chục mét và tông vào xe bạn ngay trên ray." },
+    ],
     scene: { kind: "road", props: ["rail"] },
   },
   {
@@ -454,6 +496,11 @@ export const CH6: Question[] = [
     answer: 1,
     explanation: "Tại phần đường dành cho người đi bộ qua đường, đặc biệt ở khu vực trường học, phải giảm tốc độ và dừng lại nhường đường.",
     signs: ["W.225"],
+    consequences: [
+      { kind: "danger", text: "Bạn bấm còi giữ tốc độ, các em học sinh hoảng sợ chạy tán loạn trên vạch, một em vấp ngã ngay trước đầu xe khiến bạn phải phanh cháy lốp; không nhường đường cho người đi bộ còn bị xử phạt." },
+      null,
+      { kind: "crash", text: "Bạn lách qua khoảng trống giữa các em, một em bước lùi lại và bị xe bạn hất ngã trên vạch qua đường. Gây tai nạn cho trẻ em: bị xử phạt nặng, tước GPLX, bồi thường và có thể bị truy cứu hình sự." },
+    ],
     scene: { kind: "road", props: ["school", "crosswalk"] },
   },
   {
@@ -466,6 +513,11 @@ export const CH6: Question[] = [
     ],
     answer: 1,
     explanation: "Khi bị chói, tầm nhìn bị hạn chế: giảm tốc độ, nhìn về lề phải để giữ hướng đi. Bật đèn pha đáp trả khiến cả hai cùng bị chói, rất dễ gây tai nạn.",
+    consequences: [
+      { kind: "crash", text: "Bạn bật đèn pha đáp trả, cả hai người lái cùng bị chói và mất phương hướng — hai xe lệch làn và va chạm trực diện. Dùng đèn chiếu xa khi tránh xe ngược chiều: ô tô 800 nghìn – 1 triệu, xe máy 400–600 nghìn." },
+      null,
+      { kind: "crash", text: "Bạn tăng tốc trong lúc đang bị chói mắt, không nhìn thấy người đi xe đạp sát lề và tông vào họ. Chạy quá tốc độ khi tầm nhìn hạn chế gây tai nạn: bị xử phạt nặng, tước GPLX." },
+    ],
     scene: { kind: "road", props: ["night"] },
   },
   {
@@ -478,6 +530,11 @@ export const CH6: Question[] = [
     ],
     answer: 1,
     explanation: "Khi có tín hiệu của xe ưu tiên, phải nhanh chóng giảm tốc độ, tránh hoặc dừng sát lề bên phải để nhường đường, không gây cản trở.",
+    consequences: [
+      { kind: "danger", text: "Bạn tăng tốc chạy trước xe cứu thương, xe ưu tiên buộc phải bám theo và không thể vượt; đến giao lộ bạn phanh gấp, xe cứu thương suýt tông vào đuôi xe bạn. Cản trở xe ưu tiên: ô tô 6–8 triệu, xe máy 4–6 triệu, trừ 4 điểm GPLX." },
+      null,
+      { kind: "ticket", text: "Bạn giữ nguyên làn, xe cứu thương hú còi liên tục phía sau mà không vượt được; CSGT tại chốt phía trước dừng xe bạn: không nhường đường cho xe ưu tiên — ô tô 6–8 triệu, xe máy 4–6 triệu, trừ 4 điểm GPLX." },
+    ],
     scene: { kind: "road", props: ["ambulance"] },
   },
   {
@@ -490,6 +547,11 @@ export const CH6: Question[] = [
     ],
     answer: 1,
     explanation: "Đèn vàng: phải dừng lại trước vạch dừng. Chỉ được đi tiếp khi đã đi quá vạch dừng.",
+    consequences: [
+      { kind: "crash", text: "Bạn tăng tốc để qua trước khi đèn đỏ, đèn chuyển đỏ khi xe vừa tới vạch và xe từ hướng vuông góc được đèn xanh lao ra — va chạm ngang hông. Không chấp hành đèn tín hiệu: ô tô 18–20 triệu, xe máy 4–6 triệu, trừ 4 điểm GPLX." },
+      null,
+      { kind: "ticket", text: "Bạn bấm còi và đi tiếp qua vạch khi đèn vàng dù hoàn toàn có thể dừng, camera phạt nguội ghi lại: ô tô 18–20 triệu, xe máy 4–6 triệu, trừ 4 điểm GPLX." },
+    ],
     scene: { kind: "road", props: ["light-yellow"] },
   },
   {
@@ -502,6 +564,11 @@ export const CH6: Question[] = [
     ],
     answer: 1,
     explanation: "Mưa làm giảm độ bám đường và tầm nhìn: bật đèn chiếu gần, giảm tốc độ, tăng khoảng cách an toàn, thao tác phanh – lái nhẹ nhàng.",
+    consequences: [
+      { kind: "crash", text: "Bạn giữ tốc độ trên mặt đường trơn, xe phía trước phanh vì vũng nước, bạn đạp phanh nhưng xe trượt dài và đâm vào đuôi xe. Không giữ khoảng cách an toàn gây tai nạn: 20–22 triệu, trừ 10 điểm GPLX." },
+      null,
+      { kind: "crash", text: "Bạn bám sát đuôi xe trước với đèn khẩn cấp nhấp nháy, xe trước phanh gấp và bạn không có khoảng trống để dừng — tông thẳng vào đuôi xe; xe sau còn hiểu nhầm bạn đang gặp sự cố." },
+    ],
     scene: { kind: "road", props: ["rain"] },
   },
   {
@@ -514,6 +581,11 @@ export const CH6: Question[] = [
     ],
     answer: 1,
     explanation: "Dừng xe ở nơi an toàn để không gây thêm tai nạn, bật đèn khẩn cấp, giúp đỡ người bị nạn, gọi cấp cứu 115 và báo cho công an (113).",
+    consequences: [
+      { kind: "danger", text: "Bạn tăng tốc vọt qua hiện trường, chạm vào mảnh vỡ trên đường và suýt tông người đang sơ cứu nạn nhân; bỏ qua người bị nạn còn có thể bị truy cứu trách nhiệm về tội không cứu giúp người trong tình trạng nguy hiểm đến tính mạng." },
+      null,
+      { kind: "crash", text: "Bạn dừng xe giữa đường để chụp ảnh, xe phía sau không kịp tránh xe bạn và xe tai nạn đang chắn đường — tai nạn liên hoàn thứ cấp; dừng xe không đúng quy định gây cản trở giao thông bị xử phạt." },
+    ],
     scene: { kind: "road", props: ["accident"] },
   },
 ];

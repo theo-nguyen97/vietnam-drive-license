@@ -34,6 +34,11 @@ export const CH3: Question[] = [
     ],
     answer: 1,
     explanation: "Trên đường trơn, phanh gấp dễ bó cứng bánh gây trượt ngã. Hãy giảm ga, phanh nhẹ nhàng, kết hợp cả hai phanh.",
+    consequences: [
+      { kind: "crash", text: "Bóp mạnh phanh trước trên mặt đường trơn, bánh trước bó cứng và trượt ngang, xe đổ ngay tại chỗ — bạn văng ra đường trước đầu xe phía sau." },
+      null,
+      { kind: "crash", text: "Chỉ đạp mạnh phanh sau, bánh sau bó cứng và văng ngang, đuôi xe quăng ra khiến xe xoay và trượt dài trên mặt đường trơn." },
+    ],
     scene: { kind: "road", props: ["rain"] },
   },
   {
@@ -90,6 +95,11 @@ export const CH3: Question[] = [
     ],
     answer: 1,
     explanation: "Đi chậm, đều ga ở số thấp để nước không tràn vào ống xả, khoang động cơ. Sau khi qua, rà phanh để làm khô má phanh trước khi chạy tiếp.",
+    consequences: [
+      { kind: "danger", text: "Bạn tăng tốc lao qua đoạn ngập, nước bị hất tràn vào khoang động cơ và ống hút gió — xe thuỷ kích, chết máy giữa đoạn ngập, chi phí sửa động cơ hàng chục triệu." },
+      null,
+      { kind: "danger", text: "Bạn tắt máy và đẩy xe, nước tràn vào ống xả, lọt lên buồng đốt và khoang động cơ; đẩy xe giữa dòng nước còn khiến bạn dễ trượt ngã hoặc bị cuốn." },
+    ],
     scene: { kind: "road", props: ["rain"] },
   },
   {
@@ -102,6 +112,11 @@ export const CH3: Question[] = [
     ],
     answer: 1,
     explanation: "Tầm nhìn kém và mặt đường trơn: bật đèn chiếu gần/đèn sương mù để người khác nhìn thấy mình, giảm tốc độ và tăng khoảng cách an toàn.",
+    consequences: [
+      { kind: "crash", text: "Đèn chiếu xa bị sương mù phản chiếu thành một màn sáng trắng làm bạn càng không nhìn thấy đường; ở tốc độ cao bạn phát hiện xe phía trước quá trễ và đâm vào đuôi xe. Không giữ khoảng cách gây tai nạn: 20–22 triệu, trừ 10 điểm GPLX." },
+      null,
+      { kind: "danger", text: "Bật đèn khẩn cấp khi đang chạy khiến xe khác không biết bạn sắp chuyển hướng; giữ tốc độ bình thường trong mưa mù, bạn không kịp dừng khi gặp chướng ngại vật hiện ra sát trước mũi xe." },
+    ],
     scene: { kind: "road", props: ["fog"] },
   },
   {
@@ -147,6 +162,11 @@ export const CH3: Question[] = [
     ],
     answer: 1,
     explanation: "Ban đêm tầm nhìn hạn chế: bật đèn chiếu sáng, đi tốc độ phù hợp; chuyển sang đèn chiếu gần khi tránh xe ngược chiều, khi đi trong đô thị có chiếu sáng.",
+    consequences: [
+      { kind: "crash", text: "Bạn giữ đèn chiếu xa khi có xe ngược chiều, người lái xe đối diện bị chói mắt và lệch sang làn của bạn — va chạm trực diện. Dùng đèn chiếu xa khi tránh xe ngược chiều: ô tô 800 nghìn – 1 triệu, xe máy 400–600 nghìn." },
+      null,
+      { kind: "crash", text: "Bạn tắt đèn để tiết kiệm điện, không ai nhìn thấy xe bạn trong đêm và bạn không thấy chướng ngại vật — xe phía sau đâm vào đuôi xe bạn. Không sử dụng đèn chiếu sáng khi trời tối: ô tô 800 nghìn – 1 triệu, xe máy 400–600 nghìn." },
+    ],
     scene: { kind: "road", props: ["night"] },
   },
   {
@@ -160,6 +180,11 @@ export const CH3: Question[] = [
     answer: 1,
     explanation: "Trẻ em thường có phản ứng khó đoán; gặp biển \"Trẻ em\" hoặc khu vực trường học phải giảm tốc độ, quan sát và sẵn sàng dừng lại.",
     signs: ["W.225"],
+    consequences: [
+      { kind: "danger", text: "Tiếng còi liên tục làm các em nhỏ hoảng sợ chạy tán loạn, một em lao ngược lại trước đầu xe khiến bạn phải phanh gấp; bấm còi liên tục trong khu dân cư còn bị xử phạt." },
+      null,
+      { kind: "crash", text: "Bạn tăng tốc đi qua trường học, một học sinh bất ngờ chạy ra từ sau xe buýt đang đón trả và bị xe bạn hất ngã. Gây tai nạn cho trẻ em: bị xử phạt nặng, tước GPLX và chịu trách nhiệm bồi thường, có thể bị truy cứu hình sự." },
+    ],
     scene: { kind: "road", props: ["school"] },
   },
 ];

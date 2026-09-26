@@ -81,6 +81,11 @@ export const CH1: Question[] = [
     options: ["Không được cản trở; phải giảm tốc độ, tránh hoặc dừng sát lề bên phải để nhường đường.", "Được đi song song để giữ khoảng cách.", "Được bám theo sau để đi nhanh hơn."],
     answer: 0,
     explanation: "Khi có tín hiệu của xe ưu tiên, người tham gia giao thông phải nhanh chóng giảm tốc độ, tránh hoặc dừng lại sát lề đường bên phải để nhường đường; không được gây cản trở xe ưu tiên.",
+    consequences: [
+      null,
+      { kind: "danger", text: "Xe bạn chạy song song chắn mất lối tránh, xe cứu thương phải phanh gấp và hú còi liên tục phía sau. Cản trở xe ưu tiên bị phạt: ô tô 6–8 triệu, xe máy 4–6 triệu, trừ 4 điểm GPLX." },
+      { kind: "crash", text: "Bạn bám đuôi xe cứu thương, xe ưu tiên phanh gấp trước giao lộ và bạn đâm thẳng vào đuôi xe. Hành vi gây cản trở xe ưu tiên bị phạt 6–8 triệu (ô tô), trừ 4 điểm GPLX." },
+    ],
     scene: { kind: "road", props: ["ambulance"] },
   },
   {
@@ -130,6 +135,11 @@ export const CH1: Question[] = [
     answer: 0,
     explanation: "Hiệu lệnh của người điều khiển giao thông có hiệu lực cao nhất, sau đó mới đến tín hiệu đèn, biển báo hiệu, vạch kẻ đường.",
     tip: "Thứ tự chấp hành: Người điều khiển → Đèn → Biển → Vạch.",
+    consequences: [
+      null,
+      { kind: "crash", text: "Bạn đi theo đèn xanh trong khi CSGT đang cho hướng vuông góc đi: xe bạn lao vào giữa dòng xe cắt ngang giao lộ. Không chấp hành hiệu lệnh người điều khiển giao thông: ô tô 18–20 triệu, xe máy 4–6 triệu, trừ 4 điểm GPLX." },
+      { kind: "ticket", text: "Bạn đi theo biển báo, bỏ qua hiệu lệnh của CSGT đang điều tiết — bị dừng xe ngay tại giao lộ và lập biên bản không chấp hành hiệu lệnh người điều khiển giao thông (ô tô 18–20 triệu, trừ 4 điểm GPLX)." },
+    ],
     scene: { kind: "road", props: ["police-side", "light-green"] },
   },
   {
@@ -149,6 +159,11 @@ export const CH1: Question[] = [
     ],
     answer: 1,
     explanation: "Đèn vàng báo hiệu phải dừng lại trước vạch dừng. Nếu đã đi quá vạch dừng thì được đi tiếp. Không được tăng tốc để \"vượt đèn vàng\".",
+    consequences: [
+      { kind: "crash", text: "Bạn tăng tốc khi đèn vàng, đèn chuyển đỏ lúc xe vừa vào giao lộ và bạn tông vào xe hướng vuông góc vừa được đèn xanh. Vượt đèn vàng bị xử lý như không chấp hành đèn tín hiệu: ô tô 18–20 triệu, xe máy 4–6 triệu, trừ 4 điểm GPLX." },
+      null,
+      { kind: "ticket", text: "Bạn coi đèn vàng như đèn xanh và đi tiếp qua vạch dừng — camera phạt nguội ghi hình, bạn bị phạt như vượt đèn đỏ: ô tô 18–20 triệu, xe máy 4–6 triệu, trừ 4 điểm GPLX." },
+    ],
     scene: { kind: "road", props: ["light-yellow"] },
   },
   {
@@ -172,6 +187,11 @@ export const CH1: Question[] = [
     ],
     answer: 0,
     explanation: "Tay giơ thẳng đứng: người tham gia giao thông ở tất cả các hướng phải dừng lại.",
+    consequences: [
+      null,
+      { kind: "danger", text: "Bạn cho rằng mình ở bên hông nên vẫn đi, trong khi CSGT đang yêu cầu mọi hướng dừng để giải toả giao lộ — bạn kẹt giữa ngã tư và bị dừng xe lập biên bản (ô tô 18–20 triệu, xe máy 4–6 triệu, trừ 4 điểm GPLX)." },
+      { kind: "crash", text: "Bạn ở bên phải CSGT và đi tiếp, đúng lúc xe cứu thương đang được ưu tiên qua giao lộ theo hiệu lệnh — hai xe va chạm giữa ngã tư. Không chấp hành hiệu lệnh người điều khiển giao thông: trừ 4 điểm GPLX." },
+    ],
     scene: { kind: "road", props: ["police-up"] },
   },
   {
@@ -185,6 +205,11 @@ export const CH1: Question[] = [
     answer: 1,
     explanation: "Hai tay hoặc một tay dang ngang: người ở phía trước và phía sau người điều khiển phải dừng; người ở bên phải và bên trái được đi.",
     tip: "Dang ngang như \"bức tường\" chắn trước – sau; hai bên hông được đi.",
+    consequences: [
+      { kind: "crash", text: "Bạn ở phía trước CSGT và đi tiếp, đâm ngang hông xe tải đang được phép đi từ bên phải người điều khiển. Không chấp hành hiệu lệnh người điều khiển giao thông: ô tô 18–20 triệu, xe máy 4–6 triệu, trừ 4 điểm GPLX." },
+      null,
+      { kind: "ok", text: "Bạn ở bên trái CSGT nhưng dừng lại, gây ùn ứ cho dòng xe phía sau và bị CSGT ra hiệu thúc đi. Không bị phạt, nhưng hiểu sai hiệu lệnh có thể khiến bạn đi nhầm ở lần sau." },
+    ],
     scene: { kind: "road", props: ["police-side"] },
   },
   {
@@ -197,6 +222,11 @@ export const CH1: Question[] = [
     ],
     answer: 1,
     explanation: "Tay phải giơ về phía trước: phía sau và bên phải dừng lại; phía trước được rẽ phải; bên trái được đi mọi hướng; người đi bộ đi sau lưng người điều khiển giao thông.",
+    consequences: [
+      { kind: "crash", text: "Bạn ở phía sau CSGT và cho rằng được đi, lao vào giữa dòng xe bên trái người điều khiển đang được đi mọi hướng — va chạm giữa giao lộ. Phạt: ô tô 18–20 triệu, xe máy 4–6 triệu, trừ 4 điểm GPLX." },
+      null,
+      { kind: "danger", text: "Bạn ở phía sau CSGT và đi thẳng qua, đúng lúc người đi bộ đang băng qua sau lưng người điều khiển — phải phanh gấp sát người đi bộ. Không chấp hành hiệu lệnh người điều khiển giao thông: trừ 4 điểm GPLX." },
+    ],
     scene: { kind: "road", props: ["police-forward"] },
   },
   {
@@ -400,6 +430,11 @@ export const CH1: Question[] = [
     options: ["55 m.", "70 m.", "100 m."],
     answer: 1,
     explanation: "Tốc độ trên 80 km/h đến 100 km/h: khoảng cách an toàn tối thiểu là 70 m (khi mặt đường khô ráo). Khi trời mưa, sương mù, đường trơn, phải tăng khoảng cách.",
+    consequences: [
+      { kind: "crash", text: "Bạn giữ khoảng cách 55 m ở tốc độ 90 km/h; xe phía trước phanh gấp, bạn không kịp dừng và đâm vào đuôi xe. Không giữ khoảng cách an toàn gây tai nạn: 20–22 triệu, trừ 10 điểm GPLX." },
+      null,
+      { kind: "ok", text: "Bạn giữ 100 m — an toàn hơn mức tối thiểu, không sai luật, nhưng khoảng trống lớn khiến xe khác liên tục chen vào phía trước." },
+    ],
     scene: { kind: "road", props: ["highway"] },
   },
   {
@@ -412,6 +447,11 @@ export const CH1: Question[] = [
     ],
     answer: 1,
     explanation: "Người đi bộ, xe thô sơ, xe gắn máy, xe mô tô, máy kéo, xe máy chuyên dùng có tốc độ thiết kế nhỏ hơn tốc độ tối thiểu quy định không được đi vào đường cao tốc (trừ phương tiện phục vụ quản lý, bảo trì đường cao tốc).",
+    consequences: [
+      { kind: "ok", text: "Ô tô con và xe khách được phép đi vào cao tốc; nếu bạn né cao tốc vì tưởng bị cấm, bạn chỉ mất thêm thời gian đi đường thường." },
+      null,
+      { kind: "ok", text: "Xe tải trên 3,5 tấn vẫn được đi cao tốc (theo làn và tốc độ quy định); nếu bạn hiểu nhầm và cho xe máy vào cao tốc thì bị phạt 4–6 triệu (xe mô tô đi vào đường cao tốc)." },
+    ],
     scene: { kind: "road", props: ["highway"] },
   },
   {
@@ -580,6 +620,11 @@ export const CH1: Question[] = [
     options: ["Bật đèn chiếu xa để quan sát tốt hơn.", "Chuyển từ đèn chiếu xa sang đèn chiếu gần.", "Tắt hết đèn chiếu sáng."],
     answer: 1,
     explanation: "Khi tránh xe ngược chiều ban đêm phải chuyển sang đèn chiếu gần để không làm chói mắt người lái xe đi ngược chiều.",
+    consequences: [
+      { kind: "crash", text: "Đèn chiếu xa làm người lái xe ngược chiều chói mắt, mất phương hướng và lấn sang làn của bạn — hai xe va chạm trực diện. Dùng đèn chiếu xa khi tránh xe ngược chiều: ô tô 800 nghìn – 1 triệu, xe máy 400–600 nghìn." },
+      null,
+      { kind: "crash", text: "Tắt hết đèn, xe ngược chiều không nhìn thấy bạn và bạn cũng không thấy mép đường — xe lao xuống lề hoặc đâm vào xe đối diện. Không sử dụng đủ đèn chiếu sáng ban đêm: ô tô 800 nghìn – 1 triệu." },
+    ],
     scene: { kind: "road", props: ["night"] },
   },
   {
@@ -592,6 +637,11 @@ export const CH1: Question[] = [
     ],
     answer: 1,
     explanation: "Khi đèn đỏ bật sáng hoặc có chuông báo, phải dừng ngay lại, giữ khoảng cách tối thiểu 5 m tính từ ray gần nhất và chỉ đi qua khi đèn tắt, rào chắn mở hoàn toàn, chuông ngừng kêu.",
+    consequences: [
+      { kind: "crash", text: "Bạn tăng tốc vượt qua đường sắt khi chuông đang kêu, tàu hoả lao tới với quán tính hàng trăm mét không thể dừng — va chạm gần như chắc chắn tử vong. Vượt đường ngang khi đèn đỏ đã bật: bị xử phạt nặng, trừ điểm GPLX." },
+      null,
+      { kind: "crash", text: "Bạn đi chậm qua đường ray lúc tàu đang đến, xe chết máy hoặc kẹt ngay trên ray và bị tàu tông. Đèn đỏ, chuông báo là lệnh cấm đi, không phải lời nhắc đi cẩn thận." },
+    ],
     scene: { kind: "road", props: ["rail"] },
   },
   {
@@ -604,6 +654,11 @@ export const CH1: Question[] = [
     ],
     answer: 1,
     explanation: "Phải đặt báo hiệu trên đường sắt cách tối thiểu 500 m về hai phía, báo cho nhà ga, người quản lý đường sắt gần nhất và bằng mọi biện pháp nhanh chóng đưa phương tiện ra khỏi phạm vi an toàn đường sắt.",
+    consequences: [
+      { kind: "crash", text: "Bạn ngồi trong xe chờ cứu hộ, tàu hoả không được báo trước lao tới và tông vào xe đang chết máy trên ray — người trong xe khó thoát kịp." },
+      null,
+      { kind: "crash", text: "Bạn bật đèn khẩn cấp rồi bỏ đi, lái tàu không hề biết có xe trên ray, tàu đâm vào xe và có thể trật bánh. Bạn còn phải chịu trách nhiệm bồi thường và có thể bị truy cứu trách nhiệm hình sự." },
+    ],
     scene: { kind: "road", props: ["rail"] },
   },
   {
@@ -631,6 +686,11 @@ export const CH1: Question[] = [
     ],
     answer: 1,
     explanation: "Người lái xe phải giảm tốc độ (có thể dừng lại an toàn) khi có báo hiệu nguy hiểm, chướng ngại vật, tầm nhìn hạn chế, qua nơi giao nhau, cầu hẹp, đường vòng, gần trường học, khu đông dân cư, trời mưa, sương mù, mặt đường trơn...",
+    consequences: [
+      { kind: "ok", text: "Đường vắng không phải căn cứ để giảm tốc; nếu bạn chỉ chậm lại khi vắng xe mà không giảm tốc ở nơi sương mù, giao lộ, trường học thì rất dễ không kịp xử lý khi có chướng ngại vật." },
+      null,
+      { kind: "crash", text: "Bạn chỉ giảm tốc khi thấy CSGT; trong sương mù bạn vẫn giữ tốc độ tối đa, xe phía trước đang dừng hiện ra quá gần và bạn không kịp phanh. Không giữ khoảng cách gây tai nạn: 20–22 triệu, trừ 10 điểm GPLX." },
+    ],
     scene: { kind: "road", props: ["fog"] },
   },
   {
@@ -643,6 +703,11 @@ export const CH1: Question[] = [
     ],
     answer: 1,
     explanation: "Tại phần đường dành cho người đi bộ qua đường, người lái xe phải giảm tốc độ, quan sát, nhường đường cho người đi bộ, xe lăn của người khuyết tật qua đường.",
+    consequences: [
+      { kind: "danger", text: "Bạn bấm còi giục, người đi bộ giật mình đứng sững giữa đường và bạn phải phanh gấp ngay sát họ. Không nhường đường cho người đi bộ tại vạch qua đường bị CSGT xử phạt." },
+      null,
+      { kind: "crash", text: "Bạn lách vòng ra phía sau, người đi bộ bất ngờ quay lại và bị xe bạn hất ngã ngay trên vạch qua đường. Gây tai nạn cho người đi bộ: bạn bị xử phạt nặng, tước GPLX và chịu trách nhiệm bồi thường." },
+    ],
     scene: { kind: "road", props: ["crosswalk"] },
   },
 ];
