@@ -46,7 +46,7 @@ function checkJunction(q: Question, sc: JunctionScene) {
   if (sc.lights) {
     for (const v of sc.vehicles) {
       const c = sc.lights[AXIS[v.from]];
-      if (c === "red" && flat.includes(v.id) && v.kind !== "ambulance" && v.kind !== "fire" && v.kind !== "police" && !sc.violators?.includes(v.id))
+      if (c === "red" && flat.includes(v.id) && !v.inside && v.kind !== "ambulance" && v.kind !== "fire" && v.kind !== "police" && !sc.violators?.includes(v.id))
         err(q, `xe ${v.id} gặp đèn đỏ nhưng vẫn nằm trong order (không phải xe ưu tiên/vi phạm)`);
     }
   }

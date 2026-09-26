@@ -166,7 +166,7 @@ Vì vậy nhãn xe trong `options` phải đúng với nhãn trong `vehicles` (`
 
 ## Lưu ý về nội dung
 
-Ngân hàng câu hỏi hiện tại (600 câu: __CH__; __CRIT__ câu điểm liệt, __JUNC__ sa hình động, __SCENE__ câu có mô phỏng) được biên soạn theo Luật Trật tự, an toàn
+Ngân hàng câu hỏi hiện tại (600 câu: chương 1: 190, chương 2: 30, chương 3: 60, chương 4: 35, chương 5: 175, chương 6: 110; 41 câu điểm liệt, 77 sa hình động, 195 câu có mô phỏng) được biên soạn theo Luật Trật tự, an toàn
 giao thông đường bộ 2024, Nghị định 168/2024/NĐ-CP, Thông tư 38/2024/TT-BGTVT về tốc độ – khoảng cách và QCVN 41 về báo hiệu đường bộ
 để phục vụ ôn luyện, mô phỏng đúng cấu trúc và tỉ lệ chương của bộ 600 câu sát hạch. Đây **không phải** bản sao nguyên văn bộ câu hỏi
 chính thức — hãy đối chiếu với bộ đề do cơ quan có thẩm quyền ban hành. Cấu trúc dữ liệu cho phép nhập bộ đề chính thức khi có nguồn.

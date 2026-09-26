@@ -24,7 +24,7 @@ Dùng **chung ngân hàng câu hỏi, bộ đề và định dạng tiến độ
 ```
 mobile/
   app/src/main/assets/data/*.json     # câu hỏi, hạng bằng, chương, biển báo, chủ đề (sinh từ web)
-  app/src/main/assets/signs/*.png     # 48 biển báo 256 px (vẽ từ SVG của web)
+  app/src/main/assets/signs/*.png     # 114 biển báo 256 px (vẽ từ SVG của web)
   app/src/main/java/vn/lailua/app/
     data/        Models.kt (kotlinx.serialization), Repo.kt (nạp assets)
     logic/       Random.kt (mulberry32 = web), Exam.kt (bộ đề, chấm), Sets.kt (bài ôn, chủ đề, điểm yếu), Stats.kt (tiến độ, dự đoán)
