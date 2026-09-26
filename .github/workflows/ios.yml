@@ -1,0 +1,76 @@
+name: iOS app
+
+on:
+  push:
+    branches: [main, "claude/**"]
+    paths: ["ios/**", "mobile/app/src/main/assets/**", ".github/workflows/ios.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: macos-15
+    defaults:
+      run:
+        working-directory: ios
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cài XcodeGen
+        run: brew install xcodegen
+
+      - name: Unit test logic (bộ đề trùng khớp bản web & Android)
+        run: swift test --package-path Packages/LaiLuaCore
+
+      - name: Sinh project Xcode
+        run: xcodegen generate
+
+      - name: Chọn simulator iPhone
+        id: sim
+        run: |
+          UDID=$(xcrun simctl list devices available -j | python3 -c "import json,sys; d=json.load(sys.stdin)['devices']; xs=[x for k,v in d.items() if 'iOS' in k for x in v if x['name'].startswith('iPhone')]; print(xs[-1]['udid'])")
+          echo "udid=$UDID" >> "$GITHUB_OUTPUT"
+          xcrun simctl boot "$UDID" || true
+
+      - name: Chạy thử luồng app trên simulator
+        run: |
+          xcodebuild test -project LaiLua.xcodeproj -scheme LaiLua -quiet \
+            -destination "id=${{ steps.sim.outputs.udid }}" \
+            -derivedDataPath build/DerivedData CODE_SIGNING_ALLOWED=NO
+
+      - name: Build bản simulator (.app)
+        run: |
+          xcodebuild build -project LaiLua.xcodeproj -scheme LaiLua -configuration Debug -quiet \
+            -destination "generic/platform=iOS Simulator" -derivedDataPath build/DerivedData \
+            CODE_SIGNING_ALLOWED=NO
+          cd build/DerivedData/Build/Products/Debug-iphonesimulator && zip -qry ../../../../LaiLua-simulator.zip LaiLua.app
+
+      - name: Archive bản thiết bị (không ký) → IPA
+        run: |
+          xcodebuild archive -project LaiLua.xcodeproj -scheme LaiLua -configuration Release -quiet \
+            -destination "generic/platform=iOS" -archivePath build/LaiLua.xcarchive \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" DEVELOPMENT_TEAM=""
+          mkdir -p build/Payload
+          cp -R build/LaiLua.xcarchive/Products/Applications/LaiLua.app build/Payload/
+          (cd build && zip -qry LaiLua-unsigned.ipa Payload)
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lai-lua-ios-simulator
+          path: ios/build/LaiLua-simulator.zip
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lai-lua-ios-unsigned-ipa
+          path: ios/build/LaiLua-unsigned.ipa
+
+      # Đẩy tag dạng ios-v* thì đính kèm IPA (chưa ký — ký lại bằng AltStore/Sideloadly hoặc Xcode) vào GitHub Release.
+      - name: GitHub Release
+        if: startsWith(github.ref, 'refs/tags/ios-v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            ios/build/LaiLua-unsigned.ipa
+            ios/build/LaiLua-simulator.zip

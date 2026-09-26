@@ -66,7 +66,8 @@ và đính kèm dưới dạng artifact. Đẩy tag `app-v1.0.0` sẽ tạo GitH
 
 ## Chưa có / hướng phát triển
 
-- iOS (cần Swift/SwiftUI hoặc chuyển sang Kotlin Multiplatform + Compose Multiplatform để dùng chung mã).
+(Bản iOS native nằm ở [`ios/`](../ios/README.md), dùng chung thư mục `assets/` này.)
+
 - Mini game Săn biển báo, Thử thách 12 điểm, lộ trình lấy bằng, tin tức luật, trang Học mẹo — hiện chỉ có trên web.
 - Mô phỏng "chọn sai thì sao" (xe đi sai lượt va chạm, hậu quả từng đáp án): dữ liệu `consequences` đã có trong `questions.json`
   nhưng app mới hiển thị mô phỏng thứ tự đúng; phần diễn lại theo đáp án sai chưa được chuyển sang Compose.

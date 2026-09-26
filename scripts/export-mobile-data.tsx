@@ -1,5 +1,5 @@
 /**
- * Xuất dữ liệu dùng chung cho ứng dụng Android (mobile/):
+ * Xuất dữ liệu dùng chung cho ứng dụng Android (mobile/) và iOS (ios/ tham chiếu thẳng thư mục assets này):
  *   - assets/data/questions.json  (câu hỏi + quỹ đạo xe cho sa hình, đã tính sẵn)
  *   - assets/data/licenses.json, chapters.json, signs.json
  *   - assets/signs/<code>.png     (biển báo vẽ từ SignGraphic, 256 px)

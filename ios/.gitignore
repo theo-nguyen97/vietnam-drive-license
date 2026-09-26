@@ -1,0 +1,12 @@
+# Sinh bởi XcodeGen / Xcode
+*.xcodeproj
+*.xcworkspace
+LaiLua/Info.plist
+build/
+DerivedData/
+xcuserdata/
+*.ipa
+*.xcarchive
+.swiftpm/
+Packages/LaiLuaCore/.build/
+.DS_Store
