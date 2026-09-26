@@ -67,11 +67,11 @@ Thư mục [`mobile/`](mobile/README.md) là bản **native Android (Kotlin + Je
 **native iOS (Swift + SwiftUI)**. Cả hai dùng chung ngân hàng câu hỏi, bộ đề (trùng khớp từng câu với web, có unit test
 đối chiếu) và định dạng tiến độ với bản web. Có sa hình hoạt hình (Compose Canvas / SwiftUI Canvas), thi thử đếm ngược,
 ôn tập ngắt quãng, dự đoán khả năng đậu, xuất/nhập tiến độ qua lại giữa web – Android – iOS.
-Bản Android có đủ các mục như web: mô phỏng "chọn sai thì sao" (va chạm, hậu quả từng đáp án), tin tức luật, lộ trình lấy bằng,
+Cả hai bản đều có đủ các mục như web: mô phỏng "chọn sai thì sao" (va chạm, hậu quả từng đáp án), tin tức luật, lộ trình lấy bằng,
 học mẹo, phân tích điểm yếu, mini game Săn biển báo và Thử thách 12 điểm, đọc câu hỏi bằng giọng nói.
 APK/AAB được build tự động bởi workflow `android.yml` (artifact mỗi lần push kèm ảnh chụp từng màn hình, GitHub Release khi đẩy tag `app-v*`;
 ký bản phát hành bằng `mobile/scripts/create-keystore.sh` + GitHub Secrets);
-bản iOS (IPA chưa ký + bản simulator) bởi `ios.yml` (Release khi đẩy tag `ios-v*`).
+bản iOS (IPA chưa ký + bản simulator + ảnh chụp từng màn hình) bởi `ios.yml` (Release khi đẩy tag `ios-v*`).
 
 ## Cấu trúc đề thi (Thông tư 12/2025/TT-BCA)
 

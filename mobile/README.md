@@ -2,7 +2,7 @@
 
 Bản native Android của [Lái Lụa](../README.md): ôn thi lý thuyết giấy phép lái xe theo phong cách game giao thông.
 Dùng **chung ngân hàng câu hỏi, bộ đề, mô phỏng và định dạng tiến độ** với bản web (bản iOS ở [`ios/`](../ios/README.md)
-dùng chung thư mục `assets/` này).
+dùng chung thư mục `assets/` này và có cùng bộ tính năng).
 
 ## Tính năng
 
