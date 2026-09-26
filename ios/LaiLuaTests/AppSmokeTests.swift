@@ -18,12 +18,25 @@ final class AppSmokeTests: XCTestCase {
     private var app: AppContainer!
     private var shot = 0
 
+    override func tearDown() async throws {
+        window?.isHidden = true
+        window = nil
+    }
+
     override func setUp() async throws {
         // Test bundle được nạp vào tiến trình app nên `Bundle.main` chính là app (chứa thư mục assets).
         let repo = try AppContainer.loadRepo(bundle: Bundle.main)
         let tmp = FileManager.default.temporaryDirectory.appendingPathComponent("smoke-\(UUID().uuidString).json")
         app = AppContainer(repo: repo, store: ProgressStore(url: tmp), signs: SignImages(baseURL: AppContainer.assetsURL(in: Bundle.main)?.appendingPathComponent("signs")))
-        window = UIWindow(frame: CGRect(x: 0, y: 0, width: 390, height: 844))
+        // Cửa sổ phải gắn vào scene của app chủ, nếu không SwiftUI không vẽ gì (ảnh chụp trắng trơn).
+        if let scene = UIApplication.shared.connectedScenes.compactMap({ $0 as? UIWindowScene }).first {
+            window = UIWindow(windowScene: scene)
+        } else {
+            window = UIWindow(frame: .zero)
+        }
+        window.frame = CGRect(x: 0, y: 0, width: 390, height: 844)
+        window.windowLevel = .alert + 1
+        window.overrideUserInterfaceStyle = .dark
         window.makeKeyAndVisible()
     }
 
@@ -46,8 +59,12 @@ final class AppSmokeTests: XCTestCase {
     private func capture(_ name: String) {
         shot += 1
         let file = String(format: "%02d-%@", shot, name)
-        let img = UIGraphicsImageRenderer(bounds: window.bounds).image { _ in
-            window.drawHierarchy(in: window.bounds, afterScreenUpdates: true)
+        let fmt = UIGraphicsImageRendererFormat()
+        fmt.scale = 2
+        let img = UIGraphicsImageRenderer(bounds: window.bounds, format: fmt).image { ctx in
+            if !window.drawHierarchy(in: window.bounds, afterScreenUpdates: true) {
+                window.layer.render(in: ctx.cgContext)
+            }
         }
         let att = XCTAttachment(image: img)
         att.name = file
