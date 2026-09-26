@@ -4,7 +4,7 @@ import Link from "next/link";
 import { motion } from "motion/react";
 import {
   Trophy, AlertTriangle, RotateCcw, Bookmark, ListOrdered, ChevronRight, Dices, CalendarCheck,
-  Gauge as GaugeIcon, Target, Stethoscope, ArrowRight, Repeat,
+  Gauge as GaugeIcon, Target, Stethoscope, ArrowRight, Repeat, Lightbulb, Clapperboard,
 } from "lucide-react";
 import clsx from "clsx";
 import type { LicenseId } from "@/lib/types";
@@ -123,7 +123,7 @@ export function LicenseHub({ license, home = false }: { license: LicenseId; home
 
       {/* Luyện tập */}
       <SectionTitle title="Luyện tập" />
-      <section className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+      <section className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
         <QuickSet
           href={`${base}/diem-yeu`}
           icon={<Stethoscope className="h-5 w-5" />}
@@ -140,6 +140,20 @@ export function LicenseHub({ license, home = false }: { license: LicenseId; home
           title="Toàn bộ câu hỏi"
           desc={`${p.total} câu theo thứ tự`}
           tone="text-emerald-300 bg-emerald-500/10 ring-emerald-400/25"
+        />
+        <QuickSet
+          href={`${base}/on-tap/mo-phong`}
+          icon={<Clapperboard className="h-5 w-5" />}
+          title="Tình huống mô phỏng"
+          desc={`${pool.filter((q) => q.scene || q.consequences).length} câu có hình động — chọn sai xem hậu quả`}
+          tone="text-red-300 bg-red-500/10 ring-red-400/25"
+        />
+        <QuickSet
+          href={`${base}/on-tap/co-meo`}
+          icon={<Lightbulb className="h-5 w-5" />}
+          title="Học theo mẹo"
+          desc={`${pool.filter((q) => q.tip).length} câu có mẹo nhớ · xem trang Học mẹo`}
+          tone="text-amber-300 bg-amber-500/10 ring-amber-400/25"
           className="col-span-2 sm:col-span-1"
         />
       </section>

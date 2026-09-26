@@ -35,8 +35,8 @@ export default function Intro() {
               <span className="text-lane">như chơi game</span>
             </h1>
             <p className="mt-5 max-w-xl text-lg text-white/70">
-              Mỗi câu hỏi là một <b className="text-white">trạm kiểm tra</b> trên đường. Trả lời đúng để barie mở, sai thì… bị thổi còi! Sa hình
-              chuyển động, giải thích chi tiết và tiến độ được lưu lại cho từng hạng bằng.
+              Mỗi câu hỏi là một <b className="text-white">trạm kiểm tra</b> trên đường. Trả lời đúng để barie mở, sai thì… xem ngay hậu quả:
+              xe cắt ngang, va chạm hay bị thổi còi. Bộ 600 câu, sa hình chuyển động, giải thích chi tiết và tiến độ được lưu cho từng hạng bằng.
             </p>
             <div className="mt-7 flex flex-wrap items-center gap-3">
               <ButtonLink href="/" size="lg">Bắt đầu học →</ButtonLink>
@@ -70,12 +70,14 @@ export default function Intro() {
             <p className="font-hud text-sm uppercase tracking-[0.2em] text-lane">Chế độ chơi</p>
             <h2 className="font-display text-3xl text-white">Học như chơi — chơi mà đỗ</h2>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {[
               ["📅", "Ôn tập hôm nay", "Lặp lại ngắt quãng: câu sai quay lại sau 10 phút, câu đúng giãn dần 1 – 3 – 7 – 16 – 35 ngày.", "#hang-bang"],
               ["🏁", "Bộ đề 2026 & 2027", "10 – 20 đề cố định mỗi hạng theo đề hiện hành và đề mới từ 01/3/2027, có dự đoán khả năng đậu.", "#hang-bang"],
               ["🪪", "Thử thách 12 điểm", "Chế độ sinh tồn: sai bị trừ điểm GPLX như luật mới, hết 12 điểm là bị tước bằng!", "#hang-bang"],
               ["🎯", "Săn biển báo", "60 giây nhận diện biển báo thật nhanh, combo càng dài điểm càng cao.", "/san-bien-bao"],
+              ["🎬", "Chọn sai thì sao?", "Mô phỏng theo chính đáp án bạn chọn: xe cắt ngang nhau, vượt đèn đỏ, bị CSGT lập biên bản — rồi so với cách đi đúng.", "#hang-bang"],
+              ["💡", "Học mẹo", "Câu thần chú sa hình, con số phải nhớ, cặp biển dễ nhầm và mẹo nhớ gắn với từng câu.", "/hoc-meo"],
             ].map(([icon, title, desc, href], i) => (
               <Link
                 key={title}

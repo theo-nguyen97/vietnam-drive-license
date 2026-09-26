@@ -24,6 +24,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: absoluteUrl("/bien-bao/"), changeFrequency: "monthly", priority: 0.8 },
     { url: absoluteUrl("/lo-trinh/"), changeFrequency: "monthly", priority: 0.7 },
     { url: absoluteUrl("/kham-pha/"), changeFrequency: "monthly", priority: 0.5 },
+    { url: absoluteUrl("/hoc-meo/"), changeFrequency: "monthly", priority: 0.8 },
   ];
   const licenses: MetadataRoute.Sitemap = LICENSES.flatMap((l) => {
     const id = l.id.toLowerCase();

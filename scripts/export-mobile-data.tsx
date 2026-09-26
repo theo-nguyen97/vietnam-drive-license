@@ -10,6 +10,7 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { renderToStaticMarkup } from "react-dom/server";
+import type { JunctionScene } from "@/lib/types";
 import { QUESTIONS } from "@/data/questions";
 import { LICENSES } from "@/data/licenses";
 import { CHAPTERS } from "@/data/chapters";
@@ -25,6 +26,10 @@ const SIGN_DIR = join(ROOT, "signs");
 mkdirSync(DATA, { recursive: true });
 mkdirSync(SIGN_DIR, { recursive: true });
 
+function withPaths(scene: JunctionScene) {
+  return { ...scene, vehicles: scene.vehicles.map((v) => ({ ...v, label: v.label ?? TOP_LABEL[v.kind], path: vehiclePath(v, scene.layout) })) };
+}
+
 const write = (name: string, value: unknown) => writeFileSync(join(DATA, name), JSON.stringify(value));
 
 write(
@@ -32,13 +37,7 @@ write(
   QUESTIONS.map((q) => ({
     ...q,
     topic: topicOf(q),
-    scene:
-      q.scene?.kind === "junction"
-        ? {
-            ...q.scene,
-            vehicles: q.scene.vehicles.map((v) => ({ ...v, label: v.label ?? TOP_LABEL[v.kind], path: vehiclePath(v, q.scene!.layout) })),
-          }
-        : q.scene,
+    scene: q.scene?.kind === "junction" ? withPaths(q.scene) : q.scene,
   })),
 );
 write("licenses.json", LICENSES);

@@ -300,7 +300,7 @@ function PracticeSession({ license, set, onRestart }: { license: LicenseId; set:
 
       <div {...swipe} className="mx-auto grid w-full max-w-6xl flex-1 gap-4 px-3 py-3 sm:gap-5 sm:px-4 sm:py-4 lg:grid-cols-[1.25fr_1fr] lg:py-6">
         <div className="lg:sticky lg:top-24 lg:self-start">
-          <SceneStage q={q} number={idx + 1} vehicle={lic.vehicle} outcome={outcome} mode="practice" xpGain={gains[q.id]} />
+          <SceneStage q={q} number={idx + 1} vehicle={lic.vehicle} outcome={outcome} mode="practice" xpGain={gains[q.id]} selected={selected} />
           <p className="mt-2 hidden text-center text-xs text-white/40 lg:block">Phím tắt: 1–4 chọn đáp án · Enter sang câu tiếp · ← câu trước</p>
           <p className="mt-1.5 text-center text-[0.6875rem] text-white/35 lg:hidden">Vuốt ngang để chuyển câu</p>
         </div>

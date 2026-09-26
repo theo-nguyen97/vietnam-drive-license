@@ -473,6 +473,7 @@ export function ExamRunner({ license, setNo }: { license: LicenseId; setNo?: num
             vehicle={lic.vehicle}
             outcome={review ? (answers[q.id] === q.answer ? "correct" : "wrong") : null}
             mode={review ? "review" : "exam"}
+            selected={review ? answers[q.id] : undefined}
           />
           <div className="hidden lg:block">{gridPanel(false)}</div>
         </div>

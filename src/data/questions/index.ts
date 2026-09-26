@@ -10,8 +10,12 @@ import { CH3 } from "./ch3";
 import { CH4 } from "./ch4";
 import { CH5 } from "./ch5";
 import { CH6 } from "./ch6";
+import { CH1C } from "./ch1c";
+import { CH234 } from "./ch234";
+import { CH5B } from "./ch5b";
+import { CH6B } from "./ch6b";
 
-export const QUESTIONS: Question[] = [...CH1, ...CH1B, ...CH2, ...CH3, ...CH4, ...CH5, ...CH6, ...EXTRA, ...LAW2027].sort(
+export const QUESTIONS: Question[] = [...CH1, ...CH1B, ...CH2, ...CH3, ...CH4, ...CH5, ...CH6, ...EXTRA, ...LAW2027, ...CH1C, ...CH234, ...CH5B, ...CH6B].sort(
   (a, b) => a.chapter - b.chapter || a.id - b.id,
 );
 

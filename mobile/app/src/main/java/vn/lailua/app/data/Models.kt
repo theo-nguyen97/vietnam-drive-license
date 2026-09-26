@@ -108,6 +108,10 @@ data class JunctionScene(
 @SerialName("road")
 data class RoadScene(val props: List<String> = emptyList()) : Scene()
 
+/** Hậu quả giả lập khi chọn một đáp án (cùng chỉ số với options; đáp án đúng là null). */
+@Serializable
+data class Consequence(val kind: String, val text: String)
+
 @Serializable
 data class Question(
     val id: Int,
@@ -123,4 +127,5 @@ data class Question(
     val scene: Scene? = null,
     val tip: String? = null,
     val topic: String = "khai-niem",
+    val consequences: List<Consequence?>? = null,
 )

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import type { PlayerVehicle, RoadProp, SignCode } from "@/lib/types";
+import type { ConsequenceKind, PlayerVehicle, RoadProp, SignCode } from "@/lib/types";
 import { SignGraphic } from "@/components/signs/SignGraphic";
 import { RearVehicle } from "./sprites";
 import { rng } from "@/lib/random";
@@ -52,6 +52,7 @@ export function DriveScene({
   runKey,
   label,
   seed = 1,
+  consequence,
   onIntroDone,
 }: {
   vehicle: PlayerVehicle;
@@ -61,12 +62,19 @@ export function DriveScene({
   runKey: string | number;
   label?: string;
   seed?: number;
+  /** Loại hậu quả khi phase = "fail": va chạm, bị phạt, mất an toàn. */
+  consequence?: ConsequenceKind;
   onIntroDone?: () => void;
 }) {
   const [snap, setSnap] = useState({ d: 0, t: 0, boom: 0, shake: 0 });
   const st = useRef({ d: 0, t: 0, boom: 0, shake: 0, phase0: 0, dFrom: 0, introDone: false });
   const phaseRef = useRef(phase);
+  const consRef = useRef(consequence);
   const cb = useRef(onIntroDone);
+
+  useEffect(() => {
+    consRef.current = consequence;
+  }, [consequence]);
   const reduced = useRef(false);
 
   useEffect(() => {
@@ -117,8 +125,21 @@ export function DriveScene({
         s.d = s.dFrom + (el > 0.3 ? 46 * easeIn(clamp01((el - 0.3) / 2.6)) : 0);
         s.shake = 0;
       } else if (ph === "fail") {
-        s.d = s.dFrom + 0.45 * easeOut(clamp01(el / 0.3));
-        s.shake = el < 0.9 ? 1 - el / 0.9 : 0;
+        const c = consRef.current;
+        if (c === "crash") {
+          // lao thẳng vào trạm / chướng ngại rồi dừng khựng
+          s.d = s.dFrom + (GATE - STOP - 0.9) * easeIn(clamp01(el / 0.55));
+          s.shake = el < 0.55 ? 0 : el < 1.6 ? 1 - (el - 0.55) / 1.05 : 0;
+        } else if (c === "danger") {
+          s.d = s.dFrom + 1.4 * easeOut(clamp01(el / 0.9));
+          s.shake = el < 1.4 ? 0.55 * (1 - el / 1.4) : 0;
+        } else if (c === "ok") {
+          s.d = s.dFrom + 0.3 * easeOut(clamp01(el / 0.4));
+          s.shake = 0;
+        } else {
+          s.d = s.dFrom + 0.45 * easeOut(clamp01(el / 0.3));
+          s.shake = el < 0.9 ? 1 - el / 0.9 : 0;
+        }
       }
       setSnap({ d: s.d, t: s.t, boom: s.boom, shake: s.shake });
       raf = requestAnimationFrame(loop);
@@ -183,6 +204,10 @@ export function DriveScene({
         <radialGradient id="vignette" cx="0.5" cy="0.5" r="0.75">
           <stop offset="0.55" stopColor="#ef4444" stopOpacity="0" />
           <stop offset="1" stopColor="#ef4444" stopOpacity="0.65" />
+        </radialGradient>
+        <radialGradient id="vignetteAmber" cx="0.5" cy="0.5" r="0.75">
+          <stop offset="0.5" stopColor="#f59e0b" stopOpacity="0" />
+          <stop offset="1" stopColor="#f59e0b" stopOpacity="0.6" />
         </radialGradient>
       </defs>
 
@@ -258,8 +283,15 @@ export function DriveScene({
         {rain && <Rain t={t} />}
         {night && <rect x={-20} y={0} width={VW + 40} height={VH} fill="#020617" opacity={0.25} />}
 
+        {/* Vệt phanh khi xử lý sai */}
+        {phase === "fail" && (consequence === "crash" || consequence === "danger") && <Skid d={d} />}
+
         {/* Xe của người chơi */}
-        <g transform={`translate(${VW / 2} ${VH - 6 + (phase === "intro" || phase === "pass" ? Math.sin(t * 30) * 0.8 : 0)}) scale(${vehicleScale(vehicle)})`}>
+        <g
+          transform={`translate(${VW / 2 + (phase === "fail" && consequence === "danger" ? Math.sin(t * 9) * 14 : 0)} ${
+            VH - 6 + (phase === "intro" || phase === "pass" ? Math.sin(t * 30) * 0.8 : 0)
+          }) scale(${vehicleScale(vehicle)}) rotate(${phase === "fail" && consequence === "danger" ? Math.sin(t * 9) * 4 : 0})`}
+        >
           <RearVehicle kind={vehicle} braking={braking} />
         </g>
       </g>
@@ -271,13 +303,18 @@ export function DriveScene({
           <rect x={VW - 14} y={0} width={14} height={VH} fill="#3b82f6" opacity={Math.sin(t * 12) > 0 ? 0 : 0.5} />
         </>
       )}
-      {phase === "fail" && shake > 0 && <rect x={0} y={0} width={VW} height={VH} fill="url(#vignette)" opacity={shake} />}
-      {phase === "fail" && (
+      {phase === "fail" && shake > 0 && (
+        <rect x={0} y={0} width={VW} height={VH} fill={consequence === "danger" ? "url(#vignetteAmber)" : "url(#vignette)"} opacity={shake} />
+      )}
+      {phase === "fail" && (consequence === undefined || consequence === "ticket") && (
         <g opacity={0.9}>
           <circle cx={24} cy={24} r={14} fill={Math.sin(t * 14) > 0 ? "#ef4444" : "#1d4ed8"} />
           <circle cx={VW - 24} cy={24} r={14} fill={Math.sin(t * 14) > 0 ? "#1d4ed8" : "#ef4444"} />
         </g>
       )}
+      {phase === "fail" && consequence === "ticket" && <TicketCard t={t} />}
+      {phase === "fail" && consequence === "crash" && <Shatter d={d} />}
+      {phase === "fail" && consequence === "danger" && <DangerFlash t={t} />}
     </svg>
   );
 }
@@ -298,6 +335,92 @@ function vehicleScale(v: PlayerVehicle) {
     default:
       return 0.8;
   }
+}
+
+/* ---------------- Hậu quả khi xử lý sai ---------------- */
+
+/** Kính lái rạn vỡ sau va chạm. */
+function Shatter({ d }: { d: number }) {
+  const k = clamp01((d - STOP) / (GATE - STOP - 1));
+  if (k < 0.85) return null;
+  const cx = VW / 2 + 40;
+  const cy = VH / 2 - 10;
+  const rays = Array.from({ length: 14 }, (_, i) => {
+    const a = (i / 14) * Math.PI * 2 + (i % 3) * 0.17;
+    const len = 90 + ((i * 37) % 60);
+    return `M${cx} ${cy} L${cx + Math.cos(a) * len} ${cy + Math.sin(a) * len}`;
+  }).join(" ");
+  return (
+    <g>
+      <rect x={0} y={0} width={VW} height={VH} fill="#fff" opacity={0.08} />
+      <path d={rays} stroke="#f8fafc" strokeWidth={2.2} opacity={0.9} fill="none" />
+      <path d={rays} stroke="#0f172a" strokeWidth={0.8} opacity={0.6} fill="none" />
+      <circle cx={cx} cy={cy} r={22} fill="none" stroke="#f8fafc" strokeWidth={2} opacity={0.8} />
+      <circle cx={cx} cy={cy} r={46} fill="none" stroke="#f8fafc" strokeWidth={1.2} opacity={0.6} strokeDasharray="9 7" />
+      <polygon
+        points={Array.from({ length: 16 }, (_, i) => {
+          const a = (i / 16) * Math.PI * 2;
+          const r = i % 2 ? 26 : 52;
+          return `${cx + Math.cos(a) * r},${cy + Math.sin(a) * r}`;
+        }).join(" ")}
+        fill="#fbbf24"
+        stroke="#ef4444"
+        strokeWidth={3}
+        opacity={0.95}
+      />
+      <text x={cx} y={cy + 7} textAnchor="middle" fontSize={17} fontWeight={900} fill="#7f1d1d" fontFamily="Arial">
+        VA CHẠM
+      </text>
+    </g>
+  );
+}
+
+/** Biên bản vi phạm của CSGT. */
+function TicketCard({ t }: { t: number }) {
+  const k = clamp01(t * 2);
+  return (
+    <g transform={`translate(${VW / 2 - 70} ${-90 + 100 * easeOut(k)})`} opacity={k}>
+      <rect x={4} y={4} width={140} height={54} rx={8} fill="#0006" />
+      <rect x={0} y={0} width={140} height={54} rx={8} fill="#fefce8" stroke="#ef4444" strokeWidth={3} />
+      <rect x={0} y={0} width={140} height={16} rx={8} fill="#ef4444" />
+      <text x={70} y={12} textAnchor="middle" fontSize={9.5} fontWeight={900} fill="#fff" fontFamily="Arial" letterSpacing={1}>
+        CẢNH SÁT GIAO THÔNG
+      </text>
+      <text x={70} y={36} textAnchor="middle" fontSize={15} fontWeight={900} fill="#991b1b" fontFamily="Arial">
+        BIÊN BẢN VI PHẠM
+      </text>
+      <line x1={14} y1={45} x2={126} y2={45} stroke="#94a3b8" strokeWidth={1.5} strokeDasharray="3 3" />
+    </g>
+  );
+}
+
+/** Cảnh báo mất an toàn (tam giác vàng nhấp nháy). */
+function DangerFlash({ t }: { t: number }) {
+  const on = Math.sin(t * 8) > -0.2;
+  return (
+    <g opacity={on ? 1 : 0.35} transform={`translate(${VW / 2} 46)`}>
+      <polygon points="0,-26 30,24 -30,24" fill="#facc15" stroke="#b45309" strokeWidth={3} strokeLinejoin="round" />
+      <text x={0} y={17} textAnchor="middle" fontSize={26} fontWeight={900} fill="#111" fontFamily="Arial">
+        !
+      </text>
+      <text x={0} y={44} textAnchor="middle" fontSize={11} fontWeight={800} fill="#fff" stroke="#000" strokeWidth={0.6} fontFamily="Arial" letterSpacing={1}>
+        MẤT AN TOÀN
+      </text>
+    </g>
+  );
+}
+
+/** Vệt phanh phía sau xe người chơi. */
+function Skid({ d }: { d: number }) {
+  const from = Math.max(0.7, 0.9);
+  const to = Math.min(6, 1.2 + (d - STOP) * 2.2);
+  if (to <= from) return null;
+  return (
+    <g opacity={0.55}>
+      <polygon points={quad(-0.62, -0.42, from, to)} fill="#111827" />
+      <polygon points={quad(0.42, 0.62, from, to)} fill="#111827" />
+    </g>
+  );
 }
 
 /* ---------------- Thành phần cảnh ---------------- */

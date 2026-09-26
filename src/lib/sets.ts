@@ -6,7 +6,7 @@ import type { QStat } from "@/store/progress";
 import { shuffle } from "./random";
 import { getTopic, topicSet, topicsFor, weaknessSet } from "./topics";
 
-export const STATIC_SETS = ["hom-nay", "tat-ca", "diem-liet", "cau-sai", "ngau-nhien", "da-luu"] as const;
+export const STATIC_SETS = ["hom-nay", "tat-ca", "diem-liet", "cau-sai", "ngau-nhien", "da-luu", "co-meo", "mo-phong"] as const;
 
 export const DAILY_SIZE = 20;
 
@@ -43,6 +43,10 @@ export function setMeta(key: string): { title: string; desc: string; icon: strin
       return { title: "Chạy ngẫu nhiên", desc: "20 câu bất kỳ — khởi động nhanh", icon: "🎲" };
     case "da-luu":
       return { title: "Câu đã lưu", desc: "Các câu bạn đánh dấu để ôn lại", icon: "🔖" };
+    case "co-meo":
+      return { title: "Học theo mẹo", desc: "Các câu có mẹo nhớ — luyện để thuộc mẹo", icon: "💡" };
+    case "mo-phong":
+      return { title: "Tình huống mô phỏng", desc: "Câu có hình động: sa hình, tình huống trên đường — thử chọn sai để xem hậu quả", icon: "🎬" };
   }
   return { title: "Ôn tập", desc: "", icon: "📘" };
 }
@@ -71,6 +75,10 @@ export function buildSet(
       return shuffle(all).slice(0, 20);
     case "da-luu":
       return all.filter((q) => bookmarks.includes(q.id));
+    case "co-meo":
+      return all.filter((q) => q.tip);
+    case "mo-phong":
+      return shuffle(all.filter((q) => q.scene || q.consequences));
     default:
       return all;
   }

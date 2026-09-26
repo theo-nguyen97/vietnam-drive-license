@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { Gauge, IdCard, Info, Newspaper, Route, Signpost, Target, Crosshair } from "lucide-react";
+import { Gauge, IdCard, Info, Newspaper, Route, Signpost, Target, Crosshair, Lightbulb, Clapperboard } from "lucide-react";
 import { useHydrated, useProgress } from "@/store/progress";
 
 type Tile = { href: string; icon: ReactNode; title: string; desc: string; tone: string; big?: boolean };
@@ -15,6 +15,8 @@ export function ExploreGrid() {
   const tiles: Tile[] = [
     { href: "/lo-trinh", icon: <Route className="h-6 w-6" />, title: "Lộ trình lấy bằng", desc: "Từng bước từ hồ sơ đến nhận bằng, kèm hướng dẫn sa hình thực hành có hình động.", tone: "from-emerald-500/25 text-emerald-300", big: true },
     { href: "/bien-bao", icon: <Signpost className="h-6 w-6" />, title: "Thư viện biển báo", desc: "Các biển báo hay gặp trong đề, tra nhanh theo nhóm.", tone: "from-sky-500/25 text-sky-300", big: true },
+    { href: "/hoc-meo", icon: <Lightbulb className="h-6 w-6" />, title: "Học mẹo", desc: "Câu thần chú sa hình, con số phải nhớ, cặp biển dễ nhầm và mẹo nhớ cho từng câu.", tone: "from-amber-500/25 text-amber-300", big: true },
+    { href: base ? `${base}/on-tap/mo-phong` : "/chon-hang", icon: <Clapperboard className="h-6 w-6" />, title: "Tình huống mô phỏng", desc: "Chọn sai để xem điều gì xảy ra: va chạm, vượt đèn đỏ, bị CSGT dừng xe.", tone: "from-red-500/25 text-red-300", big: true },
     { href: "/san-bien-bao", icon: <Target className="h-5 w-5" />, title: "Săn biển báo", desc: "Mini game 60 giây", tone: "from-cyan-500/20 text-cyan-300" },
     { href: base ? `${base}/thu-thach` : "/chon-hang", icon: <Gauge className="h-5 w-5" />, title: "Thử thách 12 điểm", desc: "Sai là bị trừ điểm GPLX", tone: "from-rose-500/20 text-rose-300" },
     { href: base ? `${base}/diem-yeu` : "/chon-hang", icon: <Crosshair className="h-5 w-5" />, title: "Phân tích điểm yếu", desc: "Chủ đề bạn hay sai", tone: "from-orange-500/20 text-orange-300" },

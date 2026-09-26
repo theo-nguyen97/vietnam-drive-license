@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Dir, JunctionScene as Spec, JunctionVehicle, LightColor } from "@/lib/types";
+import type { WhatIfPlan } from "@/lib/whatif";
 import { SignGraphic } from "@/components/signs/SignGraphic";
 import { TopVehicle, TOP_LABEL } from "./sprites";
 import { approachPoint, vehiclePath } from "./junctionPaths";
@@ -62,22 +63,45 @@ function pointAt(g: Geo, s: number) {
   return { x, y, ang: (ang * 180) / Math.PI };
 }
 
+/** Điểm giao cắt đầu tiên giữa hai quỹ đạo (sau vạch dừng) — dùng để dàn cảnh va chạm. */
+function crossing(a: Geo, b: Geo): { sA: number; sB: number } | null {
+  const i0 = Math.ceil((a.stop + 20) / STEP);
+  const j0 = Math.ceil((b.stop + 20) / STEP);
+  const R2 = 15 * 15;
+  for (let i = i0; i < a.pts.length; i++) {
+    const [ax, ay] = a.pts[i];
+    for (let j = j0; j < b.pts.length; j++) {
+      const dx = ax - b.pts[j][0];
+      const dy = ay - b.pts[j][1];
+      if (dx * dx + dy * dy < R2) return { sA: i * STEP, sB: j * STEP };
+    }
+  }
+  return null;
+}
+
 export function JunctionScene({
   spec,
   phase,
   runKey,
+  plan,
   onIntroDone,
   onDone,
 }: {
   spec: Spec;
   phase: JunctionPhase;
   runKey: string | number;
+  /** Kịch bản "nếu chọn đáp án này" — thay cho thứ tự đúng của sa hình. */
+  plan?: WhatIfPlan | null;
   onIntroDone?: () => void;
   onDone?: () => void;
 }) {
   const geo = useMemo(() => measure(spec.vehicles.map((v) => ({ v, ...vehiclePath(v, spec.layout) }))), [spec]);
-  const [frame, setFrame] = useState<{ pos: Record<string, number>; step: number }>({ pos: {}, step: -1 });
-  const sim = useRef({ t0: 0, phase, intro: false, done: false, reduced: false });
+  const order = plan?.order ?? spec.order;
+  const stepsText = plan?.steps ?? spec.steps;
+  const violators = plan ? plan.violators : spec.violators ?? [];
+  const conflict = plan?.conflict;
+  const [frame, setFrame] = useState<{ pos: Record<string, number>; step: number; crash: number }>({ pos: {}, step: -1, crash: 0 });
+  const sim = useRef({ t0: 0, phase, intro: false, done: false, reduced: false, crashAt: 0 });
   const cbs = useRef({ onIntroDone, onDone });
 
   useEffect(() => {
@@ -91,32 +115,51 @@ export function JunctionScene({
   useEffect(() => {
     sim.current.intro = false;
     sim.current.done = false;
+    sim.current.crashAt = 0;
     sim.current.t0 = performance.now();
   }, [runKey]);
 
   useEffect(() => {
     sim.current.phase = phase;
     sim.current.t0 = performance.now();
+    sim.current.crashAt = 0;
     if (phase === "play") sim.current.done = false;
   }, [phase]);
 
+  // Điểm va chạm (nếu kịch bản có xung đột và hai quỹ đạo cắt nhau)
+  const hit = useMemo(() => {
+    if (!conflict) return null;
+    const a = geo.find((g) => g.v.id === conflict.offender);
+    const b = geo.find((g) => g.v.id === conflict.victim);
+    if (!a || !b) return null;
+    const c = crossing(a, b);
+    if (!c) return null;
+    // xe bị cắt ngang được chỉnh tốc độ để hai xe tới điểm giao cắt cùng lúc
+    const factor = Math.max(0.55, Math.min(1.8, (c.sB - b.stop) / Math.max(1, c.sA - a.stop)));
+    return { ...c, factor };
+  }, [conflict, geo]);
+
   // Lịch di chuyển theo thứ tự
   const schedule = useMemo(() => {
-    const gaps = spec.order.map((group) => {
+    const gaps = order.map((group) => {
       const minSpeed = Math.min(...group.map((id) => spec.vehicles.find((v) => v.id === id)?.speed ?? 1));
       return Math.max(1.0, 250 / (SPEED * minSpeed));
     });
-    return spec.order.map((group, i) => ({ ids: group, start: 0.2 + gaps.slice(0, i).reduce((a, b) => a + b, 0) }));
-  }, [spec]);
+    return order.map((group, i) => ({ ids: group, start: 0.2 + gaps.slice(0, i).reduce((a, b) => a + b, 0) }));
+  }, [order, spec.vehicles]);
+
+  const stopAllNow = plan ? plan.correct && !!spec.stopAll : !!spec.stopAll;
 
   useEffect(() => {
     let raf = 0;
     const movingIds = new Set(schedule.flatMap((g) => g.ids));
+    const last = schedule.length - 1;
     const loop = (now: number) => {
       const S = sim.current;
       const el = (now - S.t0) / 1000;
       const pos: Record<string, number> = {};
       let step = -1;
+      let crash = 0;
       if (S.phase === "intro" || S.phase === "idle") {
         const dur = S.reduced || S.phase === "idle" ? 0 : 1.5;
         let allDone = true;
@@ -136,45 +179,76 @@ export function JunctionScene({
         });
         schedule.forEach((grp, gi) => {
           if (el >= grp.start) step = gi;
+          const isConflict = !!hit && gi === last && conflict;
           grp.ids.forEach((id) => {
             const g = geo.find((x) => x.v.id === id);
             if (!g) return;
             const v = SPEED * (g.v.speed ?? 1);
             const tt = Math.max(0, el - grp.start);
             const acc = 0.45;
-            const dist = tt < acc ? (v * tt * tt) / (2 * acc) : v * (tt - acc / 2);
-            const s = Math.min(g.len, g.stop + dist);
+            let dist = tt < acc ? (v * tt * tt) / (2 * acc) : v * (tt - acc / 2);
+            if (isConflict && id === conflict.victim) dist *= hit.factor;
+            let s = Math.min(g.len, g.stop + dist);
+            if (isConflict) {
+              const limit = id === conflict.offender ? hit.sA : hit.sB;
+              if (s >= limit) {
+                s = limit;
+                if (!S.crashAt) S.crashAt = now;
+              }
+            }
             pos[id] = s;
-            if (s < g.len - 1) finished = false;
+            if (!isConflict && s < g.len - 1) finished = false;
           });
+          if (isConflict && !S.crashAt) finished = false;
         });
-        if (spec.stopAll && el < 1.8) finished = false;
+        if (S.crashAt) {
+          const since = (now - S.crashAt) / 1000;
+          crash = since;
+          if (since < 1.6) finished = false;
+        }
+        if (stopAllNow && el < 1.8) finished = false;
         if (finished && !S.done) {
           S.done = true;
           cbs.current.onDone?.();
         }
       }
-      setFrame({ pos, step });
+      setFrame({ pos, step, crash });
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(raf);
-  }, [geo, schedule, spec.stopAll]);
+  }, [geo, schedule, stopAllNow, hit, conflict]);
 
   const playing = phase === "play" || phase === "done";
-  const moving = new Set(spec.order.flat());
+  const moving = new Set(order.flat());
   const step = playing ? frame.step : -1;
+  const crashed = playing && frame.crash > 0;
   const caption = playing
-    ? spec.stopAll
-      ? "Tất cả các xe phải dừng lại!"
-      : step >= 0
-        ? `${step + 1}. ${spec.steps?.[step] ?? spec.order[step].map((id) => labelOf(spec.vehicles.find((v) => v.id === id)!)).join(" + ")}`
-        : null
+    ? crashed
+      ? "💥 Va chạm! Xe đi sai lượt cắt ngang xe đang có quyền đi."
+      : stopAllNow
+        ? "Tất cả các xe phải dừng lại!"
+        : step >= 0
+          ? `${step + 1}. ${stepsText?.[step] ?? order[step].map((id) => labelOf(spec.vehicles.find((v) => v.id === id)!)).join(" + ")}`
+          : plan && !plan.correct && order.length === 0
+            ? plan.verdict.text
+            : null
     : null;
+
+  const shake = crashed && frame.crash < 0.5 ? Math.sin(frame.crash * 60) * 5 * (1 - frame.crash / 0.5) : 0;
+  const hitPoint = (() => {
+    if (!crashed || !hit || !conflict) return null;
+    const a = geo.find((g) => g.v.id === conflict.offender)!;
+    const b = geo.find((g) => g.v.id === conflict.victim)!;
+    const pa = pointAt(a, hit.sA);
+    const pb = pointAt(b, hit.sB);
+    return { x: (pa.x + pb.x) / 2, y: (pa.y + pb.y) / 2 };
+  })();
 
   return (
     <div className="relative h-full w-full">
       <svg viewBox="-120 20 640 360" className="block h-full w-full" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Sa hình giao lộ">
+        <g transform={`translate(${shake} ${shake / 2})`}>
         <Board spec={spec} />
 
         {!playing && geo.map((g) => <IntentArrow key={g.v.id} g={g} player={!!g.v.player} />)}
@@ -186,15 +260,16 @@ export function JunctionScene({
           const s = frame.pos[g.v.id] ?? 0;
           if (s >= g.len - 1) return null;
           const p = pointAt(g, s);
-          const violator = spec.violators?.includes(g.v.id);
+          const violator = violators.includes(g.v.id);
           const waiting = playing && !moving.has(g.v.id);
           const blink = g.v.move === "left" || g.v.move === "uturn" ? "left" : g.v.move === "right" ? "right" : undefined;
+          const inCrash = crashed && conflict && (g.v.id === conflict.offender || g.v.id === conflict.victim);
           return (
             <g key={g.v.id}>
-              <g transform={`translate(${p.x} ${p.y}) rotate(${p.ang})`}>
+              <g transform={`translate(${p.x} ${p.y}) rotate(${p.ang + (inCrash && g.v.id === conflict.offender ? Math.min(14, frame.crash * 40) : 0)})`}>
                 {g.v.player && <circle r={30} fill="none" stroke="#facc15" strokeWidth={3} strokeDasharray="6 5" className="spin-slow" />}
                 {playing && violator && <circle r={32} fill="#ef4444" opacity={0.3} className="pulse-soft" />}
-                {(spec.stopAll || waiting) && playing && <circle r={30} fill="none" stroke="#ef4444" strokeWidth={3} opacity={0.8} />}
+                {(stopAllNow || waiting) && playing && <circle r={30} fill="none" stroke="#ef4444" strokeWidth={3} opacity={0.8} />}
                 <TopVehicle kind={g.v.kind} color={g.v.color ?? PALETTE[i % PALETTE.length]} blink={s <= g.stop + 60 ? blink : undefined} />
               </g>
               <Badge x={p.x} y={p.y - 30} text={labelOf(g.v)} player={!!g.v.player} violator={playing && !!violator} />
@@ -202,16 +277,49 @@ export function JunctionScene({
           );
         })}
 
+        {hitPoint && <Burst x={hitPoint.x} y={hitPoint.y} t={frame.crash} />}
+
         {spec.police && <PoseCard pose={spec.police.pose} />}
+        </g>
+        {crashed && frame.crash < 0.35 && <rect x={-120} y={20} width={640} height={360} fill="#fff" opacity={0.7 * (1 - frame.crash / 0.35)} />}
       </svg>
       {caption && (
         <div className="pointer-events-none absolute inset-x-0 bottom-2 flex justify-center px-2">
-          <div className="max-w-[92%] rounded-full bg-slate-950/85 px-4 py-1.5 text-center text-xs font-semibold text-white shadow-lg ring-1 ring-white/15 sm:text-sm">
+          <div
+            className={`max-w-[92%] rounded-full px-4 py-1.5 text-center text-xs font-semibold text-white shadow-lg ring-1 ring-white/15 sm:text-sm ${
+              crashed ? "bg-red-600/95" : "bg-slate-950/85"
+            }`}
+          >
             {caption}
           </div>
         </div>
       )}
     </div>
+  );
+}
+
+/** Tia lửa / vụn kính tại điểm va chạm. */
+function Burst({ x, y, t }: { x: number; y: number; t: number }) {
+  const k = Math.min(1, t / 0.6);
+  const r = 14 + k * 26;
+  const pts = Array.from({ length: 12 }, (_, i) => {
+    const a = (i / 12) * Math.PI * 2;
+    const rr = i % 2 === 0 ? r : r * 0.55;
+    return `${x + Math.cos(a) * rr},${y + Math.sin(a) * rr}`;
+  }).join(" ");
+  return (
+    <g opacity={1 - k * 0.55}>
+      <polygon points={pts} fill="#fbbf24" stroke="#ef4444" strokeWidth={3} strokeLinejoin="round" />
+      <polygon points={pts} fill="#fff" opacity={0.35} transform={`translate(${x} ${y}) scale(0.5) translate(${-x} ${-y})`} />
+      {Array.from({ length: 8 }, (_, i) => {
+        const a = (i / 8) * Math.PI * 2 + 0.3;
+        const d = 18 + k * 44;
+        return <circle key={i} cx={x + Math.cos(a) * d} cy={y + Math.sin(a) * d} r={3 - k * 2} fill={i % 2 ? "#fde68a" : "#f87171"} />;
+      })}
+      <text x={x} y={y - r - 6} textAnchor="middle" fontSize={22} fontWeight={900} fill="#fff" stroke="#7f1d1d" strokeWidth={1.5} fontFamily="Arial">
+        VA CHẠM!
+      </text>
+    </g>
   );
 }
 

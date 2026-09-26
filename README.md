@@ -16,8 +16,21 @@ mở và xe chạy tiếp, trả lời sai thì bị "thổi còi" kèm giải t
   (xe tay ga, mô tô phân khối lớn, ô tô con, xe tải, xe khách, đầu kéo container…).
 - **Chế độ ôn tập**: theo 6 chương, câu điểm liệt, câu hay sai, câu đã lưu, chạy ngẫu nhiên; phản hồi ngay, giải thích + mẹo nhớ,
   combo & XP, phím tắt (1–4, Enter, ←/→).
+- **Bộ 600 câu** theo cấu trúc 6 chương của bộ câu hỏi sát hạch (Thông tư 12/2025/TT-BCA): quy tắc giao thông, văn hoá – PCCC – cứu nạn,
+  kỹ thuật lái xe, cấu tạo – sửa chữa, báo hiệu đường bộ (114 biển báo vẽ SVG), sa hình & tình huống. `npm run check` kiểm tra
+  tự động: id, đáp án, mã biển, **sa hình khớp với câu hỏi** (đáp án đúng đọc ra đúng thứ tự xe, xe đèn đỏ không nằm trong thứ tự đi,
+  xe vi phạm khớp với đáp án), đủ câu cho mọi hạng/đề.
 - **Sa hình động**: giao lộ nhìn từ trên xuống với đèn tín hiệu, CSGT, biển báo, vòng xuyến, đường ưu tiên… Sau khi trả lời,
   mô phỏng chạy các xe **đúng thứ tự** kèm chú thích từng bước; xe vi phạm được đánh dấu.
+- **Chọn sai thì sao? (mô phỏng theo đáp án)** — trả lời sai, sa hình diễn lại *đúng cách bạn chọn*: xe đi sai lượt lao ra cùng lúc với
+  xe có quyền đi trước, hai quỹ đạo cắt nhau → **va chạm** (tia lửa, rung màn hình, nhãn "VI PHẠM"); xe đi khi đèn đỏ / CSGT ra hiệu
+  dừng → vượt đèn đỏ; kèm kết luận vì sao sai. Câu tình huống trên đường cũng có hậu quả riêng cho từng đáp án
+  (`consequences`: va chạm – biên bản CSGT – mất an toàn) với hình động tương ứng (kính rạn, biên bản, tam giác cảnh báo, vệt phanh).
+  Bảng **"Thử cách xử lý khác"** cho phép mô phỏng lần lượt từng đáp án rồi so với cách đi đúng — có trong ôn tập và xem lại bài thi.
+  Bài **"Tình huống mô phỏng"** (`on-tap/mo-phong`) gom mọi câu có hình động.
+- **Học mẹo** (`/hoc-meo`): 50+ mẹo biên soạn theo 9 nhóm (cách làm bài, câu điểm liệt, khái niệm, con số phải nhớ, biển báo dễ nhầm,
+  câu thần chú sa hình, kỹ thuật, cấu tạo, văn hoá) kèm biển minh hoạ, nút luyện chủ đề tương ứng; cộng toàn bộ mẹo nhớ gắn với từng
+  câu trong ngân hàng (tìm kiếm không dấu). Bài **"Học theo mẹo"** (`on-tap/co-meo`) luyện các câu có mẹo.
 - **Cảnh lái 3D giả lập** cho câu hỏi thường: xe người chơi chạy tới trạm, biển báo dựng bên đường, đèn tín hiệu, CSGT, đường sắt có tàu
   chạy qua, trời mưa, sương mù, ban đêm, xe cứu thương trong gương chiếu hậu…
 - **Bộ đề 2026**: mỗi hạng có bộ đề cố định (10 đề cho A1, A, B1 · 20 đề cho các hạng ô tô), cấu trúc theo Thông tư 12/2025/TT-BCA
@@ -78,6 +91,7 @@ npm install
 npm run dev      # http://localhost:3000
 npm run build    # xuất trang tĩnh vào thư mục out/ (output: "export")
 npm run lint
+npm run check    # kiểm tra ngân hàng câu hỏi (id, đáp án, biển báo, sa hình khớp câu hỏi, đủ câu sinh đề)
 ```
 
 Bản build là **trang tĩnh** nên có thể đưa lên Vercel, Netlify, GitHub Pages, Cloudflare Pages…
@@ -146,8 +160,13 @@ scene: {
 
 Câu thường có thể chọn bối cảnh cho cảnh lái: `scene: { kind: "road", props: ["rain", "light-yellow"] }`.
 
+Với câu sa hình "Thứ tự các xe đi như thế nào…", mô phỏng "nếu chọn sai" được suy ra tự động (`src/lib/whatif.ts`): đáp án được đọc thành
+thứ tự xe theo nhãn (Xe con, Xe tải…), so với `order`; xe đi sai lượt chạy cùng lúc với xe có quyền đi trước và va chạm nếu quỹ đạo cắt nhau.
+Vì vậy nhãn xe trong `options` phải đúng với nhãn trong `vehicles` (`label` hoặc tên mặc định theo `kind`) — `npm run check` sẽ báo nếu lệch.
+
 ## Lưu ý về nội dung
 
-Ngân hàng câu hỏi hiện tại (247 câu, 26 câu điểm liệt, 31 sa hình động) được biên soạn theo Luật Trật tự, an toàn giao thông đường bộ 2024, các quy định về tốc độ,
-khoảng cách an toàn và QCVN 41 về báo hiệu đường bộ để phục vụ ôn luyện. Đây **không phải** bản sao bộ 600 câu sát hạch chính thức —
-hãy đối chiếu với bộ đề do cơ quan có thẩm quyền ban hành. Cấu trúc dữ liệu cho phép nhập bộ đề chính thức khi có nguồn.
+Ngân hàng câu hỏi hiện tại (600 câu: __CH__; __CRIT__ câu điểm liệt, __JUNC__ sa hình động, __SCENE__ câu có mô phỏng) được biên soạn theo Luật Trật tự, an toàn
+giao thông đường bộ 2024, Nghị định 168/2024/NĐ-CP, Thông tư 38/2024/TT-BGTVT về tốc độ – khoảng cách và QCVN 41 về báo hiệu đường bộ
+để phục vụ ôn luyện, mô phỏng đúng cấu trúc và tỉ lệ chương của bộ 600 câu sát hạch. Đây **không phải** bản sao nguyên văn bộ câu hỏi
+chính thức — hãy đối chiếu với bộ đề do cơ quan có thẩm quyền ban hành. Cấu trúc dữ liệu cho phép nhập bộ đề chính thức khi có nguồn.

@@ -1,7 +1,7 @@
 import { BookOpen, ClipboardCheck, Compass, Newspaper, UserRound } from "lucide-react";
 import type { LicenseId } from "@/lib/types";
 
-const EXPLORE = ["/kham-pha", "/lo-trinh", "/bien-bao", "/san-bien-bao", "/gioi-thieu"];
+const EXPLORE = ["/kham-pha", "/lo-trinh", "/bien-bao", "/san-bien-bao", "/gioi-thieu", "/hoc-meo"];
 
 /** 5 mục điều hướng chính dùng chung cho header (desktop) và thanh tab (mobile). */
 export function navItems(path: string, last: LicenseId | null) {
