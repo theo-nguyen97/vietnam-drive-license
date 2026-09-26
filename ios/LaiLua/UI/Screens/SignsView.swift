@@ -3,7 +3,11 @@ import LaiLuaCore
 
 /// Thư viện biển báo theo nhóm, bấm để xem ý nghĩa.
 struct SignsView: View {
+    /// Mở từ Khám phá / mini game: có thanh quay lại.
+    var showBack = false
+
     @EnvironmentObject private var app: AppContainer
+    @EnvironmentObject private var nav: Nav
     @State private var group: String?
     @State private var open: SignInfo?
 
@@ -11,6 +15,10 @@ struct SignsView: View {
 
     var body: some View {
         let list = app.repo.signs.filter { group == nil || $0.group == group }
+        VStack(spacing: 0) {
+        if showBack {
+            RunnerTopBar("Biển báo", subtitle: "\(app.repo.signs.count) biển · QCVN 41", onBack: { nav.pop() })
+        }
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 Eyebrow("QCVN 41")
@@ -50,7 +58,10 @@ struct SignsView: View {
             }
             .padding(16)
         }
+        }
         .background(Asphalt.bg.ignoresSafeArea())
+        .toolbar(.hidden, for: .navigationBar)
+        .navigationBarBackButtonHidden(true)
         .sheet(item: $open) { s in
             VStack(spacing: 10) {
                 if let img = app.signs.image(s.code) { Image(uiImage: img).resizable().frame(width: 110, height: 110).padding(.top, 20) }

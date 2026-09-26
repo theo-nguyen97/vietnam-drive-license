@@ -8,18 +8,27 @@ public final class Repo: @unchecked Sendable {
     public let signs: [SignInfo]
     public let signGroups: [SignGroup]
     public let topics: [Topic]
+    public let news: NewsBundle
+    public let journey: JourneyBundle
+    public let tips: TipBundle
 
     private let byId: [Int: Question]
     private var poolCache: [String: [Question]] = [:]
     private let lock = NSLock()
 
-    public init(questions: [Question], licenses: [License], chapters: [Chapter], signs: [SignInfo], signGroups: [SignGroup], topics: [Topic]) {
+    public init(
+        questions: [Question], licenses: [License], chapters: [Chapter], signs: [SignInfo], signGroups: [SignGroup], topics: [Topic],
+        news: NewsBundle = NewsBundle(), journey: JourneyBundle = JourneyBundle(), tips: TipBundle = TipBundle()
+    ) {
         self.questions = questions
         self.licenses = licenses
         self.chapters = chapters
         self.signs = signs
         self.signGroups = signGroups
         self.topics = topics
+        self.news = news
+        self.journey = journey
+        self.tips = tips
         byId = Dictionary(questions.map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
     }
 
@@ -33,7 +42,10 @@ public final class Repo: @unchecked Sendable {
             chapters: try dec.decode([Chapter].self, from: read("chapters.json")),
             signs: bundle.signs,
             signGroups: bundle.groups,
-            topics: try dec.decode([Topic].self, from: read("topics.json"))
+            topics: try dec.decode([Topic].self, from: read("topics.json")),
+            news: try dec.decode(NewsBundle.self, from: read("news.json")),
+            journey: try dec.decode(JourneyBundle.self, from: read("journey.json")),
+            tips: try dec.decode(TipBundle.self, from: read("tips.json"))
         )
     }
 

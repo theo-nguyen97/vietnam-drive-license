@@ -96,11 +96,20 @@ public struct ProgressState: Codable, Hashable, Sendable {
     public var onboarded: Bool = false
     /// "before" | "after" | "unknown"
     public var examTiming: String? = nil
+    /// Điểm cao nhất Thử thách 12 điểm theo hạng.
+    public var arcadeBest: [String: Int] = [:]
+    /// Điểm cao nhất mini game Săn biển báo.
+    public var signBest: Int = 0
+    /// Các bước đã hoàn thành trong lộ trình lấy bằng.
+    public var journey: [String: Bool] = [:]
+    /// Tự đọc câu hỏi bằng giọng nói khi sang câu mới.
+    public var autoSpeak: Bool = false
 
     public init() {}
 
     private enum K: String, CodingKey {
         case stats, exams, xp, streak, bestCombo, bookmarks, sound, lastLicense, driverName, examVersion, fontScale, onboarded, examTiming
+        case arcadeBest, signBest, journey, autoSpeak
     }
 
     /// JSON lưu `stats` dạng object với khoá là số (giống web) — Codable mặc định của Swift lại
@@ -123,6 +132,10 @@ public struct ProgressState: Codable, Hashable, Sendable {
         fontScale = try d.decodeIfPresent(Double.self, forKey: .fontScale) ?? 1
         onboarded = try d.decodeIfPresent(Bool.self, forKey: .onboarded) ?? false
         examTiming = try d.decodeIfPresent(String.self, forKey: .examTiming)
+        arcadeBest = try d.decodeIfPresent([String: Int].self, forKey: .arcadeBest) ?? [:]
+        signBest = try d.decodeIfPresent(Int.self, forKey: .signBest) ?? 0
+        journey = try d.decodeIfPresent([String: Bool].self, forKey: .journey) ?? [:]
+        autoSpeak = try d.decodeIfPresent(Bool.self, forKey: .autoSpeak) ?? false
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -140,6 +153,10 @@ public struct ProgressState: Codable, Hashable, Sendable {
         try c.encode(fontScale, forKey: .fontScale)
         try c.encode(onboarded, forKey: .onboarded)
         try c.encodeIfPresent(examTiming, forKey: .examTiming)
+        try c.encode(arcadeBest, forKey: .arcadeBest)
+        try c.encode(signBest, forKey: .signBest)
+        try c.encode(journey, forKey: .journey)
+        try c.encode(autoSpeak, forKey: .autoSpeak)
     }
 }
 
@@ -199,7 +216,18 @@ public enum ProgressLogic {
         var n = ProgressState()
         n.sound = s.sound; n.driverName = s.driverName; n.fontScale = s.fontScale; n.examVersion = s.examVersion
         n.onboarded = s.onboarded; n.lastLicense = s.lastLicense; n.examTiming = s.examTiming
+        n.journey = s.journey; n.autoSpeak = s.autoSpeak
         return n
+    }
+
+    public static func setArcadeBest(_ s: ProgressState, license: String, score: Int) -> ProgressState {
+        var s = s; s.arcadeBest[license] = max(s.arcadeBest[license] ?? 0, score); return s
+    }
+
+    public static func setSignBest(_ s: ProgressState, _ score: Int) -> ProgressState { var s = s; s.signBest = max(s.signBest, score); return s }
+
+    public static func toggleJourney(_ s: ProgressState, _ key: String) -> ProgressState {
+        var s = s; s.journey[key] = !(s.journey[key] ?? false); return s
     }
 
     // MARK: - Chuỗi ngày học

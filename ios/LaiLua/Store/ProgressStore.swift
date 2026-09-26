@@ -67,6 +67,10 @@ final class ProgressStore: ObservableObject {
     func setExamVersion(_ v: String?) { update { var s = $0; s.examVersion = v; return s } }
     func setFontScale(_ f: Double) { update { var s = $0; s.fontScale = f; return s } }
     func setLastLicense(_ id: String) { update { var s = $0; s.lastLicense = id; return s } }
+    func setAutoSpeak(_ v: Bool) { update { var s = $0; s.autoSpeak = v; return s } }
+    func setArcadeBest(_ license: String, _ score: Int) { update { ProgressLogic.setArcadeBest($0, license: license, score: score) } }
+    func setSignBest(_ score: Int) { update { ProgressLogic.setSignBest($0, score) } }
+    func toggleJourney(_ key: String) { update { ProgressLogic.toggleJourney($0, key) } }
     func completeOnboarding(license: String, timing: String) { update { ProgressLogic.completeOnboarding($0, license: license, timing: timing) } }
     /// Xoá tiến độ nhưng giữ cài đặt.
     func reset() { update { ProgressLogic.reset($0) } }

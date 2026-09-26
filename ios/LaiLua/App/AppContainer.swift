@@ -11,6 +11,7 @@ final class AppContainer: ObservableObject {
     let predictor: Predictor
     let sfx: Sfx
     let signs: SignImages
+    let speech: Speech
 
     init(repo: Repo, store: ProgressStore, signs: SignImages) {
         self.repo = repo
@@ -21,6 +22,7 @@ final class AppContainer: ObservableObject {
         predictor = Predictor(repo: repo, exams: exams, sets: sets)
         sfx = Sfx()
         sfx.enabled = store.state.sound
+        speech = Speech()
     }
 
     /// Thư mục `assets/` (JSON + PNG biển báo) được copy nguyên từ bản Android vào bundle.

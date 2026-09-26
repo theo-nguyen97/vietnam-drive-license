@@ -16,7 +16,7 @@ jobs:
       run:
         working-directory: ios
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Cài XcodeGen
         run: brew install xcodegen
@@ -34,11 +34,20 @@ jobs:
           echo "udid=$UDID" >> "$GITHUB_OUTPUT"
           xcrun simctl boot "$UDID" || true
 
-      - name: Chạy thử luồng app trên simulator
+      - name: Chạy thử luồng app trên simulator (chụp ảnh từng màn)
         run: |
-          xcodebuild test -project LaiLua.xcodeproj -scheme LaiLua -quiet \
+          mkdir -p build/screenshots
+          TEST_RUNNER_SCREENSHOT_DIR="$PWD/build/screenshots" xcodebuild test -project LaiLua.xcodeproj -scheme LaiLua -quiet \
             -destination "id=${{ steps.sim.outputs.udid }}" \
-            -derivedDataPath build/DerivedData CODE_SIGNING_ALLOWED=NO
+            -derivedDataPath build/DerivedData -resultBundlePath build/Tests.xcresult CODE_SIGNING_ALLOWED=NO
+
+      # Ảnh chụp từng màn hình do AppSmokeTests tạo — xem nhanh giao diện mà không cần máy Mac
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lai-lua-ios-screenshots
+          path: ios/build/screenshots/
+          if-no-files-found: ignore
 
       - name: Build bản simulator (.app)
         run: |

@@ -19,12 +19,17 @@ struct QuestionView: View {
     let onBookmark: () -> Void
 
     @EnvironmentObject private var app: AppContainer
+    @EnvironmentObject private var store: ProgressStore
+    /// Đáp án đang được mô phỏng khi người học bấm "Thử cách xử lý khác" (nil = đáp án đã chọn).
+    @State private var simChoice: Int?
+
+    private var sim: Int { simChoice ?? selected ?? q.answer }
 
     var body: some View {
         let chapter = app.repo.chapter(q.chapter)
         VStack(alignment: .leading, spacing: 0) {
             if q.scene != nil {
-                SceneStage(q: q, revealed: revealed, correct: selected == q.answer, vehicle: vehicle)
+                SceneStage(q: q, revealed: revealed, sim: sim, vehicle: vehicle)
             }
 
             if !q.signs.isEmpty {
@@ -43,10 +48,11 @@ struct QuestionView: View {
             }
 
             HStack(spacing: 6) {
-                Chip("Câu \(index + 1)/\(total)", color: Asphalt.lane.opacity(0.15), fg: Asphalt.lane)
+                Chip(total > 0 ? "Câu \(index + 1)/\(total)" : "Trạm \(index + 1)", color: Asphalt.lane.opacity(0.15), fg: Asphalt.lane)
                 Chip("\(chapter?.icon ?? "") \(chapter?.short ?? "")")
                 if q.critical { Chip("⚠ ĐIỂM LIỆT", color: Asphalt.red.opacity(0.15), fg: Asphalt.rose) }
                 Spacer()
+                SpeakButton(q: q)
                 Button(action: onBookmark) {
                     Image(systemName: bookmarked ? "bookmark.fill" : "bookmark")
                         .font(.system(size: 16, weight: .semibold))
@@ -107,8 +113,21 @@ struct QuestionView: View {
                 .padding(.top, 6)
                 .transition(.opacity.combined(with: .move(edge: .top)))
             }
+
+            if revealed && (q.consequences != nil || q.junction != nil) {
+                ConsequencesView(q: q, selected: selected, sim: sim) { simChoice = $0 }
+            }
         }
         .animation(.easeOut(duration: 0.25), value: revealed)
+        .onChange(of: q.id) { _ in simChoice = nil; autoSpeak() }
+        .onChange(of: revealed) { _ in simChoice = nil }
+        .onAppear { autoSpeak() }
+        .onDisappear { app.speech.stop() }
+    }
+
+    /// Tự đọc câu mới nếu người dùng bật trong mục Tôi.
+    private func autoSpeak() {
+        if store.state.autoSpeak { app.speech.speak(Speech.questionText(q.text, options: q.options)) } else { app.speech.stop() }
     }
 
     private struct OptionStyle { let bg: Color; let border: Color; let keyBg: Color; let keyFg: Color }
@@ -121,24 +140,125 @@ struct QuestionView: View {
     }
 }
 
+/// Nút loa: đọc đề bài + đáp án bằng giọng nói.
+private struct SpeakButton: View {
+    let q: Question
+    @EnvironmentObject private var app: AppContainer
+
+    var body: some View {
+        if app.speech.available {
+            SpeakButtonInner(q: q, speech: app.speech)
+        }
+    }
+}
+
+private struct SpeakButtonInner: View {
+    let q: Question
+    @ObservedObject var speech: Speech
+
+    var body: some View {
+        Button {
+            if speech.speaking { speech.stop() } else { speech.speak(Speech.questionText(q.text, options: q.options)) }
+        } label: {
+            Image(systemName: speech.speaking ? "speaker.slash.fill" : "speaker.wave.2.fill")
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundColor(speech.speaking ? Asphalt.lane : Asphalt.muted)
+                .frame(width: 32, height: 32)
+        }
+        .accessibilityLabel(speech.speaking ? "Dừng đọc" : "Đọc câu hỏi")
+    }
+}
+
+private func kindIcon(_ kind: String) -> String {
+    switch kind { case "crash": return "💥"; case "ticket": return "🚓"; case "danger": return "⚠️"; default: return "✅" }
+}
+
+private func kindTitle(_ kind: String) -> String {
+    switch kind { case "crash": return "Va chạm"; case "ticket": return "Bị lập biên bản"; case "danger": return "Mất an toàn"; default: return "Đúng luật" }
+}
+
+/// Hậu quả của đáp án đang mô phỏng và bảng "Thử cách xử lý khác": bấm một đáp án để xem điều gì xảy ra
+/// (sa hình diễn lại theo đáp án đó).
+private struct ConsequencesView: View {
+    let q: Question
+    let selected: Int?
+    let sim: Int
+    let onSim: (Int) -> Void
+    @State private var open = false
+
+    var body: some View {
+        let current = sim == q.answer ? nil : WhatIf.outcome(q, choice: sim)
+        VStack(alignment: .leading, spacing: 6) {
+            if let current {
+                let tone = current.kind == "crash" ? Asphalt.red : (current.kind == "ok" ? Asphalt.green : Color(hex: 0xF59E0B))
+                HStack(alignment: .top, spacing: 10) {
+                    Text(kindIcon(current.kind)).font(.system(size: 26))
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("\(sim == selected ? "Nếu làm vậy ngoài đường" : "Nếu chọn \(LETTERS[sim])"): \(kindTitle(current.kind))")
+                            .afont(15, .heavy).foregroundColor(.white).fixedSize(horizontal: false, vertical: true)
+                        Text(current.text).afont(14).foregroundColor(.white.opacity(0.85)).lineSpacing(2).fixedSize(horizontal: false, vertical: true)
+                    }
+                    Spacer(minLength: 0)
+                }
+                .padding(12)
+                .background(tone.opacity(0.14))
+                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).stroke(tone.opacity(0.5), lineWidth: 1))
+            }
+            Button { withAnimation { open.toggle() } } label: {
+                Text(open ? "▾ Thử cách xử lý khác" : "▸ Thử cách xử lý khác — xem hậu quả từng đáp án")
+                    .afont(14, .bold).foregroundColor(Asphalt.lane).padding(.vertical, 6)
+            }
+            .buttonStyle(.plain)
+            if open {
+                if q.junction != nil {
+                    Text("Bấm một đáp án để xem sa hình diễn lại theo cách đó.").afont(12).foregroundColor(Asphalt.faint)
+                }
+                ForEach(q.options.indices, id: \.self) { i in
+                    let c = i == q.answer ? nil : WhatIf.outcome(q, choice: i)
+                    let active = i == sim
+                    Button { onSim(i) } label: {
+                        HStack(alignment: .top, spacing: 6) {
+                            Text(LETTERS[i]).afont(15, .black).foregroundColor(i == q.answer ? Asphalt.mint : .white).frame(width: 22, alignment: .leading)
+                            Text(c.map { kindIcon($0.kind) } ?? "✅").afont(14)
+                            Text(c?.text ?? "Xử lý đúng luật — đi tiếp an toàn.").afont(14).foregroundColor(.white.opacity(0.85))
+                                .multilineTextAlignment(.leading).fixedSize(horizontal: false, vertical: true)
+                            Spacer(minLength: 0)
+                        }
+                        .padding(10)
+                        .background(active ? Asphalt.lane.opacity(0.12) : Asphalt.surface)
+                        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                        .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).stroke(active ? Asphalt.lane.opacity(0.6) : .clear, lineWidth: 1))
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+        }
+        .padding(.top, 10)
+    }
+}
+
 /// Khung sa hình / tình huống với điều khiển pha hoạt hình.
 private struct SceneStage: View {
     let q: Question
     let revealed: Bool
-    let correct: Bool
+    /// Đáp án đang mô phỏng (sa hình diễn lại theo đáp án này).
+    let sim: Int
     let vehicle: String
 
     @State private var phase: JunctionPhase = .intro
     @State private var run = 0
 
     var body: some View {
+        let correct = sim == q.answer
         ZStack(alignment: .topTrailing) {
             switch q.scene {
             case .some(.junction(let sc)):
                 JunctionCanvas(
                     spec: sc, phase: phase, runKey: run,
                     onIntroDone: { if phase == .intro { phase = .idle } },
-                    onDone: { phase = .done }
+                    onDone: { phase = .done },
+                    plan: revealed ? WhatIf.plan(q, choice: sim) : nil
                 )
                 if revealed && phase == .done {
                     Button { run += 1; phase = .play } label: {
@@ -150,7 +270,7 @@ private struct SceneStage: View {
                 }
             case .some(.road(let sc)):
                 let rp: RoadPhase = !revealed ? .intro : (correct ? .pass : .fail)
-                RoadCanvas(props: sc.props, vehicle: vehicle, phase: rp, runKey: q.id, seed: q.id)
+                RoadCanvas(props: sc.props, vehicle: vehicle, phase: rp, runKey: q.id * 10 + sim, seed: q.id)
             case .none:
                 EmptyView()
             }
@@ -162,5 +282,6 @@ private struct SceneStage: View {
         .overlay(RoundedRectangle(cornerRadius: 20, style: .continuous).stroke(Asphalt.line, lineWidth: 1))
         .onAppear { if revealed { run += 1; phase = .play } }
         .onChange(of: revealed) { r in if r { run += 1; phase = .play } }
+        .onChange(of: sim) { _ in if revealed { run += 1; phase = .play } }
     }
 }

@@ -24,7 +24,7 @@ struct RootView: View {
     }
 }
 
-/// Màn chào khi chưa chọn hạng; sau đó là 4 tab + các màn hình đẩy lên (ôn tập, thi, đổi hạng).
+/// Màn chào khi chưa chọn hạng; sau đó là 5 tab + các màn hình đẩy lên (ôn tập, thi, đổi hạng).
 struct AppShell: View {
     @EnvironmentObject private var app: AppContainer
     @EnvironmentObject private var store: ProgressStore
@@ -43,6 +43,13 @@ struct AppShell: View {
                             case .practice(let key): PracticeView(setKey: key)
                             case .exam(let n): ExamView(setNo: n)
                             case .changeLicense: OnboardingView(change: true, onDone: { nav.pop() })
+                            case .article(let slug): NewsArticleView(slug: slug)
+                            case .journey: JourneyView()
+                            case .tips: TipsView()
+                            case .weakness: WeaknessView()
+                            case .signs: SignsView(showBack: true)
+                            case .signHunt: SignHuntView()
+                            case .arcade: ArcadeView()
                             }
                         }
                 }
@@ -57,16 +64,25 @@ struct AppShell: View {
 }
 
 struct MainTabs: View {
+    @EnvironmentObject private var nav: Nav
+
     var body: some View {
-        TabView {
+        TabView(selection: $nav.tab) {
             HomeView()
                 .tabItem { Label("Học", systemImage: "book.fill") }
+                .tag(MainTab.home)
             ExamSetsView()
                 .tabItem { Label("Thi thử", systemImage: "timer") }
-            SignsView()
-                .tabItem { Label("Biển báo", systemImage: "signpost.right.fill") }
+                .tag(MainTab.exams)
+            NewsListView()
+                .tabItem { Label("Tin tức", systemImage: "newspaper.fill") }
+                .tag(MainTab.news)
+            ExploreView()
+                .tabItem { Label("Khám phá", systemImage: "safari.fill") }
+                .tag(MainTab.explore)
             MeView()
                 .tabItem { Label("Tôi", systemImage: "person.fill") }
+                .tag(MainTab.me)
         }
         .tint(Asphalt.lane)
         .toolbar(.hidden, for: .navigationBar)

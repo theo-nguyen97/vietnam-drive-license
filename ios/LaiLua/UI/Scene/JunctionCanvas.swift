@@ -38,6 +38,7 @@ private struct Geo {
 
 /**
  * Sa hình giao lộ nhìn từ trên xuống, mô phỏng thứ tự đi (chuyển từ JunctionScene.tsx / JunctionCanvas.kt).
+ * Có `plan` thì diễn lại theo đáp án người học chọn (xe đi sai lượt, va chạm).
  * Hệ toạ độ gốc 400×400 (tâm giao lộ 200,200); khung nhìn -120..520 × 20..380.
  */
 struct JunctionCanvas: View {
@@ -46,42 +47,69 @@ struct JunctionCanvas: View {
     let runKey: Int
     var onIntroDone: () -> Void = {}
     var onDone: () -> Void = {}
+    var plan: WhatIf.Plan? = nil
 
     @EnvironmentObject private var app: AppContainer
     @State private var pos: [String: Double] = [:]
     @State private var step = -1
     @State private var clock = 0.0
+    /// Số giây kể từ lúc va chạm (0 = chưa va chạm).
+    @State private var crash = 0.0
 
-    private struct LoopKey: Hashable { let phase: JunctionPhase; let run: Int }
+    private struct LoopKey: Hashable { let phase: JunctionPhase; let run: Int; let plan: WhatIf.Plan? }
+
+    private var order: [[String]] { plan?.order ?? spec.order }
+    private var violators: [String] { plan?.violators ?? spec.violators }
+    private var stopAllNow: Bool { plan.map { $0.correct && spec.stopAll } ?? spec.stopAll }
+
+    /// Điểm va chạm; xe bị cắt ngang được chỉnh tốc độ để hai xe tới điểm giao cắt cùng lúc.
+    private func hit(_ geo: [Geo]) -> (sA: Double, sB: Double, factor: Double)? {
+        guard let c = plan?.conflict, let a = geo.first(where: { $0.v.id == c.offender }), let b = geo.first(where: { $0.v.id == c.victim }),
+              let x = WhatIf.crossing(a.line, stopA: a.stop, b.line, stopB: b.stop) else { return nil }
+        return (x.sA, x.sB, min(1.8, max(0.55, (x.sB - b.stop) / max(1, x.sA - a.stop))))
+    }
 
     private var geo: [Geo] {
         spec.vehicles.map { Geo(v: $0, line: PathCache.shared.polyline($0.path.d), stop: $0.path.stop) }
     }
 
     private var schedule: [(ids: [String], start: Double)] {
-        let gaps = spec.order.map { group -> Double in
+        let gaps = order.map { group -> Double in
             let minSpeed = group.map { spec.vehicle($0)?.speed ?? 1 }.min() ?? 1
             return max(1, 250 / (SPEED * minSpeed))
         }
-        return spec.order.enumerated().map { i, group in (group, 0.2 + gaps.prefix(i).reduce(0, +)) }
+        return order.enumerated().map { i, group in (group, 0.2 + gaps.prefix(i).reduce(0, +)) }
     }
 
-    private var moving: Set<String> { Set(spec.order.flatMap { $0 }) }
+    private var moving: Set<String> { Set(order.flatMap { $0 }) }
 
     var body: some View {
         let playing = phase == .play || phase == .done
+        let crash = self.crash
+        let crashed = playing && crash > 0
+        let order = self.order
+        let stepsText = plan?.steps ?? spec.steps
+        let violators = self.violators
+        let stopAllNow = self.stopAllNow
+        let conflict = plan?.conflict
+        let plan = self.plan
+        let step = self.step
         let caption: String? = {
             if !playing { return nil }
-            if spec.stopAll { return "Tất cả các xe phải dừng lại!" }
-            if step >= 0 && step < spec.order.count {
-                let text = spec.steps.flatMap { step < $0.count ? $0[step] : nil } ?? spec.order[step].map { spec.vehicle($0)?.label ?? $0 }.joined(separator: " + ")
+            if crashed { return "💥 Va chạm! Xe đi sai lượt cắt ngang xe đang có quyền đi." }
+            if stopAllNow { return "Tất cả các xe phải dừng lại!" }
+            if step >= 0 && step < order.count {
+                let text = stepsText.flatMap { step < $0.count ? $0[step] : nil } ?? order[step].map { spec.vehicle($0)?.label ?? $0 }.joined(separator: " + ")
                 return "\(step + 1). \(text)"
             }
+            if let plan, !plan.correct, order.isEmpty { return plan.verdict.text }
             return nil
         }()
+        let shake: CGFloat = crashed && crash < 0.5 ? CGFloat(sin(crash * 60) * 5 * (1 - crash / 0.5)) : 0
         let tick = (Int(clock * 2.5) % 2) == 0
         let geo = self.geo
         let moving = self.moving
+        let hit = self.hit(geo)
 
         Canvas { ctx, size in
             let sc = max(size.width / 640, size.height / 360)
@@ -89,7 +117,7 @@ struct JunctionCanvas: View {
             let oy = (size.height - 360 * sc) / 2 - 20 * sc
             var c = ctx
             c.clip(to: Path(CGRect(origin: .zero, size: size)))
-            c.translateBy(x: ox, y: oy)
+            c.translateBy(x: ox + shake * sc, y: oy + shake * sc / 2)
             c.scaleBy(x: sc, y: sc)
             drawBoard(c, spec) { app.signs.image($0) }
             if !playing { for g in geo { drawIntent(c, g, player: g.v.player) } }
@@ -98,15 +126,16 @@ struct JunctionCanvas: View {
                 let s = pos[g.v.id] ?? 0
                 if s >= g.len - 1 { continue }
                 let (x, y, ang) = g.at(s)
-                let violator = spec.violators.contains(g.v.id)
+                let violator = violators.contains(g.v.id)
                 let waiting = playing && !moving.contains(g.v.id)
                 let blink: String? = {
                     switch g.v.move { case "left", "uturn": return "left"; case "right": return "right"; default: return nil }
                 }()
-                let vc = c.moved(x, y, rotate: ang)
+                let spin: CGFloat = crashed && conflict?.offender == g.v.id ? CGFloat(min(14, crash * 40)) : 0
+                let vc = c.moved(x, y, rotate: ang + spin)
                 if g.v.player { vc.ring(Color(hex: 0xFACC15), 30, at: .zero, width: 3, dash: [6, 5]) }
                 if playing && violator { vc.circle(Color(hex: 0xEF4444, alpha: 0.3), 32, at: .zero) }
-                if (spec.stopAll || waiting) && playing { vc.ring(Color(hex: 0xEF4444, alpha: 0.8), 30, at: .zero, width: 3) }
+                if (stopAllNow || waiting) && playing { vc.ring(Color(hex: 0xEF4444, alpha: 0.8), 30, at: .zero, width: 3) }
                 let color = g.v.color.flatMap { Color.parseOrNil($0) } ?? PALETTE[i % PALETTE.count]
                 drawTopVehicle(vc, kind: g.v.kind, color: color, blink: s <= g.stop + 60 ? blink : nil, tick: tick)
 
@@ -123,7 +152,15 @@ struct JunctionCanvas: View {
                 let anchor = P(x, y - 40 + h / 2)
                 c.scaled(1 / sc, around: anchor).draw(resolved, at: anchor, anchor: .center)
             }
+            if crashed, let hit, let conflict,
+               let a = geo.first(where: { $0.v.id == conflict.offender }), let b = geo.first(where: { $0.v.id == conflict.victim }) {
+                let pa = a.at(hit.sA), pb = b.at(hit.sB)
+                drawBurst(c, x: (pa.x + pb.x) / 2, y: (pa.y + pb.y) / 2, t: crash, sc: sc)
+            }
             if let pol = spec.police { drawPoseCard(c, pose: pol.pose, sc: sc) }
+            if crashed && crash < 0.35 {
+                ctx.fill(Path(CGRect(origin: .zero, size: size)), with: .color(.white.opacity(0.7 * (1 - crash / 0.35))))
+            }
         }
         .overlay(alignment: .bottom) {
             if let caption {
@@ -133,12 +170,12 @@ struct JunctionCanvas: View {
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 14)
                     .padding(.vertical, 6)
-                    .background(Color(hex: 0x0F172A, alpha: 0.85))
+                    .background(crashed ? Color(hex: 0xDC2626, alpha: 0.95) : Color(hex: 0x0F172A, alpha: 0.85))
                     .clipShape(Capsule())
                     .padding(8)
             }
         }
-        .task(id: LoopKey(phase: phase, run: runKey)) { await runLoop() }
+        .task(id: LoopKey(phase: phase, run: runKey, plan: plan)) { await runLoop() }
     }
 
     /// Vòng lặp khung hình chỉ chạy khi còn hoạt hình (vào vị trí / mô phỏng thứ tự); xong là dừng.
@@ -149,8 +186,13 @@ struct JunctionCanvas: View {
         let moving = self.moving
         let spec = self.spec
         let phase = self.phase
+        let hit = self.hit(geo)
+        let conflict = plan?.conflict
+        let stopAllNow = self.stopAllNow
         let t0 = Date()
         var fired = false
+        var crashAt = -1.0
+        crash = 0
         while !Task.isCancelled {
             let el = (phase == .idle || phase == .done) ? 1e6 : Date().timeIntervalSince(t0)
             var next: [String: Double] = [:]
@@ -164,20 +206,34 @@ struct JunctionCanvas: View {
                 }
             } else {
                 for g in geo where !moving.contains(g.v.id) { next[g.v.id] = g.stop }
+                let last = schedule.count - 1
                 for (gi, item) in schedule.enumerated() {
                     if el >= item.start { st = gi }
+                    let isConflict = hit != nil && conflict != nil && gi == last
                     for id in item.ids {
                         guard let g = geo.first(where: { $0.v.id == id }) else { continue }
                         let v = SPEED * g.v.speed
                         let tt = max(0, el - item.start)
                         let acc = 0.45
-                        let dist = tt < acc ? v * tt * tt / (2 * acc) : v * (tt - acc / 2)
-                        let s = min(g.len, g.stop + dist)
+                        var dist = tt < acc ? v * tt * tt / (2 * acc) : v * (tt - acc / 2)
+                        if isConflict, let hit, id == conflict?.victim { dist *= hit.factor }
+                        var s = min(g.len, g.stop + dist)
+                        if isConflict, let hit {
+                            let limit = id == conflict?.offender ? hit.sA : hit.sB
+                            // Ở pha DONE (vẽ lại trạng thái cuối) coi như va chạm đã xảy ra từ lâu, nếu không
+                            // `el` đứng yên khiến crash = 0 mãi và vòng lặp không dừng.
+                            if s >= limit { s = limit; if crashAt < 0 { crashAt = phase == .done ? el - 10 : el } }
+                        }
                         next[id] = s
-                        if s < g.len - 1 { finished = false }
+                        if !isConflict && s < g.len - 1 { finished = false }
                     }
+                    if isConflict && crashAt < 0 { finished = false }
                 }
-                if spec.stopAll && el < 1.8 { finished = false }
+                if crashAt >= 0 {
+                    crash = el - crashAt
+                    if crash < 1.6 { finished = false }
+                }
+                if stopAllNow && el < 1.8 { finished = false }
             }
             pos = next
             step = st
@@ -192,6 +248,28 @@ struct JunctionCanvas: View {
             try? await Task.sleep(nanoseconds: 16_000_000)
         }
     }
+}
+
+/// Hình nổ "VA CHẠM!" tại điểm giao cắt.
+private func drawBurst(_ c: GraphicsContext, x: CGFloat, y: CGFloat, t: Double, sc: CGFloat) {
+    let k = CGFloat(min(1, t / 0.6))
+    let r = 14 + k * 26
+    let alpha = Double(1 - k * 0.55)
+    let star = polygon((0..<12).map { i -> CGPoint in
+        let a = CGFloat(i) / 12 * 2 * .pi
+        let rr = i % 2 == 0 ? r : r * 0.55
+        return P(x + cos(a) * rr, y + sin(a) * rr)
+    })
+    c.fill(star, with: .color(Color(hex: 0xFBBF24).opacity(alpha)))
+    c.stroke(star, with: .color(Color(hex: 0xEF4444).opacity(alpha)), lineWidth: 3)
+    for i in 0..<8 {
+        let a = CGFloat(i) / 8 * 2 * .pi + 0.3
+        let d = 18 + k * 44
+        c.circle(i % 2 == 1 ? Color(hex: 0xFDE68A) : Color(hex: 0xF87171), max(0.5, 3 - k * 2), at: P(x + cos(a) * d, y + sin(a) * d), alpha: alpha)
+    }
+    let label = c.resolve(Text("VA CHẠM!").font(.system(size: 20, weight: .black, design: .rounded)).foregroundColor(.white.opacity(alpha)))
+    let anchor = P(x, y - r - 14)
+    c.scaled(1 / sc, around: anchor).draw(label, at: anchor, anchor: .center)
 }
 
 private func drawIntent(_ c: GraphicsContext, _ g: Geo, player: Bool) {

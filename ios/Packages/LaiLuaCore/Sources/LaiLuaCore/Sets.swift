@@ -3,7 +3,7 @@ import Foundation
 /// Các bài ôn tập (chuyển từ src/lib/sets.ts).
 public final class SetBuilder: @unchecked Sendable {
     public static let dailySize = 20
-    public static let staticKeys = ["hom-nay", "tat-ca", "diem-liet", "cau-sai", "ngau-nhien", "da-luu"]
+    public static let staticKeys = ["hom-nay", "tat-ca", "diem-liet", "cau-sai", "ngau-nhien", "da-luu", "co-meo", "mo-phong"]
 
     private let repo: Repo
     public init(repo: Repo) { self.repo = repo }
@@ -21,6 +21,10 @@ public final class SetBuilder: @unchecked Sendable {
             return Meta("Ôn tập", "", "📘")
         }
         if key == "diem-yeu" { return Meta("Luyện điểm yếu", "Câu hỏi từ các chủ đề bạn hay sai nhất", "🩺") }
+        if key.hasPrefix("meo-") {
+            if let g = repo.tips.groups.first(where: { $0.id == String(key.dropFirst("meo-".count)) }) { return Meta("Luyện mẹo: \(g.name)", g.desc, g.icon) }
+            return Meta("Ôn tập", "", "📘")
+        }
         if key.hasPrefix("chuong-") {
             if let id = Int(key.dropFirst("chuong-".count)), let ch = repo.chapter(id) { return Meta(ch.short, ch.name, ch.icon) }
             return Meta("Ôn tập", "", "📘")
@@ -32,6 +36,8 @@ public final class SetBuilder: @unchecked Sendable {
         case "cau-sai": return Meta("Câu hay sai", "Những câu bạn trả lời sai ở lần gần nhất", "🔁")
         case "ngau-nhien": return Meta("Chạy ngẫu nhiên", "20 câu bất kỳ — khởi động nhanh", "🎲")
         case "da-luu": return Meta("Câu đã lưu", "Các câu bạn đánh dấu để ôn lại", "🔖")
+        case "co-meo": return Meta("Học theo mẹo", "Các câu có mẹo nhớ — luyện để thuộc mẹo", "💡")
+        case "mo-phong": return Meta("Tình huống mô phỏng", "Câu có hình động — thử chọn sai để xem hậu quả", "🎬")
         default: return Meta("Ôn tập", "", "📘")
         }
     }
@@ -43,6 +49,7 @@ public final class SetBuilder: @unchecked Sendable {
             return all.filter { $0.chapter == id }
         }
         if key.hasPrefix("chu-de-") { return topicSet(licenseId, topicId: String(key.dropFirst("chu-de-".count)), stats: stats) }
+        if key.hasPrefix("meo-") { return tipQuestions(licenseId, groupId: String(key.dropFirst("meo-".count))) }
         switch key {
         case "diem-yeu": return weaknessSet(licenseId, stats: stats)
         case "hom-nay": return dailySet(all, stats: stats)
@@ -52,8 +59,20 @@ public final class SetBuilder: @unchecked Sendable {
         case "da-luu":
             let set = Set(bookmarks)
             return all.filter { set.contains($0.id) }
+        case "co-meo": return all.filter { $0.tip != nil }
+        case "mo-phong": return all.filter { $0.scene != nil || $0.consequences != nil }.shuffled()
         default: return all
         }
+    }
+
+    /// Câu minh hoạ của một nhóm mẹo (Học mẹo → "Luyện ngay"): câu được mẹo trỏ tới, rồi câu thuộc chủ đề của nhóm.
+    public func tipQuestions(_ licenseId: String, groupId: String) -> [Question] {
+        let all = repo.questionsFor(licenseId)
+        guard let group = repo.tips.groups.first(where: { $0.id == groupId }) else { return [] }
+        let linked = Set(repo.tips.tips.filter { $0.group == groupId }.flatMap { $0.questions })
+        let topics = Set(group.topics)
+        var seen = Set<Int>()
+        return (all.filter { linked.contains($0.id) } + all.filter { topics.contains($0.topic) }).filter { seen.insert($0.id).inserted }
     }
 
     /// Câu đến hạn ôn (theo hộp Leitner), ưu tiên câu điểm liệt và câu quá hạn lâu.

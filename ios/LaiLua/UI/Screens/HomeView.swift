@@ -89,6 +89,8 @@ struct HomeView: View {
                         Quick(key: "da-luu", icon: "🔖", title: "Câu đã lưu", desc: "\(state.bookmarks.count) câu"),
                         Quick(key: "ngau-nhien", icon: "🎲", title: "Chạy ngẫu nhiên", desc: "20 câu khởi động"),
                         Quick(key: "tat-ca", icon: "🛣️", title: "Toàn bộ câu hỏi", desc: "\(p.total) câu theo thứ tự"),
+                        Quick(key: "co-meo", icon: "💡", title: "Học theo mẹo", desc: "Câu có mẹo nhớ nhanh"),
+                        Quick(key: "mo-phong", icon: "🎬", title: "Tình huống mô phỏng", desc: "Sa hình & hậu quả"),
                     ]
                     ForEach(0..<(quick.count / 2), id: \.self) { row in
                         HStack(spacing: 10) {
@@ -118,6 +120,12 @@ struct HomeView: View {
                             }
                         }
                         .padding(.bottom, 8)
+                    }
+                    SectionTitle("Tin mới") {
+                        Button { nav.switchTab(.news) } label: { Text("Xem tất cả →").afont(13, .bold).foregroundColor(Asphalt.lane) }
+                    }
+                    ForEach(app.repo.news.items.prefix(3)) { n in
+                        NewsCard(n: n, big: false) { nav.push(.article(n.slug)) }.padding(.bottom, 8)
                     }
                     HStack { Spacer(); VehicleIcon(kind: lic.vehicle).frame(width: 120, height: 86); Spacer() }.padding(.top, 4)
                     Spacer().frame(height: 24)

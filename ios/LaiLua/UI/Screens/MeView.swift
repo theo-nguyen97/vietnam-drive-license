@@ -152,6 +152,17 @@ struct MeView: View {
                             Spacer()
                             Toggle("", isOn: Binding(get: { state.sound }, set: { store.setSound($0) })).labelsHidden().tint(Asphalt.green)
                         }
+                        Spacer().frame(height: 14)
+                        HStack {
+                            VStack(alignment: .leading, spacing: 0) {
+                                FieldLabel("Tự đọc câu hỏi")
+                                Text(app.speech.available ? (state.autoSpeak ? "Đọc to mỗi câu mới" : "Bấm 🔊 để nghe từng câu") : "Máy chưa có giọng đọc tiếng Việt")
+                                    .afont(15, .semibold).foregroundColor(app.speech.available ? .white : Asphalt.muted)
+                            }
+                            Spacer()
+                            Toggle("", isOn: Binding(get: { state.autoSpeak }, set: { store.setAutoSpeak($0) })).labelsHidden().tint(Asphalt.green)
+                                .disabled(!app.speech.available)
+                        }
                     }
                 }
 
